@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://main/Main.gd" type="Script" id=1]
+[ext_resource path="res://main/MouseInput.gd" type="Script" id=2]
+
+[node name="Main" type="Node2D"]
+pause_mode = 2
+script = ExtResource( 1 )
+
+[node name="Background Tiles" type="TileMap" parent="."]
+pause_mode = 1
+mode = 1
+cell_size = Vector2( 64, 32 )
+cell_y_sort = true
+format = 1
+
+[node name="Foreground Display Objects" type="YSort" parent="."]
+pause_mode = 1
+
+[node name="Camera2D" type="Camera2D" parent="."]
+pause_mode = 2
+
+[node name="MouseInput" type="Node2D" parent="."]
+script = ExtResource( 2 )
+
+[node name="UI" type="CanvasLayer" parent="."]
+pause_mode = 2
