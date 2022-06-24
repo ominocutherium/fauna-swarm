@@ -1,5 +1,7 @@
 # Features, in no particular order
 
+![Mockup of the heads-up display during gameplay.](interface_mockup.png)
+
 * Single player run-based game
 	* "Run" as in a roguelike run, where the player has one save file at a time and they can either win or lose the run. This is analagous to a PVP "match" in which the factions are vying for mutually exclusive goals.
 	* There is no metaprogression, unlocks, or other influence between runs.
