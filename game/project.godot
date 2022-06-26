@@ -57,6 +57,7 @@ _global_script_class_icons={
 [application]
 
 config/name="RTSJam"
+run/main_scene="res://main/MainMenu.tscn"
 config/icon="res://icon.png"
 
 [display]
@@ -64,6 +65,10 @@ config/icon="res://icon.png"
 window/size/width=800
 window/stretch/mode="viewport"
 window/stretch/aspect="keep"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/gut/plugin.cfg" )
 
 [physics]
 
