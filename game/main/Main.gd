@@ -9,14 +9,9 @@ func _process(delta: float) -> void:
 	pass
 
 
-func set_map_data(map_data_variant) -> void:
-	# Implement during Step 8 on roadmap
-	pass
-
-
-func initialize_or_restore_map_state(map_state_variant) -> void:
-	# Implement during Step 3 on roadmap
-	pass
+func initialize_or_restore_map_state() -> void:
+	GameState.background_tiles.apply_to_tilemap($"Background Tiles")
+	GameState.building_tiles.apply_to_tilemap($"Building Tiles")
 	get_tree().paused = false
 
 

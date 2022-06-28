@@ -16,6 +16,13 @@ cell_size = Vector2( 64, 32 )
 cell_y_sort = true
 format = 1
 
+[node name="Building Tiles" type="TileMap" parent="."]
+pause_mode = 1
+mode = 1
+cell_size = Vector2( 64, 32 )
+cell_y_sort = true
+format = 1
+
 [node name="Foreground Display Objects" type="YSort" parent="."]
 pause_mode = 1
 
