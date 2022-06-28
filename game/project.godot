@@ -14,10 +14,20 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/midi/ADSR.gd"
 }, {
+"base": "MapTileData",
+"class": "BackgroundTileData",
+"language": "GDScript",
+"path": "res://map/BackgroundTiles.gd"
+}, {
 "base": "Reference",
 "class": "Bank",
 "language": "GDScript",
 "path": "res://addons/midi/Bank.gd"
+}, {
+"base": "MapTileData",
+"class": "GameStateBuildingData",
+"language": "GDScript",
+"path": "res://map/GameStateBuildingData.gd"
 }, {
 "base": "Reference",
 "class": "GutHookScript",
@@ -29,6 +39,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/gut/test.gd"
 }, {
+"base": "Resource",
+"class": "MapTileData",
+"language": "GDScript",
+"path": "res://map/GameStateTileData.gd"
+}, {
 "base": "Node",
 "class": "MidiPlayer",
 "language": "GDScript",
@@ -39,6 +54,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/midi/SMF.gd"
 }, {
+"base": "Resource",
+"class": "SavedGameState",
+"language": "GDScript",
+"path": "res://game_state/SavedGameState.gd"
+}, {
+"base": "Resource",
+"class": "SavedUnit",
+"language": "GDScript",
+"path": "res://units/SavedUnit.gd"
+}, {
 "base": "Reference",
 "class": "SoundFont",
 "language": "GDScript",
@@ -46,11 +71,16 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "AudioStreamPlayerADSR": "",
+"BackgroundTileData": "",
 "Bank": "",
+"GameStateBuildingData": "",
 "GutHookScript": "",
 "GutTest": "",
+"MapTileData": "",
 "MidiPlayer": "",
 "SMF": "",
+"SavedGameState": "",
+"SavedUnit": "",
 "SoundFont": ""
 }
 
@@ -59,6 +89,11 @@ _global_script_class_icons={
 config/name="RTSJam"
 run/main_scene="res://main/MainMenu.tscn"
 config/icon="res://icon.png"
+
+[autoload]
+
+GameState="*res://game_state/GameState.gd"
+UnitManager="*res://units/UnitManager.gd"
 
 [display]
 
