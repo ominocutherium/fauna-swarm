@@ -5,6 +5,7 @@ func _ready() -> void:
 	get_tree().paused = true
 	if GameState.building_tiles != null:
 		initialize_or_restore_map_state()
+#	UnitManager.connect("unit_moved",self,"_on_unit_moved")
 
 
 func _process(delta: float) -> void:
@@ -15,6 +16,10 @@ func initialize_or_restore_map_state() -> void:
 	GameState.background_tiles.apply_to_tilemap($"Background Tiles")
 	GameState.building_tiles.apply_to_tilemap($"Building Tiles")
 	get_tree().paused = false
+
+
+func _on_unit_moved(identifier:int,to:Vector2) -> void:
+	pass
 
 
 func _on_MouseInput_location_left_clicked(location) -> void:

@@ -105,6 +105,14 @@ window/stretch/aspect="keep"
 
 enabled=PoolStringArray( "res://addons/gut/plugin.cfg" )
 
+[layer_names]
+
+2d_physics/layer_1="Obstacles"
+2d_physics/layer_2="Units (Player)"
+2d_physics/layer_3="Units (Evil 1)"
+2d_physics/layer_4="Units (Evil 2)"
+2d_physics/layer_5="Terrain-can-be-flown-over"
+
 [locale]
 
 translations=PoolStringArray( "res://ui/ui_text.en.translation" )
