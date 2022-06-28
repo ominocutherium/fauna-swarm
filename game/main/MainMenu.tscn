@@ -123,6 +123,18 @@ margin_bottom = -30.0
 
 [node name="Statistics" parent="Statistics" instance=ExtResource( 3 )]
 
+[node name="SaveLoadError" type="AcceptDialog" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 30.0
+margin_top = 70.0
+margin_right = -30.0
+margin_bottom = -30.0
+
+[node name="Label2" type="Label" parent="SaveLoadError"]
+margin_right = 40.0
+margin_bottom = 14.0
+
 [connection signal="pressed" from="Buttons/VBoxContainer/Start" to="." method="_on_Start_pressed"]
 [connection signal="pressed" from="Buttons/VBoxContainer/Continue" to="." method="_on_Continue_pressed"]
 [connection signal="pressed" from="Buttons/VBoxContainer/Settings" to="." method="_on_Settings_pressed"]

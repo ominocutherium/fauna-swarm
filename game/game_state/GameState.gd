@@ -5,6 +5,11 @@ var background_tiles : BackgroundTileData
 var building_tiles : GameStateBuildingData
 
 
+func initialize_new_game() -> void:
+	background_tiles = BackgroundTileData.new()
+	building_tiles = GameStateBuildingData.new()
+
+
 func restore(save_res:SavedGameState) -> void:
 	units = save_res.units
 	background_tiles = save_res.background_tiles
