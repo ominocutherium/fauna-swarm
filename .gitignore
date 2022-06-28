@@ -1,0 +1,5 @@
+game/addons/*
+game/assets/*
+game/.import/
+game/**/*.png
+

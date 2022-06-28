@@ -1,0 +1,87 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://main/Main.gd" type="Script" id=1]
+[ext_resource path="res://main/MouseInput.gd" type="Script" id=2]
+[ext_resource path="res://main/MainCamera.gd" type="Script" id=3]
+[ext_resource path="res://icon.png" type="Texture" id=4]
+
+[node name="Main" type="Node2D"]
+pause_mode = 2
+script = ExtResource( 1 )
+
+[node name="Background Tiles" type="TileMap" parent="."]
+pause_mode = 1
+mode = 1
+cell_size = Vector2( 64, 32 )
+cell_y_sort = true
+format = 1
+
+[node name="Building Tiles" type="TileMap" parent="."]
+pause_mode = 1
+mode = 1
+cell_size = Vector2( 64, 32 )
+cell_y_sort = true
+format = 1
+
+[node name="Foreground Display Objects" type="YSort" parent="."]
+pause_mode = 1
+
+[node name="Sprite" type="Sprite" parent="Foreground Display Objects"]
+position = Vector2( 159, 95 )
+texture = ExtResource( 4 )
+
+[node name="Sprite2" type="Sprite" parent="Foreground Display Objects"]
+position = Vector2( -122, 64 )
+texture = ExtResource( 4 )
+
+[node name="Sprite3" type="Sprite" parent="Foreground Display Objects"]
+position = Vector2( 237, -99 )
+texture = ExtResource( 4 )
+
+[node name="Sprite4" type="Sprite" parent="Foreground Display Objects"]
+position = Vector2( 507, 95 )
+texture = ExtResource( 4 )
+
+[node name="Sprite5" type="Sprite" parent="Foreground Display Objects"]
+position = Vector2( 669, 529 )
+texture = ExtResource( 4 )
+
+[node name="Sprite6" type="Sprite" parent="Foreground Display Objects"]
+position = Vector2( 279, 424 )
+texture = ExtResource( 4 )
+
+[node name="Sprite7" type="Sprite" parent="Foreground Display Objects"]
+position = Vector2( 479, 294 )
+texture = ExtResource( 4 )
+
+[node name="Sprite8" type="Sprite" parent="Foreground Display Objects"]
+position = Vector2( 110, 367 )
+texture = ExtResource( 4 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+pause_mode = 2
+current = true
+script = ExtResource( 3 )
+
+[node name="MouseInput" type="Node2D" parent="."]
+script = ExtResource( 2 )
+selection_color = Color( 0.65098, 0.8, 0.756863, 1 )
+selection_line_width = 1.0
+mouse_edge_camera_pan_speed = 400.0
+edge_margin_h = 0.15
+edge_margin_v = 0.1
+
+[node name="UI" type="CanvasLayer" parent="."]
+pause_mode = 2
+
+[node name="Panel" type="Panel" parent="UI"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -100.0
+
+[connection signal="location_left_clicked" from="MouseInput" to="." method="_on_MouseInput_location_left_clicked"]
+[connection signal="location_right_clicked" from="MouseInput" to="." method="_on_MouseInput_location_right_clicked"]
+[connection signal="rect_released" from="MouseInput" to="." method="_on_MouseInput_rect_released"]
+[connection signal="rect_updated" from="MouseInput" to="." method="_on_MouseInput_rect_updated"]
+[connection signal="request_pan_camera" from="MouseInput" to="Camera2D" method="_on_MouseInput_request_pan_camera"]

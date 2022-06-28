@@ -1,0 +1,117 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "AudioStreamPlayer",
+"class": "AudioStreamPlayerADSR",
+"language": "GDScript",
+"path": "res://addons/midi/ADSR.gd"
+}, {
+"base": "MapTileData",
+"class": "BackgroundTileData",
+"language": "GDScript",
+"path": "res://map/BackgroundTiles.gd"
+}, {
+"base": "Reference",
+"class": "Bank",
+"language": "GDScript",
+"path": "res://addons/midi/Bank.gd"
+}, {
+"base": "MapTileData",
+"class": "GameStateBuildingData",
+"language": "GDScript",
+"path": "res://map/GameStateBuildingData.gd"
+}, {
+"base": "Reference",
+"class": "GutHookScript",
+"language": "GDScript",
+"path": "res://addons/gut/hook_script.gd"
+}, {
+"base": "Node",
+"class": "GutTest",
+"language": "GDScript",
+"path": "res://addons/gut/test.gd"
+}, {
+"base": "Resource",
+"class": "MapTileData",
+"language": "GDScript",
+"path": "res://map/GameStateTileData.gd"
+}, {
+"base": "Node",
+"class": "MidiPlayer",
+"language": "GDScript",
+"path": "res://addons/midi/MidiPlayer.gd"
+}, {
+"base": "Reference",
+"class": "SMF",
+"language": "GDScript",
+"path": "res://addons/midi/SMF.gd"
+}, {
+"base": "Resource",
+"class": "SavedGameState",
+"language": "GDScript",
+"path": "res://game_state/SavedGameState.gd"
+}, {
+"base": "Resource",
+"class": "SavedUnit",
+"language": "GDScript",
+"path": "res://units/SavedUnit.gd"
+}, {
+"base": "Reference",
+"class": "SoundFont",
+"language": "GDScript",
+"path": "res://addons/midi/SoundFont.gd"
+} ]
+_global_script_class_icons={
+"AudioStreamPlayerADSR": "",
+"BackgroundTileData": "",
+"Bank": "",
+"GameStateBuildingData": "",
+"GutHookScript": "",
+"GutTest": "",
+"MapTileData": "",
+"MidiPlayer": "",
+"SMF": "",
+"SavedGameState": "",
+"SavedUnit": "",
+"SoundFont": ""
+}
+
+[application]
+
+config/name="RTSJam"
+run/main_scene="res://main/MainMenu.tscn"
+config/icon="res://icon.png"
+
+[autoload]
+
+GameState="*res://game_state/GameState.gd"
+UnitManager="*res://units/UnitManager.gd"
+
+[display]
+
+window/size/width=800
+window/stretch/mode="viewport"
+window/stretch/aspect="keep"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/gut/plugin.cfg" )
+
+[physics]
+
+common/enable_pause_aware_picking=true
+
+[rendering]
+
+quality/driver/driver_name="GLES2"
+vram_compression/import_etc=true
+vram_compression/import_etc2=false
+environment/default_environment="res://default_env.tres"
