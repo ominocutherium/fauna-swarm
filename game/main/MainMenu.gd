@@ -2,6 +2,8 @@ extends Control
 
 const SAVE_FILE_PATH = "user://saved_game.tres"
 
+onready var gameplay_scene : PackedScene = preload("res://main/Main.tscn")
+
 
 func _ready() -> void:
 	pass # Replace with function body.
@@ -15,7 +17,7 @@ func _ready() -> void:
 
 func _on_Start_pressed() -> void:
 	GameState.initialize_new_game()
-	get_tree().change_scene("res://main/Main.tscn")
+	get_tree().change_scene_to(gameplay_scene)
 
 
 func _on_Continue_pressed() -> void:
@@ -24,7 +26,7 @@ func _on_Continue_pressed() -> void:
 		$SaveLoadError.popup()
 	else:
 		GameState.restore(s)
-		get_tree().change_scene("res://main/Main.tscn")
+		get_tree().change_scene_to(gameplay_scene)
 
 
 func _on_Settings_pressed() -> void:
