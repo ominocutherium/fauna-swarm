@@ -3,6 +3,8 @@ extends Node2D
 
 func _ready() -> void:
 	get_tree().paused = true
+	if GameState.building_tiles != null:
+		initialize_or_restore_map_state()
 
 
 func _process(delta: float) -> void:
