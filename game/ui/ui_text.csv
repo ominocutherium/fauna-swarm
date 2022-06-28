@@ -1,0 +1,9 @@
+key,en
+MM_TITLE,Forest Skirmish
+MM_BUTTON_START,Start
+MM_BUTTON_CONTINUE,Continue
+MM_BUTTON_SETTINGS,Settings
+MM_BUTTON_CREDITS,Credits/Legal
+MM_BUTTON_STATS,Statistics
+MM_BUTTON_EXIT,Exit
+MM_SAVELOAD_ERROR,Error: Save file is corrupted and cannot be loaded.

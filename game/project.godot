@@ -105,6 +105,10 @@ window/stretch/aspect="keep"
 
 enabled=PoolStringArray( "res://addons/gut/plugin.cfg" )
 
+[locale]
+
+translations=PoolStringArray( "res://ui/ui_text.en.translation" )
+
 [physics]
 
 common/enable_pause_aware_picking=true

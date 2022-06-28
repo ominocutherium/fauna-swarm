@@ -34,7 +34,7 @@ anchor_bottom = 1.0
 [node name="Label" type="Label" parent="Title"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-text = "Forest Skirmish"
+text = "MM_TITLE"
 align = 1
 valign = 1
 uppercase = true
@@ -56,42 +56,42 @@ anchor_bottom = 1.0
 margin_right = 370.0
 margin_bottom = 28.0
 size_flags_vertical = 3
-text = "Start"
+text = "MM_BUTTON_START"
 
 [node name="Continue" type="Button" parent="Buttons/VBoxContainer"]
 margin_top = 32.0
 margin_right = 370.0
 margin_bottom = 60.0
 size_flags_vertical = 3
-text = "Continue"
+text = "MM_BUTTON_CONTINUE"
 
 [node name="Settings" type="Button" parent="Buttons/VBoxContainer"]
 margin_top = 64.0
 margin_right = 370.0
 margin_bottom = 93.0
 size_flags_vertical = 3
-text = "Settings"
+text = "MM_BUTTON_SETTINGS"
 
 [node name="CreditsLegal" type="Button" parent="Buttons/VBoxContainer"]
 margin_top = 97.0
 margin_right = 370.0
 margin_bottom = 125.0
 size_flags_vertical = 3
-text = "Credits/Legal"
+text = "MM_BUTTON_CREDITS"
 
 [node name="Stats" type="Button" parent="Buttons/VBoxContainer"]
 margin_top = 129.0
 margin_right = 370.0
 margin_bottom = 157.0
 size_flags_vertical = 3
-text = "Statistics"
+text = "MM_BUTTON_STATS"
 
 [node name="Quit" type="Button" parent="Buttons/VBoxContainer"]
 margin_top = 161.0
 margin_right = 370.0
 margin_bottom = 190.0
 size_flags_vertical = 3
-text = "Exit"
+text = "MM_BUTTON_EXIT"
 
 [node name="Settings" type="WindowDialog" parent="."]
 anchor_right = 1.0
@@ -132,8 +132,11 @@ margin_right = -30.0
 margin_bottom = -30.0
 
 [node name="Label2" type="Label" parent="SaveLoadError"]
-margin_right = 40.0
-margin_bottom = 14.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 732.0
+margin_bottom = 464.0
+text = "MM_SAVELOAD_ERROR"
 
 [connection signal="pressed" from="Buttons/VBoxContainer/Start" to="." method="_on_Start_pressed"]
 [connection signal="pressed" from="Buttons/VBoxContainer/Continue" to="." method="_on_Continue_pressed"]
