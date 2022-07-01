@@ -19,6 +19,7 @@ export(float,0.0,1.0) var edge_margin_v : float
 
 
 var _left_down_for_drag : bool = false
+var _left_down_in_minimap_diamond : bool = false
 var _left_down_time : float = 0.0
 var _middle_down_for_pan : bool = false
 var _right_down_for_action : bool = false
@@ -30,7 +31,18 @@ onready var margin_h_in_pixels := edge_margin_h * get_tree().root.size.x
 onready var margin_v_in_pixels := edge_margin_v * get_tree().root.size.y
 onready var right_margin_begin := get_tree().root.size.x - margin_h_in_pixels
 onready var bottom_margin_begin := get_tree().root.size.y - margin_v_in_pixels
-
+onready var minimap_diamond_midpoints := [
+	0.5*(Vector2(600,500)+Vector2(400,400)),
+	0.5*(Vector2(400,600)+Vector2(600,500)),
+	0.5*(Vector2(400,600)+Vector2(200,500)),
+	0.5*(Vector2(400,400)+Vector2(200,500)),
+]
+onready var minimap_diamond_normals := [
+	Vector2(-2,1).normalized(),
+	Vector2(-2,-1).normalized(),
+	Vector2(2,-1).normalized(),
+	Vector2(2,1).normalized(),
+]
 
 func _ready() -> void:
 	_create_lines()
@@ -57,6 +69,11 @@ func _if_mouse_button_handle_press_release(event:InputEvent) -> void:
 			BUTTON_LEFT:
 				if event.pressed:
 					_left_down_for_drag = true
+					if _position_is_inside_minimap_diamond(event.position):
+#						print("Selected inside minimap diamond.")
+						_left_down_in_minimap_diamond = true
+					else:
+						_left_down_in_minimap_diamond = false
 					_left_down_time = 0.0
 					_selection_rect.position = make_canvas_position_local(event.position)
 					_selection_rect.end = _selection_rect.position
@@ -139,3 +156,11 @@ func _update_lines_with_rect(selection_rect:Rect2) -> void:
 	_get_line(3).points[0].x = selection_rect.position.x
 	_get_line(3).points[0].y = selection_rect.end.y
 	_get_line(3).points[1] = selection_rect.end
+
+func _position_is_inside_minimap_diamond(pos:Vector2) -> bool:
+	for i in range(4):
+		var compare_vector : Vector2 = (pos-minimap_diamond_midpoints[i]).normalized()
+		if minimap_diamond_normals[i].dot(compare_vector) < 0:
+#			print("Pos: {0} Midpoint of segment {1}:{2} Compare: {3} Normal: {4}".format([pos,i,minimap_diamond_midpoints[i],compare_vector,minimap_diamond_normals[i]]))
+			return false
+	return true

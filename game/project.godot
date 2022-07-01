@@ -39,6 +39,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/gut/test.gd"
 }, {
+"base": "TextureRect",
+"class": "LaterBuildingQueueButton",
+"language": "GDScript",
+"path": "res://ui/LaterQueueItem.gd"
+}, {
 "base": "Resource",
 "class": "MapTileData",
 "language": "GDScript",
@@ -49,10 +54,25 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/midi/MidiPlayer.gd"
 }, {
+"base": "ImageTexture",
+"class": "MinimapTexture",
+"language": "GDScript",
+"path": "res://ui/MinimapTexture.gd"
+}, {
+"base": "TextureButton",
+"class": "OrderInputButton",
+"language": "GDScript",
+"path": "res://ui/OrderButton.gd"
+}, {
 "base": "Reference",
 "class": "SMF",
 "language": "GDScript",
 "path": "res://addons/midi/SMF.gd"
+}, {
+"base": "Resource",
+"class": "SavedBuilding",
+"language": "GDScript",
+"path": "res://game_state/SavedBuilding.gd"
 }, {
 "base": "Resource",
 "class": "SavedGameState",
@@ -76,9 +96,13 @@ _global_script_class_icons={
 "GameStateBuildingData": "",
 "GutHookScript": "",
 "GutTest": "",
+"LaterBuildingQueueButton": "",
 "MapTileData": "",
 "MidiPlayer": "",
+"MinimapTexture": "",
+"OrderInputButton": "",
 "SMF": "",
+"SavedBuilding": "",
 "SavedGameState": "",
 "SavedUnit": "",
 "SoundFont": ""
@@ -104,6 +128,44 @@ window/stretch/aspect="keep"
 [editor_plugins]
 
 enabled=PoolStringArray( "res://addons/gut/plugin.cfg" )
+
+[input]
+
+order_move={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":81,"unicode":0,"echo":false,"script":null)
+ ]
+}
+order_attack={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":87,"unicode":0,"echo":false,"script":null)
+ ]
+}
+order_capture_attack={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":69,"unicode":0,"echo":false,"script":null)
+ ]
+}
+order_hold={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":82,"unicode":0,"echo":false,"script":null)
+ ]
+}
+order_claim={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":65,"unicode":0,"echo":false,"script":null)
+ ]
+}
+upgrade_unit_opt1={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":68,"unicode":0,"echo":false,"script":null)
+ ]
+}
+upgrade_unit_opt2={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":70,"unicode":0,"echo":false,"script":null)
+ ]
+}
 
 [layer_names]
 

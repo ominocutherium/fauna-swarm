@@ -3,4 +3,6 @@ game/assets/*
 game/.import/
 game/**/*.png
 game/**/*.translation
+game/**/*.ttf
+game/.gut_editor_config.json
 

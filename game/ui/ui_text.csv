@@ -1,4 +1,11 @@
 key,en
+GAME_NOUN_UNIT,unit
+GAME_NOUN_FACTION,faction
+GAME_VERB_CAPTURE,capture
+GAME_VERB_ATTACK,attack
+GAME_VERB_PURIFY,purify
+GAME_NOUN_BUILDING,building
+GAME_NOUN_RESOURCE,resource
 MM_TITLE,Forest Skirmish
 MM_BUTTON_START,Start
 MM_BUTTON_CONTINUE,Continue
@@ -7,3 +14,14 @@ MM_BUTTON_CREDITS,Credits/Legal
 MM_BUTTON_STATS,Statistics
 MM_BUTTON_EXIT,Exit
 MM_SAVELOAD_ERROR,Error: Save file is corrupted and cannot be loaded.
+HUD_SELUNIT_EXAMPLE_NAME,Pure Wolf
+HUD_SELUNIT_EXAMPLE_SHORTDESC,"Armed by sharp fangs and armored by thick fur, the wolf is the heavy infantry of the forest."
+HUD_SELUNIT_EXAMPLE_TECHNAME,Bite
+HUD_SELUNIT_EXAMPLE_TECHDESC,20 DPS melee
+HUD_SELUNIT_UPGRADE_BUTTON,Upgrade
+HUD_UPUNIT_TITLE,Upgrade {0}
+CREDITS_FONT0,Using font “at01” by GrafxKid (https://grafxkid.itch.io/at01): licensed under CC0.
+HUD_SELBUILD_EXAMPLE_NAME,Decontamination Facility
+HUD_SELBUILD_EXAMPLE_DESC,Heals and purifies units. Purifies tiles in range.
+ORDER_BUTTON_TOOLTIP,{0} ({1})
+ORDER_BUTTON_HOVER,{0}: {2} ({1})

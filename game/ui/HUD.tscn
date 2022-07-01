@@ -1,0 +1,603 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://ui/theme.tres" type="Theme" id=1]
+[ext_resource path="res://icon.png" type="Texture" id=2]
+[ext_resource path="res://ui/OrderButton.gd" type="Script" id=3]
+[ext_resource path="res://ui/HUD.gd" type="Script" id=4]
+[ext_resource path="res://ui/LaterQueueItem.gd" type="Script" id=5]
+[ext_resource path="res://ui/TopOfQueue.gd" type="Script" id=6]
+
+[node name="HUD" type="Control"]
+pause_mode = 2
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 1
+theme = ExtResource( 1 )
+script = ExtResource( 4 )
+upgrade_unit_disp_path = NodePath("Bottom Panel/H/CurrSelected/UpgradeUnit")
+unit_disp_path = NodePath("Bottom Panel/H/CurrSelected/SelectedUnit")
+multi_unit_disp_path = NodePath("Bottom Panel/H/CurrSelected/SelectedGroupOfUnits")
+building_disp_path = NodePath("Bottom Panel/H/CurrSelected/SelectedBuilding")
+
+[node name="Bottom Panel" type="Panel" parent="."]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -140.0
+mouse_filter = 2
+
+[node name="H" type="HBoxContainer" parent="Bottom Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="CurrSelected" type="Control" parent="Bottom Panel/H"]
+margin_right = 196.0
+margin_bottom = 140.0
+rect_clip_content = true
+size_flags_horizontal = 3
+
+[node name="SelectedUnit" type="VBoxContainer" parent="Bottom Panel/H/CurrSelected"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 2.0
+margin_top = 2.0
+margin_right = -2.0
+margin_bottom = -2.0
+rect_clip_content = true
+mouse_filter = 2
+
+[node name="Name" type="Label" parent="Bottom Panel/H/CurrSelected/SelectedUnit"]
+margin_right = 192.0
+margin_bottom = 13.0
+rect_clip_content = true
+text = "HUD_SELUNIT_EXAMPLE_NAME"
+align = 1
+
+[node name="H1" type="HBoxContainer" parent="Bottom Panel/H/CurrSelected/SelectedUnit"]
+margin_top = 17.0
+margin_right = 192.0
+margin_bottom = 96.0
+rect_clip_content = true
+size_flags_vertical = 3
+
+[node name="C" type="Control" parent="Bottom Panel/H/CurrSelected/SelectedUnit/H1"]
+margin_right = 62.0
+margin_bottom = 79.0
+rect_clip_content = true
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.75
+
+[node name="V" type="VBoxContainer" parent="Bottom Panel/H/CurrSelected/SelectedUnit/H1/C"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 40, 50 )
+size_flags_horizontal = 3
+
+[node name="TextureRect" type="TextureRect" parent="Bottom Panel/H/CurrSelected/SelectedUnit/H1/C/V"]
+margin_right = 62.0
+margin_bottom = 60.0
+rect_min_size = Vector2( 40, 40 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+expand = true
+stretch_mode = 5
+
+[node name="UpgradeUnit" type="Button" parent="Bottom Panel/H/CurrSelected/SelectedUnit/H1/C/V"]
+margin_top = 64.0
+margin_right = 62.0
+margin_bottom = 79.0
+rect_clip_content = true
+text = "HUD_SELUNIT_UPGRADE_BUTTON"
+clip_text = true
+
+[node name="C2" type="Control" parent="Bottom Panel/H/CurrSelected/SelectedUnit/H1"]
+margin_left = 66.0
+margin_right = 192.0
+margin_bottom = 79.0
+rect_clip_content = true
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.5
+
+[node name="ShortDesc" type="Label" parent="Bottom Panel/H/CurrSelected/SelectedUnit/H1/C2"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_clip_content = true
+size_flags_horizontal = 3
+size_flags_vertical = 6
+size_flags_stretch_ratio = 0.8
+text = "HUD_SELUNIT_EXAMPLE_SHORTDESC"
+autowrap = true
+
+[node name="CurrentHealth" type="ProgressBar" parent="Bottom Panel/H/CurrSelected/SelectedUnit"]
+margin_top = 100.0
+margin_right = 192.0
+margin_bottom = 102.0
+percent_visible = false
+
+[node name="TechniqueName" type="Label" parent="Bottom Panel/H/CurrSelected/SelectedUnit"]
+margin_top = 106.0
+margin_right = 192.0
+margin_bottom = 119.0
+size_flags_vertical = 1
+text = "HUD_SELUNIT_EXAMPLE_TECHNAME"
+
+[node name="TechniqueDesc" type="Label" parent="Bottom Panel/H/CurrSelected/SelectedUnit"]
+margin_top = 123.0
+margin_right = 192.0
+margin_bottom = 136.0
+size_flags_vertical = 1
+text = "HUD_SELUNIT_EXAMPLE_TECHDESC"
+
+[node name="SelectedBuilding" type="VBoxContainer" parent="Bottom Panel/H/CurrSelected"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Name" type="Label" parent="Bottom Panel/H/CurrSelected/SelectedBuilding"]
+margin_right = 196.0
+margin_bottom = 13.0
+text = "HUD_SELBUILD_EXAMPLE_NAME"
+align = 1
+
+[node name="H1" type="HBoxContainer" parent="Bottom Panel/H/CurrSelected/SelectedBuilding"]
+margin_top = 17.0
+margin_right = 196.0
+margin_bottom = 106.0
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="Bottom Panel/H/CurrSelected/SelectedBuilding/H1"]
+margin_left = 20.0
+margin_top = 16.0
+margin_right = 76.0
+margin_bottom = 72.0
+rect_min_size = Vector2( 56, 56 )
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 5
+
+[node name="TopOfQueue" type="Control" parent="Bottom Panel/H/CurrSelected/SelectedBuilding/H1"]
+margin_left = 100.0
+margin_right = 196.0
+margin_bottom = 89.0
+rect_clip_content = true
+size_flags_horizontal = 3
+script = ExtResource( 6 )
+
+[node name="V" type="VBoxContainer" parent="Bottom Panel/H/CurrSelected/SelectedBuilding/H1/TopOfQueue"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Desc" type="Label" parent="Bottom Panel/H/CurrSelected/SelectedBuilding/H1/TopOfQueue/V"]
+margin_right = 96.0
+margin_bottom = 57.0
+size_flags_vertical = 3
+text = "HUD_SELBUILD_EXAMPLE_DESC"
+autowrap = true
+clip_text = true
+
+[node name="H" type="HBoxContainer" parent="Bottom Panel/H/CurrSelected/SelectedBuilding/H1/TopOfQueue/V"]
+margin_top = 61.0
+margin_right = 96.0
+margin_bottom = 89.0
+
+[node name="TextureRect" type="TextureRect" parent="Bottom Panel/H/CurrSelected/SelectedBuilding/H1/TopOfQueue/V/H"]
+margin_right = 28.0
+margin_bottom = 28.0
+rect_min_size = Vector2( 28, 28 )
+size_flags_horizontal = 4
+size_flags_vertical = 6
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 5
+
+[node name="ProgressBar" type="ProgressBar" parent="Bottom Panel/H/CurrSelected/SelectedBuilding/H1/TopOfQueue/V/H"]
+margin_left = 32.0
+margin_top = 7.0
+margin_right = 96.0
+margin_bottom = 20.0
+mouse_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="RestOfQueue" type="HBoxContainer" parent="Bottom Panel/H/CurrSelected/SelectedBuilding"]
+margin_top = 110.0
+margin_right = 196.0
+margin_bottom = 140.0
+rect_min_size = Vector2( 0, 30 )
+custom_constants/separation = 0
+
+[node name="0" type="TextureRect" parent="Bottom Panel/H/CurrSelected/SelectedBuilding/RestOfQueue"]
+margin_right = 28.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 28, 28 )
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 5
+script = ExtResource( 5 )
+
+[node name="1" type="TextureRect" parent="Bottom Panel/H/CurrSelected/SelectedBuilding/RestOfQueue"]
+margin_left = 28.0
+margin_right = 56.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 28, 28 )
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 5
+
+[node name="2" type="TextureRect" parent="Bottom Panel/H/CurrSelected/SelectedBuilding/RestOfQueue"]
+margin_left = 56.0
+margin_right = 84.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 28, 28 )
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 5
+
+[node name="3" type="TextureRect" parent="Bottom Panel/H/CurrSelected/SelectedBuilding/RestOfQueue"]
+margin_left = 84.0
+margin_right = 112.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 28, 28 )
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 5
+
+[node name="4" type="TextureRect" parent="Bottom Panel/H/CurrSelected/SelectedBuilding/RestOfQueue"]
+margin_left = 112.0
+margin_right = 140.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 28, 28 )
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 5
+
+[node name="5" type="TextureRect" parent="Bottom Panel/H/CurrSelected/SelectedBuilding/RestOfQueue"]
+margin_left = 140.0
+margin_right = 168.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 28, 28 )
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 5
+
+[node name="6" type="TextureRect" parent="Bottom Panel/H/CurrSelected/SelectedBuilding/RestOfQueue"]
+margin_left = 168.0
+margin_right = 196.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 28, 28 )
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 5
+
+[node name="UpgradeUnit" type="VBoxContainer" parent="Bottom Panel/H/CurrSelected"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="Bottom Panel/H/CurrSelected/UpgradeUnit"]
+margin_right = 196.0
+margin_bottom = 13.0
+grow_horizontal = 2
+text = "HUD_UPUNIT_EXAMPLE_TITLE"
+align = 1
+
+[node name="Space3" type="Control" parent="Bottom Panel/H/CurrSelected/UpgradeUnit"]
+margin_top = 17.0
+margin_right = 196.0
+margin_bottom = 22.0
+rect_min_size = Vector2( 5, 5 )
+mouse_filter = 2
+
+[node name="H" type="HBoxContainer" parent="Bottom Panel/H/CurrSelected/UpgradeUnit"]
+margin_top = 26.0
+margin_right = 196.0
+margin_bottom = 104.0
+mouse_filter = 2
+size_flags_vertical = 3
+
+[node name="Space" type="Control" parent="Bottom Panel/H/CurrSelected/UpgradeUnit/H"]
+margin_right = 5.0
+margin_bottom = 78.0
+rect_min_size = Vector2( 5, 0 )
+mouse_filter = 2
+
+[node name="Option1" type="Button" parent="Bottom Panel/H/CurrSelected/UpgradeUnit/H"]
+margin_left = 9.0
+margin_right = 96.0
+margin_bottom = 78.0
+rect_clip_content = true
+size_flags_horizontal = 3
+
+[node name="TextureRect" type="TextureRect" parent="Bottom Panel/H/CurrSelected/UpgradeUnit/H/Option1"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -20.0
+margin_top = -20.0
+margin_right = 16.0
+margin_bottom = 16.0
+mouse_filter = 2
+
+[node name="Name" type="Label" parent="Bottom Panel/H/CurrSelected/UpgradeUnit/H/Option1"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -13.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "HUD_UPUNIT_EXAMPLE_UPGRADE0"
+align = 1
+
+[node name="Option2" type="Button" parent="Bottom Panel/H/CurrSelected/UpgradeUnit/H"]
+margin_left = 100.0
+margin_right = 187.0
+margin_bottom = 78.0
+rect_clip_content = true
+size_flags_horizontal = 3
+
+[node name="TextureRect" type="TextureRect" parent="Bottom Panel/H/CurrSelected/UpgradeUnit/H/Option2"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -20.0
+margin_top = -20.0
+margin_right = 16.0
+margin_bottom = 16.0
+mouse_filter = 2
+
+[node name="Name" type="Label" parent="Bottom Panel/H/CurrSelected/UpgradeUnit/H/Option2"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -13.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "HUD_UPUNIT_EXAMPLE_UPGRADE2"
+align = 1
+
+[node name="Space2" type="Control" parent="Bottom Panel/H/CurrSelected/UpgradeUnit/H"]
+margin_left = 191.0
+margin_right = 196.0
+margin_bottom = 78.0
+rect_min_size = Vector2( 5, 0 )
+mouse_filter = 2
+
+[node name="Space4" type="Control" parent="Bottom Panel/H/CurrSelected/UpgradeUnit"]
+margin_top = 108.0
+margin_right = 196.0
+margin_bottom = 113.0
+rect_min_size = Vector2( 5, 5 )
+mouse_filter = 2
+
+[node name="Cancel" type="Button" parent="Bottom Panel/H/CurrSelected/UpgradeUnit"]
+margin_top = 117.0
+margin_right = 196.0
+margin_bottom = 132.0
+text = "HUD_UPUNIT_CANCEL"
+
+[node name="Space5" type="Control" parent="Bottom Panel/H/CurrSelected/UpgradeUnit"]
+margin_top = 136.0
+margin_right = 196.0
+margin_bottom = 140.0
+rect_min_size = Vector2( 5, 4 )
+mouse_filter = 2
+
+[node name="SelectedGroupOfUnits" type="VBoxContainer" parent="Bottom Panel/H/CurrSelected"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+
+[node name="H1" type="HBoxContainer" parent="Bottom Panel/H/CurrSelected/SelectedGroupOfUnits"]
+margin_top = 4.0
+margin_right = 196.0
+margin_bottom = 40.0
+size_flags_vertical = 6
+alignment = 1
+
+[node name="H2" type="HBoxContainer" parent="Bottom Panel/H/CurrSelected/SelectedGroupOfUnits"]
+margin_top = 52.0
+margin_right = 196.0
+margin_bottom = 88.0
+size_flags_vertical = 6
+alignment = 1
+
+[node name="H3" type="HBoxContainer" parent="Bottom Panel/H/CurrSelected/SelectedGroupOfUnits"]
+margin_top = 100.0
+margin_right = 196.0
+margin_bottom = 136.0
+size_flags_vertical = 6
+alignment = 1
+
+[node name="MMContainer" type="Control" parent="Bottom Panel/H"]
+margin_left = 200.0
+margin_right = 600.0
+margin_bottom = 140.0
+rect_min_size = Vector2( 400, 0 )
+mouse_filter = 2
+
+[node name="Orders" type="VBoxContainer" parent="Bottom Panel/H"]
+margin_left = 604.0
+margin_right = 800.0
+margin_bottom = 140.0
+size_flags_horizontal = 3
+
+[node name="H1" type="HBoxContainer" parent="Bottom Panel/H/Orders"]
+margin_top = 52.0
+margin_right = 196.0
+margin_bottom = 88.0
+size_flags_vertical = 6
+alignment = 1
+
+[node name="0" type="TextureButton" parent="Bottom Panel/H/Orders/H1"]
+margin_right = 36.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 2 )
+expand = true
+script = ExtResource( 3 )
+action_emulated = "order_move"
+
+[node name="1" type="TextureButton" parent="Bottom Panel/H/Orders/H1"]
+margin_left = 40.0
+margin_right = 76.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 2 )
+expand = true
+script = ExtResource( 3 )
+action_emulated = "order_attack"
+
+[node name="2" type="TextureButton" parent="Bottom Panel/H/Orders/H1"]
+margin_left = 80.0
+margin_right = 116.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 2 )
+expand = true
+script = ExtResource( 3 )
+action_emulated = "order_capture_attack"
+
+[node name="3" type="TextureButton" parent="Bottom Panel/H/Orders/H1"]
+margin_left = 120.0
+margin_right = 156.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 2 )
+expand = true
+script = ExtResource( 3 )
+action_emulated = "order_hold"
+
+[node name="4" type="TextureButton" parent="Bottom Panel/H/Orders/H1"]
+margin_left = 160.0
+margin_right = 196.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 2 )
+expand = true
+script = ExtResource( 3 )
+action_emulated = "order_claim"
+
+[node name="H2" type="HBoxContainer" parent="Bottom Panel/H/Orders"]
+visible = false
+margin_top = 52.0
+margin_right = 196.0
+margin_bottom = 88.0
+size_flags_vertical = 6
+alignment = 1
+
+[node name="0" type="TextureButton" parent="Bottom Panel/H/Orders/H2"]
+margin_right = 36.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 2 )
+expand = true
+
+[node name="1" type="TextureButton" parent="Bottom Panel/H/Orders/H2"]
+margin_left = 40.0
+margin_right = 76.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 2 )
+expand = true
+
+[node name="2" type="TextureButton" parent="Bottom Panel/H/Orders/H2"]
+margin_left = 80.0
+margin_right = 116.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 2 )
+expand = true
+
+[node name="3" type="TextureButton" parent="Bottom Panel/H/Orders/H2"]
+margin_left = 120.0
+margin_right = 156.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 2 )
+expand = true
+
+[node name="4" type="TextureButton" parent="Bottom Panel/H/Orders/H2"]
+margin_left = 160.0
+margin_right = 196.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 2 )
+expand = true
+
+[node name="H3" type="HBoxContainer" parent="Bottom Panel/H/Orders"]
+visible = false
+margin_top = 88.0
+margin_right = 196.0
+margin_bottom = 124.0
+size_flags_vertical = 6
+alignment = 1
+
+[node name="0" type="TextureButton" parent="Bottom Panel/H/Orders/H3"]
+margin_right = 36.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 2 )
+expand = true
+
+[node name="1" type="TextureButton" parent="Bottom Panel/H/Orders/H3"]
+margin_left = 40.0
+margin_right = 76.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 2 )
+expand = true
+
+[node name="2" type="TextureButton" parent="Bottom Panel/H/Orders/H3"]
+margin_left = 80.0
+margin_right = 116.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 2 )
+expand = true
+
+[node name="3" type="TextureButton" parent="Bottom Panel/H/Orders/H3"]
+margin_left = 120.0
+margin_right = 156.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 2 )
+expand = true
+
+[node name="4" type="TextureButton" parent="Bottom Panel/H/Orders/H3"]
+margin_left = 160.0
+margin_right = 196.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 2 )
+expand = true
+
+[connection signal="pressed" from="Bottom Panel/H/CurrSelected/SelectedUnit/H1/C/V/UpgradeUnit" to="." method="_on_UpgradeUnit_pressed"]
+[connection signal="request_top_queue_cancel" from="Bottom Panel/H/CurrSelected/SelectedBuilding/H1/TopOfQueue" to="." method="_on_TopOfQueue_request_top_queue_cancel"]
+[connection signal="pressed" from="Bottom Panel/H/CurrSelected/UpgradeUnit/H/Option1" to="." method="_on_upgrade_option_pressed" binds= [ 0 ]]
+[connection signal="pressed" from="Bottom Panel/H/CurrSelected/UpgradeUnit/H/Option2" to="." method="_on_upgrade_option_pressed" binds= [ 1 ]]
+[connection signal="pressed" from="Bottom Panel/H/CurrSelected/UpgradeUnit/Cancel" to="." method="_on_upgrade_unit_cancel_pressed"]
