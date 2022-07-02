@@ -23,6 +23,8 @@ func test_new_game_init_integration() -> void:
 	assert_not_null(GameState.building_tiles)
 
 	# Now "change the scene"
+	# FIXME: partial_double doesn't seem to read exported values in the scene.
+	# Need to set the nodes caught in vars with partial doubles as well  (should do anyway to spy on their methods).
 	gameplay_scene = partial_double("res://main/Main.tscn").instance()
 	add_child_autoqfree(gameplay_scene) # Should invoke _ready()
 

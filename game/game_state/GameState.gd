@@ -4,7 +4,11 @@ var units := []
 var background_tiles : BackgroundTileData
 var building_tiles : GameStateBuildingData
 var elapsed_time : float = 0.0
-var event_heap : EventHeap
+var event_heap := EventHeap.new()
+
+
+func _ready() -> void:
+	set_process(false)
 
 
 func _process(delta:float) -> void:

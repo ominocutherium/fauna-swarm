@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://main/Main.gd" type="Script" id=1]
 [ext_resource path="res://main/MouseInput.gd" type="Script" id=2]
@@ -7,10 +7,17 @@
 [ext_resource path="res://ui/HUD.tscn" type="PackedScene" id=5]
 [ext_resource path="res://ui/MinimapDiamond.gd" type="Script" id=6]
 [ext_resource path="res://main/OrderInput.gd" type="Script" id=7]
+[ext_resource path="res://main/ForegroundDisplay.gd" type="Script" id=8]
 
 [node name="Main" type="Node2D"]
 pause_mode = 2
 script = ExtResource( 1 )
+hud_path = NodePath("UI/HUD")
+mouse_input_path = NodePath("MouseInput")
+foreground_disp_path = NodePath("Foreground Display Objects")
+background_tilemap_path = NodePath("Background Tiles")
+building_tilemap_path = NodePath("Building Tiles")
+order_input_handler_path = NodePath("OrderInput")
 
 [node name="Background Tiles" type="TileMap" parent="."]
 pause_mode = 1
@@ -28,6 +35,7 @@ format = 1
 
 [node name="Foreground Display Objects" type="YSort" parent="."]
 pause_mode = 1
+script = ExtResource( 8 )
 
 [node name="Sprite" type="Sprite" parent="Foreground Display Objects"]
 position = Vector2( 159, 221 )
@@ -73,6 +81,8 @@ selection_line_width = 1.0
 mouse_edge_camera_pan_speed = 400.0
 edge_margin_h = 0.15
 edge_margin_v = 0.1
+physics_space_to_display_space_x_basis = Vector2( 1, 0.5 )
+physics_space_to_display_space_y_basis = Vector2( -1, 0.5 )
 
 [node name="OrderInput" type="Node" parent="."]
 script = ExtResource( 7 )
@@ -91,3 +101,6 @@ texture = ExtResource( 4 )
 [connection signal="rect_released" from="MouseInput" to="." method="_on_MouseInput_rect_released"]
 [connection signal="rect_updated" from="MouseInput" to="." method="_on_MouseInput_rect_updated"]
 [connection signal="request_pan_camera" from="MouseInput" to="Camera2D" method="_on_MouseInput_request_pan_camera"]
+[connection signal="report_no_more_order_data" from="OrderInput" to="UI/HUD" method="_on_order_input_mode_order_cleared"]
+[connection signal="report_no_valid_order_in_progress" from="OrderInput" to="UI/HUD" method="_on_order_input_mode_order_invalidated"]
+[connection signal="report_valid_order_in_progress" from="OrderInput" to="UI/HUD" method="_on_order_input_mode_order_in_progress"]

@@ -1,21 +1,27 @@
 extends Node2D
 
+class_name MouseInputHandler
+
 
 const MIN_SELECTION_SIZE = 50.0
 const MIN_SELECTION_MOUSEDOWN_TIME = 0.1
 
 
-signal rect_updated(selection_rect)
-signal rect_released(selection_rect)
+signal rect_updated(selection_rect,physics_space_enclosing_rect,physics_space_disp_rect_diamond_midpoints,physics_space_sel_diamond_normals)
+signal rect_released(selection_rect,physics_space_enclosing_rect,physics_space_disp_rect_diamond_midpoints,physics_space_sel_diamond_normals)
 signal request_pan_camera(amount)
-signal location_right_clicked(location)
-signal location_left_clicked(location)
+signal location_right_clicked(location,detection_radius,detection_radius_squared)
+signal location_left_clicked(location,detection_radius,detection_radius_squared)
 
 export(Color) var selection_color : Color
 export(float) var selection_line_width : float
 export(float) var mouse_edge_camera_pan_speed : float
 export(float,0.0,1.0) var edge_margin_h : float
 export(float,0.0,1.0) var edge_margin_v : float
+export(Vector2) var physics_space_to_display_space_x_basis : Vector2 = Vector2.RIGHT
+export(Vector2) var physics_space_to_display_space_y_basis : Vector2 = Vector2.DOWN
+export(float) var selection_rect_grow_amount := 0.0
+export(float) var single_click_detection_radius : float = 12.0
 
 
 var _left_down_for_drag : bool = false
@@ -27,6 +33,7 @@ var _edge_pan_magnitude_this_frame : Vector2 = Vector2()
 var _selection_rect := Rect2()
 var _lines := []
 
+onready var selection_radius_squared = single_click_detection_radius * single_click_detection_radius
 onready var margin_h_in_pixels := edge_margin_h * get_tree().root.size.x
 onready var margin_v_in_pixels := edge_margin_v * get_tree().root.size.y
 onready var right_margin_begin := get_tree().root.size.x - margin_h_in_pixels
@@ -42,6 +49,14 @@ onready var minimap_diamond_normals := [
 	Vector2(-2,-1).normalized(),
 	Vector2(2,-1).normalized(),
 	Vector2(2,1).normalized(),
+]
+onready var physics_space_to_display_space_transform : Transform2D = Transform2D(physics_space_to_display_space_x_basis,physics_space_to_display_space_y_basis,Vector2())
+onready var display_space_to_physics_space_transform : Transform2D = physics_space_to_display_space_transform.affine_inverse()
+onready var selection_diamond_normals_in_physics_space := [
+	display_space_to_physics_space_transform.xform(Vector2(-1,0)).normalized(), # top right
+	display_space_to_physics_space_transform.xform(Vector2(0,-1)).normalized(), # bottom right
+	display_space_to_physics_space_transform.xform(Vector2(1,0)).normalized(), # bottom left
+	display_space_to_physics_space_transform.xform(Vector2(0,1)).normalized(), # top left
 ]
 
 func _ready() -> void:
@@ -81,9 +96,14 @@ func _if_mouse_button_handle_press_release(event:InputEvent) -> void:
 					_selection_rect.end = make_canvas_position_local(event.position)
 					_left_down_for_drag = false
 					if _selection_rect.get_area() > MIN_SELECTION_SIZE and _left_down_time > MIN_SELECTION_MOUSEDOWN_TIME:
-						emit_signal("rect_released",_selection_rect)
+						var grown_rect := _selection_rect.grow(selection_rect_grow_amount)
+						emit_signal("rect_released",
+								grown_rect,
+								_get_physics_space_rect_outside_mouse_diamond(grown_rect),
+								_get_physics_space_mouse_diamond_midpoints(grown_rect),
+								selection_diamond_normals_in_physics_space)
 					else:
-						emit_signal("location_left_clicked",make_canvas_position_local(event.position))
+						emit_signal("location_left_clicked",make_canvas_position_local(event.position),single_click_detection_radius,selection_radius_squared)
 					_selection_rect = Rect2()
 					for line in _lines:
 						line.hide()
@@ -97,7 +117,7 @@ func _if_mouse_button_handle_press_release(event:InputEvent) -> void:
 					_right_down_for_action = true
 				else:
 					_right_down_for_action = false
-					emit_signal("location_right_clicked",make_canvas_position_local(event.position))
+					emit_signal("location_right_clicked",make_canvas_position_local(event.position),single_click_detection_radius,selection_radius_squared)
 
 
 func _if_mouse_motion_handle_check_edge_pan_release(event:InputEvent) -> void:
@@ -109,7 +129,12 @@ func _if_mouse_motion_handle_check_edge_pan_release(event:InputEvent) -> void:
 			_selection_rect.end = make_canvas_position_local(event.position)
 			if _left_down_time > MIN_SELECTION_MOUSEDOWN_TIME and abs(_selection_rect.get_area()) > MIN_SELECTION_SIZE:
 				_update_lines_with_rect(_selection_rect)
-			emit_signal("rect_updated",_selection_rect)
+				var grown_rect := _selection_rect.grow(selection_rect_grow_amount)
+				emit_signal("rect_updated",
+						grown_rect,
+						_get_physics_space_rect_outside_mouse_diamond(grown_rect),
+						_get_physics_space_mouse_diamond_midpoints(grown_rect),
+						selection_diamond_normals_in_physics_space)
 			return
 
 		if event.position.x < margin_h_in_pixels:
@@ -164,3 +189,32 @@ func _position_is_inside_minimap_diamond(pos:Vector2) -> bool:
 #			print("Pos: {0} Midpoint of segment {1}:{2} Compare: {3} Normal: {4}".format([pos,i,minimap_diamond_midpoints[i],compare_vector,minimap_diamond_normals[i]]))
 			return false
 	return true
+
+
+func _get_physics_space_rect_outside_mouse_diamond(mouse_rect_display_space:Rect2) -> Rect2:
+	var left_midpoint : Vector2 = display_space_to_physics_space_transform.xform(mouse_rect_display_space.position)
+	var right_midpoint : Vector2 = display_space_to_physics_space_transform.xform(mouse_rect_display_space.end)
+	var top_midpoint : Vector2 = display_space_to_physics_space_transform.xform(
+		Vector2(mouse_rect_display_space.end.x,mouse_rect_display_space.position.y)
+	)
+	var len_x : float = right_midpoint.x - left_midpoint.x
+	var len_y : float = (top_midpoint.y - right_midpoint.y) * 2.0
+	return Rect2(left_midpoint - Vector2(0,0.5)*len_x,Vector2(len_x,len_y))
+
+
+func _get_physics_space_mouse_diamond_midpoints(mouse_rect_display_space:Rect2) -> Array:
+	var top_right_corner : Vector2 = display_space_to_physics_space_transform.xform(
+		Vector2(mouse_rect_display_space.end.x,mouse_rect_display_space.position.y)
+	)
+	var bottom_right_corner : Vector2 = display_space_to_physics_space_transform.xform(mouse_rect_display_space.end)
+	var bottom_left_corner : Vector2 = display_space_to_physics_space_transform.xform(
+		Vector2(mouse_rect_display_space.position.x,mouse_rect_display_space.end.y)
+	)
+	var top_left_corner : Vector2 = display_space_to_physics_space_transform.xform(mouse_rect_display_space.position)
+	return [
+			0.5*(top_right_corner + bottom_right_corner),
+			0.5*(bottom_right_corner + bottom_left_corner),
+			0.5*(bottom_left_corner + bottom_right_corner),
+			0.5*(bottom_right_corner + top_right_corner),
+			]
+

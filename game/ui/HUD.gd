@@ -1,5 +1,7 @@
 extends Control
 
+class_name HeadsUpDisplay
+
 
 signal request_unit_upgrade
 signal request_queue_item_cancel
@@ -135,4 +137,16 @@ func _hide_all_on_left() -> void:
 	get_node(unit_disp_path).hide()
 	get_node(multi_unit_disp_path).hide()
 	get_node(building_disp_path).hide()
+
+
+func _on_order_input_mode_order_in_progress(order_type:int) -> void:
+	pass # TODO: implement; should just be display feedback
+
+
+func _on_order_input_mode_order_invalidated() -> void:
+	pass # TODO: implement; should just be display feedback
+
+
+func _on_order_input_mode_order_cleared() -> void:
+	pass # TODO: implement; should just be display feedback
 	
