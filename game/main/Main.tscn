@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://main/Main.gd" type="Script" id=1]
 [ext_resource path="res://main/MouseInput.gd" type="Script" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://ui/MinimapDiamond.gd" type="Script" id=6]
 [ext_resource path="res://main/OrderInput.gd" type="Script" id=7]
 [ext_resource path="res://main/ForegroundDisplay.gd" type="Script" id=8]
+[ext_resource path="res://main/TileDisplay.gd" type="Script" id=9]
 
 [node name="Main" type="Node2D"]
 pause_mode = 2
@@ -25,6 +26,7 @@ mode = 1
 cell_size = Vector2( 64, 32 )
 cell_y_sort = true
 format = 1
+script = ExtResource( 9 )
 
 [node name="Building Tiles" type="TileMap" parent="."]
 pause_mode = 1
@@ -32,6 +34,7 @@ mode = 1
 cell_size = Vector2( 64, 32 )
 cell_y_sort = true
 format = 1
+script = ExtResource( 9 )
 
 [node name="Foreground Display Objects" type="YSort" parent="."]
 pause_mode = 1

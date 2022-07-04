@@ -20,6 +20,8 @@ func _ready() -> void:
 	get_tree().paused = true
 	if GameState.building_tiles != null:
 		initialize_or_restore_map_state()
+		GameState.building_tiles.connect("tile_updated",building_tilemap,"_on_tile_updated_in_gamestate")
+		GameState.background_tiles.connect("tile_updated",background_tilemap,"_on_tile_updated_in_gamestate")
 	UnitManager.connect("unit_moved",self,"_on_unit_moved")
 
 
@@ -98,3 +100,18 @@ func _on_MouseInput_rect_updated(selection_rect:Rect2,xformed_rect:Rect2,xformed
 	heads_up_display.units_selected(unit_objs)
 	# if no units were overlapped then do nothing, the selection isn't completed yet
 
+
+func _on_save_and_exit_requested() -> void:
+	_save_game_incl_map_data()
+	get_tree().quit()
+
+
+func _on_save_and_back_to_mm_requested() -> void:
+	_save_game_incl_map_data()
+	get_tree().change_scene("res://main/MainMenu.tscn")
+
+
+func _save_game_incl_map_data() -> void:
+	GameState.background_tiles.extract_from_tilemap(background_tilemap)
+	GameState.building_tiles.extract_from_tilemap(building_tilemap)
+	GameState.save()

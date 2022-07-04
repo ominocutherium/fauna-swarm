@@ -1,0 +1,86 @@
+extends Node
+
+signal path_generated
+
+
+var pathfinding_for_normal_units : AStar2D
+var pathfinding_for_flying_units : AStar2D
+var pf_normal_units_mutex : Mutex
+var pf_flying_units_mutex : Mutex
+
+
+func set_map_and_obstacles_structure(game_map:StartingMapResource) -> void:
+	# initializes the AStar objects.
+	var num_tiles : int = int(game_map.extents.size.x*game_map.extents.size.y)
+	pathfinding_for_normal_units = AStar2D.new()
+	pathfinding_for_flying_units = AStar2D.new()
+	pathfinding_for_flying_units.reserve_space(num_tiles)
+	pathfinding_for_normal_units.reserve_space(num_tiles)
+	for i in range(int(game_map.extents.position.x),int(game_map.extents.position.x+game_map.extents.size.x)):
+		for j in range(int(game_map.extents.position.y),int(game_map.extents.position.y+game_map.extents.size.y)):
+			var node_coords : Vector2 = (Vector2(i,j) + Vector2(0.5,0.5)) * UnitManager.TILE_LEN
+			var pt_index : int = j*int(game_map.extents.size.x)+i
+			pathfinding_for_flying_units.add_point(pt_index,node_coords)
+			pathfinding_for_normal_units.add_point(pt_index,node_coords)
+			if i > int(game_map.extents.position.x):
+				var compare_pt : int = pt_index - 1
+				pathfinding_for_flying_units.connect_points(pt_index,compare_pt)
+				if _compare_points_should_be_connected(game_map,Vector2(i,j),Vector2(i-1,j)):
+					pathfinding_for_normal_units.connect_points(pt_index,compare_pt)
+			if j > int(game_map.extents.position.y):
+				var compare_pt : int = pt_index - int(game_map.extents.position.x)
+				pathfinding_for_flying_units.connect_points(pt_index,compare_pt)
+				if _compare_points_should_be_connected(game_map,Vector2(i,j),Vector2(i,j-1)):
+					pathfinding_for_normal_units.connect_points(pt_index,compare_pt)
+			if i > int(game_map.extents.position.x) and j > int(game_map.extents.position.y):
+				var compare_pt : int = pt_index - int(game_map.extents.position.x) - 1
+				pathfinding_for_flying_units.connect_points(pt_index,compare_pt)
+				if _compare_points_should_be_connected(game_map,Vector2(i,j),Vector2(i-1,j-1)):
+					pathfinding_for_normal_units.connect_points(pt_index,compare_pt,sqrt(2.0))
+			var functional_tilename_pt : String = game_map.tile_type_names_by_id[game_map.tile_data[pt_index]]
+			var tiletype := GameState.background_tiles.get_tile_type_by_name(functional_tilename_pt)
+			if 5.0 in tiletype.corner_elevations:
+				UnitManager.spawn_obstacle(Vector2(i,j))
+	var grown_map_for_obstacles : Rect2 = game_map.extents.grow(1.0)
+	for i in range(int(grown_map_for_obstacles.position.x),int(grown_map_for_obstacles.position.x+grown_map_for_obstacles.size.x)):
+		for j in range(int(grown_map_for_obstacles.position.y),int(grown_map_for_obstacles.position.y+grown_map_for_obstacles.size.y)):
+			if i < game_map.extents.position.x or j < game_map.extents.position.y or \
+					i >= game_map.extents.size.x+game_map.extents.position.x or \
+					j >= game_map.extents.size.y+game_map.extents.position.y:
+				UnitManager.spawn_obstacle(Vector2(i,j))
+
+
+func _compare_points_should_be_connected(game_map : StartingMapResource,point_coords:Vector2,compare_coords : Vector2) -> bool:
+	# Look at elevations
+	var dist := point_coords - compare_coords
+	var point_idx_0 : int = point_coords.x + point_coords.y*game_map.extents.size.x
+	var point_idx_1 : int = compare_coords.x + compare_coords.y*game_map.extents.size.x
+	var functional_tilename_pt : String = game_map.tile_type_names_by_id[game_map.tile_data[point_idx_0]]
+	var functional_tilename_compare_pt : String = game_map.tile_type_names_by_id[game_map.tile_data[point_idx_1]]
+	var tiletype_origin := GameState.background_tiles.get_tile_type_by_name(functional_tilename_pt)
+	var tiletype_compare := GameState.background_tiles.get_tile_type_by_name(functional_tilename_compare_pt)
+	match dist:
+		Vector2.RIGHT:
+			if tiletype_origin.corner_elevations_by_direction[Vector2(1,-1)] == tiletype_compare.corner_elevations_by_direction[Vector2(-1,-1)] \
+				and tiletype_origin.corner_elevations_by_direction[Vector2(1,1)] == tiletype_compare.corner_elevations_by_direction[Vector2(-1,1)]:
+					# top right of origin matches top left of compare
+					# and bottom right of origin matches bottom left of compare
+					return true
+		Vector2.UP:
+			if tiletype_origin.corner_elevations_by_direction[Vector2(-1,1)] == tiletype_compare.corner_elevations_by_direction[Vector2(-1,-1)] \
+				and tiletype_origin.corner_elevations_by_direction[Vector2(1,1)] == tiletype_compare.corner_elevations_by_direction[Vector2(1,-1)]:
+					# bottom left of origin matches top left of compare
+					# and bottom right of origin matches top right of compare
+					return true
+		Vector2(1,1):
+			if tiletype_origin.corner_elevations_by_direction[Vector2(1,1)] == tiletype_compare.corner_elevations_by_direction[Vector2(-1,-1)]:
+				# bottom right of origin must match top left of compare but we're not done yet
+				# must check two more tiles with the compare location to see if we can go "through" this diagonal
+				if _compare_points_should_be_connected(game_map,compare_coords+Vector2(1,0),compare_coords) \
+					and _compare_points_should_be_connected(game_map,compare_coords+Vector2(0,1),compare_coords):
+						return true
+	return false
+
+
+func queue_request_to_generate_path(requester:Object,start_pos:Vector2,end_pos:Vector2,faction:int,unit_can_fly:bool=false) -> void:
+	pass

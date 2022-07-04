@@ -1,10 +1,15 @@
 extends Node
 
+enum GameMode {SP_PURITY_VS_SINGLE_EVIL,SP_PURITY_VS_TWO_EVILS,MP_EVIL_VS_EVIL}
+
 var units := []
 var background_tiles : BackgroundTileData
 var building_tiles : GameStateBuildingData
 var elapsed_time : float = 0.0
 var event_heap := EventHeap.new()
+var random_number_generator := RandomNumberGenerator.new()
+var cosmetic_rng : RandomNumberGenerator
+var game_mode : int = GameMode.SP_PURITY_VS_SINGLE_EVIL
 
 
 func _ready() -> void:
@@ -18,14 +23,17 @@ func _process(delta:float) -> void:
 		_process_timed_out_event_dict(elapsed_dict)
 
 
-func initialize_new_game() -> void:
+func initialize_new_game(mapfile:StartingMapResource=null) -> void:
 	background_tiles = BackgroundTileData.new()
 	building_tiles = GameStateBuildingData.new()
+	if mapfile:
+		cosmetic_rng = background_tiles.init_newgame_map_from_mapfile(mapfile)
 
 
 func restore(save_res:SavedGameState) -> void:
 	units = save_res.units
 	background_tiles = save_res.background_tiles
+	background_tiles.restore()
 	building_tiles = save_res.building_tiles
 	event_heap = save_res.event_heap
 	elapsed_time = save_res.elapsed_time
@@ -36,6 +44,7 @@ func restore(save_res:SavedGameState) -> void:
 
 func save() -> SavedGameState:
 	var save_res := SavedGameState.new()
+	background_tiles.on_save()
 	save_res.background_tiles = background_tiles
 	save_res.building_tiles = building_tiles
 	save_res.event_heap = event_heap
