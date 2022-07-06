@@ -146,7 +146,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="RTSJam"
+config/name="Fauna Swarm (for RTSJam)"
 run/main_scene="res://main/MainMenu.tscn"
 config/icon="res://icon.png"
 
