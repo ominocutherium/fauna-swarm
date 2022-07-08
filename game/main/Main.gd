@@ -46,6 +46,7 @@ func _ready() -> void:
 		initialize_or_restore_map_state()
 		GameState.building_tiles.connect("tile_updated",building_tilemap,"_on_tile_updated_in_gamestate")
 		GameState.background_tiles.connect("tile_updated",background_tilemap,"_on_tile_updated_in_gamestate")
+	foreground_display.reference_tm_for_sprite_tilevs = building_tilemap
 	UnitManager.connect("unit_moved",self,"_on_unit_moved")
 
 
@@ -54,6 +55,7 @@ func _process(delta: float) -> void:
 
 
 func initialize_or_restore_map_state() -> void:
+	building_tilemap.set_map_size(GameState.building_tiles.extents.position,GameState.building_tiles.extents.end)
 	GameState.background_tiles.apply_to_tilemap($"Background Tiles")
 	GameState.building_tiles.apply_to_tilemap($"Building Tiles")
 	get_tree().paused = false

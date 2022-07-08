@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://main/Main.gd" type="Script" id=1]
 [ext_resource path="res://main/MouseInput.gd" type="Script" id=2]
@@ -9,6 +9,7 @@
 [ext_resource path="res://main/OrderInput.gd" type="Script" id=7]
 [ext_resource path="res://main/ForegroundDisplay.gd" type="Script" id=8]
 [ext_resource path="res://main/TileDisplay.gd" type="Script" id=9]
+[ext_resource path="res://main/BuildingTiles.gd" type="Script" id=10]
 
 [node name="Main" type="Node2D"]
 pause_mode = 2
@@ -34,7 +35,7 @@ mode = 1
 cell_size = Vector2( 64, 32 )
 cell_y_sort = true
 format = 1
-script = ExtResource( 9 )
+script = ExtResource( 10 )
 
 [node name="Foreground Display Objects" type="YSort" parent="."]
 pause_mode = 1
@@ -99,6 +100,8 @@ pause_mode = 2
 script = ExtResource( 6 )
 texture = ExtResource( 4 )
 
+[connection signal="tile_covered_by_building" from="Building Tiles" to="Foreground Display Objects" method="_on_tile_covered_by_building"]
+[connection signal="tile_uncovered_by_building" from="Building Tiles" to="Foreground Display Objects" method="_on_tile_no_longer_covered_by_building"]
 [connection signal="location_left_clicked" from="MouseInput" to="." method="_on_MouseInput_location_left_clicked"]
 [connection signal="location_right_clicked" from="MouseInput" to="." method="_on_MouseInput_location_right_clicked"]
 [connection signal="rect_released" from="MouseInput" to="." method="_on_MouseInput_rect_released"]

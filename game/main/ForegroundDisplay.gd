@@ -26,7 +26,83 @@ extends YSort
 
 class_name ForegroundDisplay
 
+var lists_of_static_sprites_by_tilev := {}
+var reference_tm_for_sprite_tilevs : TileMap
+var units_by_identifier := {}
+var buildings_by_identifier := {}
+
+
+func add_static_sprite(tex:Texture,region:Rect2,tex_offset:Vector2,base_location:Vector2) -> void:
+	var sprite := _add_sprite(tex,region,tex_offset,base_location)
+	if reference_tm_for_sprite_tilevs != null:
+		var tilev := reference_tm_for_sprite_tilevs.world_to_map(base_location)
+		if not lists_of_static_sprites_by_tilev.has(tilev):
+			lists_of_static_sprites_by_tilev[tilev] = []
+		lists_of_static_sprites_by_tilev[tilev].append(sprite)
+
+
+func add_building_sprite(identifier:int,tex:Texture,region:Rect2,tex_offset:Vector2,base_location:Vector2) -> void:
+	var building_sprite := _add_sprite(tex,region,tex_offset,base_location)
+	if not buildings_by_identifier.has(identifier):
+		buildings_by_identifier[identifier] = building_sprite
+
+
+func spawn_unit(identifier:int,tex:Texture,tex_offset:Vector2,location:Vector2) -> void:
+	var unit_sprite := _add_sprite(tex,Rect2(),tex_offset,location) # TODO: use a subclass here
+	if not units_by_identifier.has(identifier):
+		units_by_identifier[identifier] = unit_sprite
+	# TODO: read from static data to get info about number of frames, frame columns/rows, animations
+	var anim_player := AnimationPlayer.new()
+	unit_sprite.add_child(anim_player)
+
+
+func despawn_unit(identifier:int) -> void:
+	if units_by_identifier.has(identifier):
+		units_by_identifier[identifier].queue_free()
+		units_by_identifier.erase(identifier)
+
+
+func remove_building_sprite(identifier:int) -> void:
+	if buildings_by_identifier.has(identifier):
+		buildings_by_identifier[identifier].queue_free()
+		buildings_by_identifier.erase(identifier)
+
+
+func _add_sprite(tex:Texture,region:Rect2,tex_offset:Vector2,base_location:Vector2,sprite_subclass:GDScript=null) -> Sprite:
+	var sprite : Sprite
+	if sprite_subclass:
+		sprite = sprite_subclass.new()
+	else:
+		sprite = Sprite.new()
+	sprite.texture = tex
+	sprite.region_rect = region
+	sprite.region_enabled = true if region != Rect2() else false
+	sprite.offset = tex_offset
+	sprite.position = base_location
+	add_child(sprite)
+	return sprite
+
 
 func move_unit(identifier:int,to_position:Vector2) -> void:
 	# expects position to be in display space.
-	pass
+	if units_by_identifier.has(identifier):
+		units_by_identifier[identifier].position = to_position
+	# TODO: also set direction
+
+
+func _on_tile_changed_biome(tilev:Vector2,new_texture:Texture) -> void:
+	for s in lists_of_static_sprites_by_tilev[tilev]:
+		var spr := s as Sprite
+		spr.texture = new_texture
+
+
+func _on_tile_covered_by_building(tilev:Vector2) -> void:
+	for s in lists_of_static_sprites_by_tilev[tilev]:
+		var spr := s as Sprite
+		spr.hide()
+
+
+func _on_tile_no_longer_covered_by_building(tilev:Vector2) -> void:
+	for s in lists_of_static_sprites_by_tilev[tilev]:
+		var spr := s as Sprite
+		spr.show()
