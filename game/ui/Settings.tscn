@@ -1,5 +1,308 @@
-[gd_scene format=2]
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://ui/Settings.gd" type="Script" id=1]
 
 [node name="Settings" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource( 1 )
+audio_tab_button_path = NodePath("Tabs/Audio")
+audio_tab_path = NodePath("Content/Audio")
+gameplay_tab_button_path = NodePath("Tabs/Gameplay")
+gameplay_tab_path = NodePath("Content/Gameplay")
+controls_tab_button_path = NodePath("Tabs/Controls")
+controls_tab_path = NodePath("Content/Controls")
+audio_slider_path_main = NodePath("Content/Audio/VBoxContainer/H/MainVolume")
+audio_slider_path_bgm = NodePath("Content/Audio/VBoxContainer/H3/BGM_Volume")
+audio_slider_path_sfx = NodePath("Content/Audio/VBoxContainer/H2/SFX_Volume")
+time_scale_slider_path = NodePath("Content/Gameplay/V/H/TimeScale")
+
+[node name="Tabs" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+margin_bottom = 80.0
+
+[node name="Audio" type="Button" parent="Tabs"]
+margin_left = 55.0
+margin_top = 30.0
+margin_right = 209.0
+margin_bottom = 50.0
+size_flags_horizontal = 6
+size_flags_vertical = 6
+text = "SETTINGS_TAB_AUDIO"
+
+[node name="Controls" type="Button" parent="Tabs"]
+margin_left = 311.0
+margin_top = 30.0
+margin_right = 489.0
+margin_bottom = 50.0
+size_flags_horizontal = 6
+size_flags_vertical = 6
+text = "SETTINGS_TAB_CONTROLS"
+
+[node name="Gameplay" type="Button" parent="Tabs"]
+margin_left = 579.0
+margin_top = 30.0
+margin_right = 757.0
+margin_bottom = 50.0
+size_flags_horizontal = 6
+size_flags_vertical = 6
+text = "SETTINGS_TAB_GAMEPLAY"
+
+[node name="Content" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 84.0
+
+[node name="Audio" type="Control" parent="Content"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Label" type="Label" parent="Content/Audio"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -20.0
+margin_top = -7.0
+margin_right = 20.0
+margin_bottom = 7.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Audio"
+align = 1
+valign = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Content/Audio"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VolumeHeading" type="Label" parent="Content/Audio/VBoxContainer"]
+margin_right = 800.0
+margin_bottom = 14.0
+text = "SETTINGS_VOLUME_MAIN"
+align = 1
+
+[node name="H" type="HBoxContainer" parent="Content/Audio/VBoxContainer"]
+margin_top = 18.0
+margin_right = 800.0
+margin_bottom = 34.0
+
+[node name="Space2" type="Control" parent="Content/Audio/VBoxContainer/H"]
+margin_right = 177.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Content/Audio/VBoxContainer/H"]
+margin_left = 181.0
+margin_top = 1.0
+margin_right = 202.0
+margin_bottom = 15.0
+text = "-80"
+
+[node name="MainVolume" type="HSlider" parent="Content/Audio/VBoxContainer/H"]
+margin_left = 206.0
+margin_right = 606.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 400, 0 )
+size_flags_horizontal = 4
+min_value = -6.908
+max_value = 4.382
+step = 0.001
+value = 4.304
+ticks_on_borders = true
+
+[node name="Label2" type="Label" parent="Content/Audio/VBoxContainer/H"]
+margin_left = 610.0
+margin_top = 1.0
+margin_right = 618.0
+margin_bottom = 15.0
+text = "0"
+
+[node name="Space" type="Control" parent="Content/Audio/VBoxContainer/H"]
+margin_left = 622.0
+margin_right = 800.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+
+[node name="VolumeHeading2" type="Label" parent="Content/Audio/VBoxContainer"]
+margin_top = 38.0
+margin_right = 800.0
+margin_bottom = 52.0
+text = "SETTINGS_VOLUME_SFX"
+align = 1
+
+[node name="H2" type="HBoxContainer" parent="Content/Audio/VBoxContainer"]
+margin_top = 56.0
+margin_right = 800.0
+margin_bottom = 72.0
+
+[node name="Space2" type="Control" parent="Content/Audio/VBoxContainer/H2"]
+margin_right = 177.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Content/Audio/VBoxContainer/H2"]
+margin_left = 181.0
+margin_top = 1.0
+margin_right = 202.0
+margin_bottom = 15.0
+text = "-80"
+
+[node name="SFX_Volume" type="HSlider" parent="Content/Audio/VBoxContainer/H2"]
+margin_left = 206.0
+margin_right = 606.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 400, 0 )
+size_flags_horizontal = 4
+min_value = -6.908
+max_value = 4.382
+step = 0.001
+value = 4.356
+ticks_on_borders = true
+
+[node name="Label2" type="Label" parent="Content/Audio/VBoxContainer/H2"]
+margin_left = 610.0
+margin_top = 1.0
+margin_right = 618.0
+margin_bottom = 15.0
+text = "0"
+
+[node name="Space" type="Control" parent="Content/Audio/VBoxContainer/H2"]
+margin_left = 622.0
+margin_right = 800.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+
+[node name="VolumeHeading3" type="Label" parent="Content/Audio/VBoxContainer"]
+margin_top = 76.0
+margin_right = 800.0
+margin_bottom = 90.0
+text = "SETTINGS_VOLUME_BGM"
+align = 1
+
+[node name="H3" type="HBoxContainer" parent="Content/Audio/VBoxContainer"]
+margin_top = 94.0
+margin_right = 800.0
+margin_bottom = 110.0
+
+[node name="Space2" type="Control" parent="Content/Audio/VBoxContainer/H3"]
+margin_right = 177.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Content/Audio/VBoxContainer/H3"]
+margin_left = 181.0
+margin_top = 1.0
+margin_right = 202.0
+margin_bottom = 15.0
+text = "-80"
+
+[node name="BGM_Volume" type="HSlider" parent="Content/Audio/VBoxContainer/H3"]
+margin_left = 206.0
+margin_right = 606.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 400, 0 )
+size_flags_horizontal = 4
+min_value = -6.908
+max_value = 4.382
+step = 0.001
+value = 4.356
+ticks_on_borders = true
+
+[node name="Label2" type="Label" parent="Content/Audio/VBoxContainer/H3"]
+margin_left = 610.0
+margin_top = 1.0
+margin_right = 618.0
+margin_bottom = 15.0
+text = "0"
+
+[node name="Space" type="Control" parent="Content/Audio/VBoxContainer/H3"]
+margin_left = 622.0
+margin_right = 800.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+
+[node name="Gameplay" type="Control" parent="Content"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Label" type="Label" parent="Content/Gameplay"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -20.0
+margin_top = -7.0
+margin_right = 20.0
+margin_bottom = 7.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Gameplay"
+align = 1
+valign = 1
+
+[node name="V" type="VBoxContainer" parent="Content/Gameplay"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Label" type="Label" parent="Content/Gameplay/V"]
+margin_right = 800.0
+margin_bottom = 14.0
+text = "SETTINGS_GAMEPLAY_SPEED"
+align = 1
+
+[node name="H" type="HBoxContainer" parent="Content/Gameplay/V"]
+margin_top = 18.0
+margin_right = 800.0
+margin_bottom = 34.0
+
+[node name="Space2" type="Control" parent="Content/Gameplay/V/H"]
+margin_right = 180.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+
+[node name="TimeScale" type="HSlider" parent="Content/Gameplay/V/H"]
+margin_left = 184.0
+margin_right = 584.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 400, 0 )
+min_value = -4.0
+max_value = 3.0
+
+[node name="TimeScaleLabel" type="Label" parent="Content/Gameplay/V/H"]
+margin_left = 588.0
+margin_top = 1.0
+margin_right = 615.0
+margin_bottom = 15.0
+text = "1.0x"
+
+[node name="Space" type="Control" parent="Content/Gameplay/V/H"]
+margin_left = 619.0
+margin_right = 800.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+
+[node name="Controls" type="Control" parent="Content"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Label" type="Label" parent="Content/Controls"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -20.0
+margin_top = -7.0
+margin_right = 20.0
+margin_bottom = 7.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Controls"
+align = 1
+valign = 1
+
+[connection signal="pressed" from="Tabs/Audio" to="." method="_show_audio_tab"]
+[connection signal="pressed" from="Tabs/Controls" to="." method="_show_controls_tab"]
+[connection signal="pressed" from="Tabs/Gameplay" to="." method="_show_gameplay_tab"]

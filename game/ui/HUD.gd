@@ -29,12 +29,17 @@ class_name HeadsUpDisplay
 
 signal request_unit_upgrade
 signal request_queue_item_cancel
+signal request_abandon_game
+signal request_save_and_quit
 
 
 export(NodePath) var upgrade_unit_disp_path : NodePath
 export(NodePath) var unit_disp_path : NodePath
 export(NodePath) var multi_unit_disp_path : NodePath
 export(NodePath) var building_disp_path : NodePath
+export(NodePath) var pause_button_path : NodePath
+export(NodePath) var menu_button_path : NodePath
+export(NodePath) var menu_popup_path : NodePath
 
 var selected_unit_identifier : int = -1
 var selected_units_group_identifiers := []
@@ -174,3 +179,38 @@ func _on_order_input_mode_order_invalidated() -> void:
 func _on_order_input_mode_order_cleared() -> void:
 	pass # TODO: implement; should just be display feedback
 	
+
+
+func _on_menu_pressed() -> void:
+	get_tree().paused = false
+	$Menu.show()
+
+
+func _on_pause_resume_pressed() -> void:
+	if get_tree().paused:
+		get_tree().paused = false
+		get_node(pause_button_path).text = tr("GAME_PAUSE_BUTTON")
+	else:
+		get_tree().paused = true
+		get_node(pause_button_path).text = tr("GAME_UNPAUSE_BUTTON")
+
+
+func _on_settings_pressed() -> void:
+	$Settings.popup()
+
+
+func _on_resume_pressed() -> void:
+	$Menu.hide()
+	get_tree().paused = false
+
+
+func _on_concede_pressed() -> void:
+	$ConcedeDialog.popup()
+
+
+func _on_concede_accepted() -> void:
+	emit_signal("request_abandon_game")
+
+
+func _on_menu_save_and_quit_pressed() -> void:
+	emit_signal("request_save_and_quit")

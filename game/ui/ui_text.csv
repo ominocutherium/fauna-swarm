@@ -19,9 +19,29 @@ HUD_SELUNIT_EXAMPLE_SHORTDESC,"Armed by sharp fangs and armored by thick fur, th
 HUD_SELUNIT_EXAMPLE_TECHNAME,Bite
 HUD_SELUNIT_EXAMPLE_TECHDESC,20 DPS melee
 HUD_SELUNIT_UPGRADE_BUTTON,Upgrade
-HUD_UPUNIT_TITLE,Upgrade {0}
+HUD_UPUNIT_EXAMPLE_TITLE,Upgrade {0}
 CREDITS_FONT0,Using font “at01” by GrafxKid (https://grafxkid.itch.io/at01): licensed under CC0.
 HUD_SELBUILD_EXAMPLE_NAME,Decontamination Facility
 HUD_SELBUILD_EXAMPLE_DESC,Heals and purifies units. Purifies tiles in range.
 ORDER_BUTTON_TOOLTIP,{0} ({1})
 ORDER_BUTTON_HOVER,{0}: {2} ({1})
+HUD_UPUNIT_CANCEL,Cancel
+HUD_UPUNIT_EXAMPLE_UPGRADE0,Fang plate
+HUD_UPUNIT_EXAMPLE_UPGRADE2,Lightning paws
+HUD_UPUNIT_EXAMPLE_UPGRADE_HOVERTEXT0,Additional melee resistance and additional damage to buildings
+HUD_UPUNIT_EXAMPLE_UPGRADE_HOVERTEXT1,Additional ranged resistance and additional damage to units
+SETTINGS_TAB_AUDIO,Audio
+SETTINGS_TAB_GAMEPLAY,Gameplay
+SETTINGS_TAB_CONTROLS,Controls
+SETTINGS_VOLUME_MAIN,Volume: All
+SETTINGS_VOLUME_SFX,Volume: Sound Effects
+SETTINGS_VOLUME_BGM,Volume: Background Music
+SETTINGS_GAMEPLAY_SPEED,Game Speed
+GAME_PAUSE_BUTTON,Pause
+GAME_OPEN_MENU_BUTTON,Menu
+GAME_UNPAUSE_BUTTON,Resume
+GAME_MENU_RESUME,Resume
+GAME_MENU_SETTINGS,Settings
+GAME_MENU_CONCEDE,Abandon Match
+GAME_CONCEDE_DIALOG,You are about to concede this game. Continue?
+GAME_MENU_SAVEANDQUIT,Save & Quit
