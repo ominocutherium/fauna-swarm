@@ -667,7 +667,10 @@ rect_min_size = Vector2( 150, 90 )
 [node name="Label2" type="Label" parent="ConcedeDialog"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_bottom = -22.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -31.0
 text = "GAME_CONCEDE_DIALOG"
 align = 1
 valign = 1

@@ -1,0 +1,59 @@
+# This file is a part of "Fauna Swarm", a game produced
+# for "RTS Jam 1998" running from June 24th-July 28th on itch:
+# <https://itch.io/jam/rts-jam-1998>
+
+# A copy of the Godot 3.x editor is required to export this game.
+# See <https://godotengine.org/license> for information about how
+# Godot Engine is licensed.
+
+# Gameplay code Copyright (C) 2022 ominocutherium and contributors
+
+# The base game (but not the assets therein, which are licensed separately)
+# is free software: you can redistribute it and/or modify it under the terms
+# of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+class_name BuildingStaticData
+
+extends Resource
+
+const STRING_ATTRIBUTES := [
+	"name_key",
+	"texture_path",
+	"effects",
+]
+const INT_ATTRIBUTES := [
+	"len_h_tiles",
+	"len_v_tiles",
+	"queue_len",
+]
+const REAL_ATTRIBUTES := [
+	"texture_pos_x",
+	"texture_pos_y",
+]
+const FILTER_ATTRIBUTES := {
+	"faction":"",
+}
+
+export(int) var identifier : int
+export(String) var name_key : String
+export(int) var len_h_tiles : int
+export(int) var len_v_tiles : int
+export(int) var faction : int
+export(int) var queue_len : int
+export(String) var texture_path : String
+export(Vector2) var texture_position : Vector2
+export(Vector2) var texture_size : Vector2
+export(Array) var effects : Array
+
+var texture_pos_x : float
+var texture_pos_y : float
