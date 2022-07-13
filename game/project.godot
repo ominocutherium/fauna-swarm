@@ -115,6 +115,11 @@ _global_script_classes=[ {
 "path": "res://game_state/SavedBuilding.gd"
 }, {
 "base": "Resource",
+"class": "SavedFaction",
+"language": "GDScript",
+"path": "res://game_state/SavedFaction.gd"
+}, {
+"base": "Resource",
 "class": "SavedGameState",
 "language": "GDScript",
 "path": "res://game_state/SavedGameState.gd"
@@ -149,6 +154,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://main/TileDisplay.gd"
 }, {
+"base": "Sprite",
+"class": "UnitDisplay",
+"language": "GDScript",
+"path": "res://units/Unit.gd"
+}, {
 "base": "Resource",
 "class": "UpgradeStaticData",
 "language": "GDScript",
@@ -176,6 +186,7 @@ _global_script_class_icons={
 "OrderInputHandler": "",
 "SMF": "",
 "SavedBuilding": "",
+"SavedFaction": "",
 "SavedGameState": "",
 "SavedUnit": "",
 "SoundFont": "",
@@ -183,6 +194,7 @@ _global_script_class_icons={
 "SpeciesStaticData": "",
 "StartingMapResource": "",
 "TileDisplay": "",
+"UnitDisplay": "",
 "UpgradeStaticData": ""
 }
 

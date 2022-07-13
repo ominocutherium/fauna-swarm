@@ -31,27 +31,107 @@ const QUEUE_ITEM_TYPE = {
 	"task_identifier":"",
 	"target_identifier":"", # typically a unit identifier
 	"cooldown_s":5.0, # only counts down for most recent one
+	"timeout_s":-1.0, # used by EventHeap
+	"callback":"",
+	"callback_obj":null,
 }
 
+signal request_spawn_unit(unit_id,tile_coordinates_v2)
+signal destroyed
+
 export(int) var identifer : int
+export(int) var faction : int = -1 # -1 is a valid value for factionless buildings, like unclaimed forest hearts
+export(bool) var used_special_resource : bool = false
 export(int) var building_type : int
 export(int) var main_tile_x : int
 export(int) var main_tile_y : int
 export(int) var current_health : float
-export(Array) var queue_items
+export(int) var additional_income_provided : int
+export(Array) var queue_items := []
 
-var queue_expiry_event # connects to the heap
+var queue_expiry_event := {} # connects to the heap
+
+
+func on_restore() -> void:
+	push_top_queue_item_event_to_heap()
+
+
+func on_save() -> void:
+	if queue_expiry_event != {}:
+		queue_expiry_event.cooldown_s = queue_expiry_event.timeout_s - GameState.elapsed_time
 
 
 func get_maximum_health() -> float:
 	# queries static data based on building type
 	return 1.0
 
+
 func get_maximum_queue_size() -> int:
-	# queries static data based on building type
-	return 0
+	var s_d : BuildingStaticData = StaticData.get_building(identifer)
+	return s_d.queue_len
+
 
 func push_top_queue_item_event_to_heap() -> void:
 	if queue_items.size() > 0:
-		var timeout : float = queue_items[0].cooldown_s
-		# TODO: finish implementing when an event queue, world time, and event type exists
+		queue_expiry_event = queue_items[0]
+		var timeout : float = queue_items[0].cooldown_s + GameState.elapsed_time
+		GameState.event_heap.push_dict_onto_heap(queue_expiry_event)
+	else:
+		queue_expiry_event = {}
+
+
+func take_damage(amount:float) -> void:
+	current_health -= amount
+	if current_health < 0:
+		emit_signal("destroyed")
+
+
+func _add_queue_item(item:Dictionary) -> bool:
+	if queue_items.size() < StaticData.get_building(identifer).queue_len:
+		queue_items.append(item)
+		if queue_expiry_event == {}:
+			push_top_queue_item_event_to_heap()
+		return true
+	return false
+
+
+func _on_purifies_units_queue_item_timed_out(queue_item:Dictionary) -> void:
+	# Update faction, heal, and spawn
+	if not queue_item.target_identifier is int or queue_item.target_identifier < 0:
+		return
+	var unit : SavedUnit = GameState.get_unit(queue_item.target_identifier)
+	if unit == null:
+		return
+	unit.faction = StaticData.engine_keys_to_faction_ids.purity
+	unit.current_health = unit.get_maximum_health()
+	emit_signal("request_spawn_unit",unit.identifier,Vector2(main_tile_x,main_tile_y))
+	_on_queue_item_removed(queue_item)
+
+
+func _unit_spawner_queue_item_timed_out(queue_item:Dictionary) -> void:
+	# Heal and spawn
+	if not queue_item.target_identifier is int or queue_item.target_identifier < 0:
+		return
+	var unit : SavedUnit = GameState.get_unit(queue_item.target_identifier)
+	if unit == null:
+		return
+	unit.current_health = unit.get_maximum_health()
+	emit_signal("request_spawn_unit",unit.identifier,Vector2(main_tile_x,main_tile_y))
+	_on_queue_item_removed(queue_item)
+
+
+func _on_heals_units_queue_item_removed_from_queue(queue_item:Dictionary):
+	# Spawn but do not heal
+	if not queue_item.target_identifier is int or queue_item.target_identifier < 0:
+		return
+	var unit : SavedUnit = GameState.get_unit(queue_item.target_identifier)
+	if unit == null:
+		return
+	emit_signal("request_spawn_unit",unit.identifier,Vector2(main_tile_x,main_tile_y))
+
+
+func _on_queue_item_removed(queue_item:Dictionary) -> void:
+	if queue_item in queue_items:
+		queue_items.erase(queue_item)
+	if queue_expiry_event != queue_items[0]:
+		push_top_queue_item_event_to_heap()

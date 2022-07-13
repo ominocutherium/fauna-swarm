@@ -48,6 +48,8 @@ const REAL_ATTRIBUTES := [
 	"maximum_health",
 	"melee_damage_to_multiplier",
 	"ranged_damage_to_multiplier",
+	"attack_cooldown",
+	"attack_delay",
 ]
 const FILTER_ATTRIBUTES := {
 	"attack_damage_type":"ATTACK_DAMAGE_NAMES_TO_TYPES",
@@ -80,6 +82,8 @@ export(float) var move_speed : float
 export(float) var maximum_health : float
 export(float) var melee_damage_to_multiplier : float = 1.0
 export(float) var ranged_damage_to_multiplier : float = 1.0
+export(float) var attack_cooldown : float = 1.0 # game balance parameter
+export(float) var attack_delay : float = 0.001 # mainly an animation parameter
 export(Dictionary) var upgrade_attributes_by_identifier_then_faction
 
 

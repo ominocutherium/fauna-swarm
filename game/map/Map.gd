@@ -32,3 +32,5 @@ export(PoolStringArray) var tile_type_names_by_id := PoolStringArray()
 export(PoolIntArray) var tile_data := PoolIntArray()
 export(Rect2) var extents : Rect2
 export(int) var cosmetic_randomization_seed : int
+export(int) var number_of_unclaimed_forest_hearts : int
+export(PoolVector2Array) var forest_heart_possible_locations := PoolVector2Array()

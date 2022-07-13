@@ -33,13 +33,6 @@ const INFECTION_RANGE = 3
 const PURIFICATION_RANGE = 8
 const TILE_TYPES_DATA_PATH = "res://static_data/tile_types_functional.csv"
 const TILE_AUTOTILE_DATA_PATH = "res://static_data/tile_autotile_information.csv"
-const BIOME_IDS_BY_NAME = {
-	"purity" : 1,
-	"specter" : 2,
-	"sanguine" : 3,
-	"artifice" : 4,
-	"pestilence" : 5,
-}
 const AT_TOP_BIT = 0
 const AT_RIGHT_BIT = 1
 const AT_BOTTOM_BIT = 2
@@ -81,7 +74,7 @@ func _process_tile(tile_identifier:int, current_time:float) -> void:
 		# purification check
 		if current_time - tile_cannot_change_cooldown_started[tile_identifier] > MIN_TIME_TO_PURIFY and _is_tile_infected(tile_identifier):
 			# purify tile
-			_mutate_tile_to_biome(tile_identifier,BIOME_IDS_BY_NAME.purity)
+			_mutate_tile_to_biome(tile_identifier,StaticData.engine_keys_to_faction_ids.purity)
 			emit_signal("tile_purified",coords)
 			_mark_tiles_within_range_as_under_cooldown(coords,current_time,PURIFICATION_RANGE)
 	elif _is_tile_infected(tile_identifier): # being within purification range blocks infection
@@ -133,6 +126,7 @@ func restore() -> void:
 
 
 func _load_tiles_data() -> void:
+	# TODO: move this to a new class which is owned by the Static Data singleton for consistent loading of all static data in the same place
 	var f := File.new()
 	if f.open(TILE_TYPES_DATA_PATH,f.READ) == OK:
 		while not f.eof_reached():
@@ -195,7 +189,7 @@ func _load_tiles_data_process_csv_line(line:PoolStringArray) -> void:
 	var id : String = line[0]
 	tile_types_by_identifier[id] = t_t
 	t_t.name = id
-	t_t.biome = BIOME_IDS_BY_NAME[line[1]] if line[1] in BIOME_IDS_BY_NAME else -1
+	t_t.biome = StaticData.engine_keys_to_faction_ids[line[1]] if line[1] in StaticData.engine_keys_to_faction_ids else -1
 	if not _lists_of_tile_types_by_biome.has(t_t.biome):
 		_lists_of_tile_types_by_biome[t_t.biome] = []
 	_lists_of_tile_types_by_biome[t_t.biome].append(t_t.name)
@@ -234,9 +228,9 @@ func _load_autotile_data_process_csv_line(line:PoolStringArray) -> void:
 	var idx : int = int(line[0])
 	var mask : int = 0
 	for i in range(1,5):
-		if not line[i] in BIOME_IDS_BY_NAME:
+		if not line[i] in StaticData.engine_keys_to_faction_ids:
 			return
-		mask |= BIOME_IDS_BY_NAME[line[i]]<<(4*i)
+		mask |= StaticData.engine_keys_to_faction_ids[line[i]]<<(4*i)
 	if _autotile_bitmasks_by_tilemap_id.size() < idx + 1:
 		_autotile_bitmasks_by_tilemap_id.resize(idx+1)
 	_autotile_bitmasks_by_tilemap_id[idx] = mask
@@ -258,23 +252,23 @@ func _get_biome_of_tile(tm_tile_id:int) -> int:
 
 func _is_tile_infectable(index:int,by_other_evil:int=-1) -> bool:
 	var biome := _get_biome_of_tile(tile_data[index])
-	if biome == BIOME_IDS_BY_NAME.purity:
+	if biome == StaticData.engine_keys_to_faction_ids.purity:
 		return true
 	if by_other_evil == -1 or GameState.game_mode != GameState.GameMode.SP_PURITY_VS_TWO_EVILS:
 		return false
-	if biome == BIOME_IDS_BY_NAME.artifice and by_other_evil == BIOME_IDS_BY_NAME.specter:
+	if biome == StaticData.engine_keys_to_faction_ids.artifice and by_other_evil == StaticData.engine_keys_to_faction_ids.specter:
 		return true
-	if biome == BIOME_IDS_BY_NAME.specter and by_other_evil == BIOME_IDS_BY_NAME.sanguine:
+	if biome == StaticData.engine_keys_to_faction_ids.specter and by_other_evil == StaticData.engine_keys_to_faction_ids.sanguine:
 		return true
-	if biome == BIOME_IDS_BY_NAME.sanguine and by_other_evil == BIOME_IDS_BY_NAME.pestilence:
+	if biome == StaticData.engine_keys_to_faction_ids.sanguine and by_other_evil == StaticData.engine_keys_to_faction_ids.pestilence:
 		return true
-	if biome == BIOME_IDS_BY_NAME.pestilence and by_other_evil == BIOME_IDS_BY_NAME.artifice:
+	if biome == StaticData.engine_keys_to_faction_ids.pestilence and by_other_evil == StaticData.engine_keys_to_faction_ids.artifice:
 		return true
 	return false
 
 
 func _is_tile_infected(index:int) -> bool:
-	if _get_biome_of_tile(tile_data[index]) != BIOME_IDS_BY_NAME.purity:
+	if _get_biome_of_tile(tile_data[index]) != StaticData.engine_keys_to_faction_ids.purity:
 		return true
 	return false
 

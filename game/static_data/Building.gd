@@ -41,8 +41,9 @@ const REAL_ATTRIBUTES := [
 	"texture_pos_y",
 ]
 const FILTER_ATTRIBUTES := {
-	"faction":"",
+	"faction":"ids_of_factions",
 }
+
 
 export(int) var identifier : int
 export(String) var name_key : String
@@ -50,6 +51,7 @@ export(int) var len_h_tiles : int
 export(int) var len_v_tiles : int
 export(int) var faction : int
 export(int) var queue_len : int
+export(float) var maximum_health : float
 export(String) var texture_path : String
 export(Vector2) var texture_position : Vector2
 export(Vector2) var texture_size : Vector2
@@ -57,3 +59,12 @@ export(Array) var effects : Array
 
 var texture_pos_x : float
 var texture_pos_y : float
+var ids_of_factions : Dictionary setget ,get_ids_of_factions
+
+func get_ids_of_factions() -> Dictionary:
+	# custom modification to the generated dictionary from static data
+	# honestly, the default behavior is to not set the building's faction if the value isn't found in the dictionary,
+	# but this makes it clear exactly what is intended (and at least one building type is intended to be factionless)
+	var copy_dict : Dictionary = StaticData.engine_keys_to_faction_ids.duplicate()
+	copy_dict["factionless"] = -1
+	return copy_dict

@@ -52,10 +52,10 @@ const FILTER_ATTRIBUTES := {}
 export(int) var num_frames_idle : int
 export(int) var num_frames_moving : int
 export(int) var num_frames_attacking : int
-export(int) var sprite_size_h : int
-export(int) var sprite_size_v : int
-export(int) var offset_h : int
-export(int) var offset_v : int
+export(int) var sprite_size_h : int setget set_sprite_size_h
+export(int) var sprite_size_v : int setget set_sprite_size_v
+export(int) var offset_h : int setget set_offset_h
+export(int) var offset_v : int setget set_offset_v
 export(float) var frames_per_second : float
 export(String) var purity_tex_path : String = ""
 export(String) var specter_tex_path : String = ""
@@ -82,3 +82,23 @@ func get_tex_for_faction(faction:int) -> Texture:
 			return load(pestilent_tex_path) as Texture
 		_:
 			return null
+
+
+func set_sprite_size_h(to:int) -> void:
+	sprite_size_h = to
+	sprite_size = Vector2(sprite_size_h,sprite_size_v)
+
+
+func set_sprite_size_v(to:int) -> void:
+	sprite_size_v = to
+	sprite_size = Vector2(sprite_size_h,sprite_size_v)
+
+
+func set_offset_h(to:int) -> void:
+	offset_h = to
+	offset = Vector2(offset_h,offset_v)
+
+
+func set_offset_v(to:int) -> void:
+	offset_v = to
+	offset = Vector2(offset_h,offset_v)

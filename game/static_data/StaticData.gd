@@ -41,7 +41,7 @@ var species_disp := []
 var buildings := []
 var faction_color_palettes : Array setget set_faction_color_palettes
 var _faction_color_palettes := FactionColorPalettesStaticData.new()
-var factions := []
+var factions := [] setget set_factions
 var upgrades : Array setget set_upgrades
 
 var _parse_state_property_name := ""
@@ -50,6 +50,7 @@ var _parse_state_row_headings := []
 var _parse_state_row_data_types := []
 var _species_name_keys_to_ids := {}
 var _engine_keys_to_factions := {}
+var engine_keys_to_faction_ids := {} # this is now the canonical way to look this up. TODO: Update any class that had this hard-coded.
 
 
 func _ready() -> void:
@@ -95,6 +96,12 @@ func set_species(to:Array) -> void:
 		_species_name_keys_to_ids[sp.name_key] = i
 
 
+func set_factions(to:Array) -> void:
+	factions = to
+	for i in range(factions.size()):
+		engine_keys_to_faction_ids[factions[i].engine_key] = i
+
+
 func read_from_csv_files() -> void:
 	for property_name in CSV_INFO_BY_DATA_SHEET:
 		_parse_state_property_name = property_name
@@ -133,7 +140,7 @@ func _process_csv_line_rows(line:PoolStringArray) -> void:
 	# row mode (where property headers are in the first row) are for data sheets with
 	# many items but few properties.
 	# New items are added row by row.
-	if line.size() == 0:
+	if line.size() < 2:
 		return
 	if _parse_state_row_headings.size() == 0 and CSV_INFO_BY_DATA_SHEET[_parse_state_property_name].item_class is GDScript:
 		# First row

@@ -56,6 +56,8 @@ export(FactionTypes) var faction_type : int
 export(String) var name_key : String
 export(String) var engine_key : String
 export(Array) var unit_bonuses : Array = []
+export(float) var income_cooldown : float = 20.0
+export(float) var income_amount : float = 15.0
 
 var bonuses_by_species := {}
 

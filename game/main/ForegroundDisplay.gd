@@ -47,13 +47,14 @@ func add_building_sprite(identifier:int,tex:Texture,region:Rect2,tex_offset:Vect
 		buildings_by_identifier[identifier] = building_sprite
 
 
-func spawn_unit(identifier:int,tex:Texture,tex_offset:Vector2,location:Vector2) -> void:
-	var unit_sprite := _add_sprite(tex,Rect2(),tex_offset,location) # TODO: use a subclass here
+func spawn_unit(identifier:int,location:Vector2) -> void:
+	var unit_sprite := UnitDisplay.new()
+	unit_sprite.position = location
+	add_child(unit_sprite)
+	unit_sprite.initialize_from_unit(GameState.get_unit(identifier))
+	unit_sprite.return_to_idle()
 	if not units_by_identifier.has(identifier):
 		units_by_identifier[identifier] = unit_sprite
-	# TODO: read from static data to get info about number of frames, frame columns/rows, animations
-	var anim_player := AnimationPlayer.new()
-	unit_sprite.add_child(anim_player)
 
 
 func despawn_unit(identifier:int) -> void:

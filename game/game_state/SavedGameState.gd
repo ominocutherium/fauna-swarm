@@ -30,6 +30,8 @@ export(Array) var units := []
 export(Resource) var background_tiles : Resource
 export(Resource) var building_tiles : Resource
 export(Array) var factions := []
-export(Resource) var event_heap : Resource
+export(Array) var buildings := []
 export(float) var elapsed_time : float
+export(int) var rng_seed : int
+export(int) var rng_state : int
 
