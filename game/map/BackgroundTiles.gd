@@ -61,7 +61,7 @@ func _init() -> void:
 
 
 func choose_tiles_to_process(num_tiles:int,current_time:float) -> void:
-	for i in range(num_tiles):
+	for _i in range(num_tiles):
 		var chosen_tile : int = GameState.random_number_generator.randi_range(0,tile_data.size()-1)
 		_process_tile(chosen_tile,current_time)
 
@@ -92,7 +92,7 @@ func _process_tile(tile_identifier:int, current_time:float) -> void:
 
 
 func init_newgame_map_from_mapfile(new_game_map:StartingMapResource) -> RandomNumberGenerator:
-	var rng := RandomNumberGenerator.new()
+	rng = RandomNumberGenerator.new()
 	rng.seed = new_game_map.cosmetic_randomization_seed
 	extents = new_game_map.extents
 	tile_data.resize(new_game_map.tile_data.size())
@@ -102,7 +102,6 @@ func init_newgame_map_from_mapfile(new_game_map:StartingMapResource) -> RandomNu
 		var tilemap_idx : int = rng.randi_range(0,tile_type.tiles_in_tileset.size()-1)
 		tile_data[i] = tilemap_idx
 	Pathfinding.set_map_and_obstacles_structure(new_game_map)
-	rng = rng
 	cosmetic_randomization_seed = new_game_map.cosmetic_randomization_seed
 	return rng # pass the cosmetic rng with its current state for another object to use to randomize background object sprites
 

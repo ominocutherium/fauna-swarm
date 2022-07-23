@@ -39,10 +39,12 @@ signal report_valid_order_in_progress(order_type)
 signal report_no_valid_order_in_progress
 signal report_no_more_order_data
 
+
 var list_of_selected_unit_identifiers := [] setget set_list_of_selected_unit_identifiers
 var targeted_building_identifier : int = -1 setget set_targeted_building_identifier
 var targeted_unit_identifier : int = -1 setget set_targeted_unit_identifier
 var targeted_position : Vector2 = Vector2()
+var build_order_building_type : int = -1
 var order_in_progress : int = -1
 
 
@@ -62,6 +64,10 @@ func set_targeted_building_identifier(id:int) -> void:
 	targeted_building_identifier = id
 	if order_in_progress != -1 and list_of_selected_unit_identifiers != []:
 		_resolve_order()
+
+
+func set_build_order_building_to_build(id:int) -> void:
+	build_order_building_type = id
 
 
 func set_targeted_unit_identifier(id:int) -> void:
@@ -93,7 +99,49 @@ func set_targeted_position(position:Vector2) -> void:
 func _resolve_order(use_position:bool=false) -> void:
 	if order_in_progress == UnitManager.OrderTypes.ATTACK_OBJ and use_position:
 		order_in_progress = UnitManager.OrderTypes.ATTACK_POS
-	pass # TODO: implement
+	var target_type : int
+	var target
+	match order_in_progress:
+		UnitManager.OrderTypes.HOLD_POS:
+			target_type = -1
+			target = null
+		UnitManager.OrderTypes.ATTACK_OBJ:
+			target_type = UnitManager.ObjTargetTypes.UNIT if targeted_unit_identifier != -1 else UnitManager.ObjTargetTypes.BUILDING
+			target = targeted_unit_identifier if targeted_unit_identifier != -1 else targeted_building_identifier
+			continue
+		UnitManager.OrderTypes.MOVE_TO_POS:
+			target_type = -1
+			target = targeted_position
+			continue
+		UnitManager.OrderTypes.ATTACK_POS:
+			target_type = -1
+			target = targeted_position
+			continue
+		UnitManager.OrderTypes.CLAIM_OBJ:
+			target_type = UnitManager.ObjTargetTypes.BUILDING
+			target = targeted_building_identifier
+			continue
+		UnitManager.OrderTypes.BUILD_OBJ:
+			target = GameState.create_building(build_order_building_type)
+			target_type = UnitManager.ObjTargetTypes.BUILDING
+			continue
+		UnitManager.OrderTypes.CAPTURE_OBJ:
+			target_type = UnitManager.ObjTargetTypes.UNIT
+			target = targeted_unit_identifier
+			continue
+		UnitManager.OrderTypes.HEAL:
+			target_type = UnitManager.ObjTargetTypes.BUILDING
+			target = targeted_building_identifier
+			continue
+		_:
+			if order_in_progress < UnitManager.OrderTypes.size() and order_in_progress >= 0:
+				UnitManager.mark_units_as_needing_path(list_of_selected_unit_identifiers)
+
+	for unit_id in list_of_selected_unit_identifiers:
+		var unit : SavedUnit = GameState.get_unit(unit_id)
+		unit.set_order(order_in_progress,target_type,target)
+		UnitManager.mark_unit_as_needing_order_resolution(unit_id)
+
 	_release_order_data()
 
 

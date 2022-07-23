@@ -39,6 +39,7 @@ const INT_ATTRIBUTES := [
 const REAL_ATTRIBUTES := [
 	"texture_pos_x",
 	"texture_pos_y",
+	"build_progress_per_s",
 ]
 const FILTER_ATTRIBUTES := {
 	"faction":"ids_of_factions",
@@ -52,6 +53,7 @@ export(int) var len_v_tiles : int
 export(int) var faction : int
 export(int) var queue_len : int
 export(float) var maximum_health : float
+export(float) var build_progress_per_s : float
 export(String) var texture_path : String
 export(Vector2) var texture_position : Vector2
 export(Vector2) var texture_size : Vector2

@@ -24,13 +24,9 @@
 
 extends Node
 
-signal path_generated
-
 
 var pathfinding_for_normal_units : AStar2D
 var pathfinding_for_flying_units : AStar2D
-var pf_normal_units_mutex : Mutex
-var pf_flying_units_mutex : Mutex
 
 
 func set_map_and_obstacles_structure(game_map:StartingMapResource) -> void:
@@ -77,7 +73,9 @@ func set_map_and_obstacles_structure(game_map:StartingMapResource) -> void:
 func _compare_points_should_be_connected(game_map : StartingMapResource,point_coords:Vector2,compare_coords : Vector2) -> bool:
 	# Look at elevations
 	var dist := point_coords - compare_coords
+# warning-ignore:narrowing_conversion
 	var point_idx_0 : int = point_coords.x + point_coords.y*game_map.extents.size.x
+# warning-ignore:narrowing_conversion
 	var point_idx_1 : int = compare_coords.x + compare_coords.y*game_map.extents.size.x
 	var functional_tilename_pt : String = game_map.tile_type_names_by_id[game_map.tile_data[point_idx_0]]
 	var functional_tilename_compare_pt : String = game_map.tile_type_names_by_id[game_map.tile_data[point_idx_1]]
@@ -106,5 +104,30 @@ func _compare_points_should_be_connected(game_map : StartingMapResource,point_co
 	return false
 
 
-func queue_request_to_generate_path(requester:Object,start_pos:Vector2,end_pos:Vector2,faction:int,unit_can_fly:bool=false) -> void:
-	pass
+func get_path_with_current_params(start_pos:Vector2,end_pos:Vector2,faction:int,unit_can_fly:bool=false) -> PoolVector2Array:
+	var astar_to_use : AStar2D = pathfinding_for_flying_units if unit_can_fly else pathfinding_for_normal_units
+	var nearest_starting_point : int = astar_to_use.get_closest_point(start_pos)
+	var nearest_ending_point : int = astar_to_use.get_closest_point(end_pos)
+	# setup obstacles
+	var points_disabled := {}
+	if not unit_can_fly:
+		for coords in UnitManager.obstacle_idxs_by_coords:
+			var node_coords : Vector2 = (coords + Vector2(0.5,0.5)) * UnitManager.TILE_LEN
+			var point_idx : int = astar_to_use.get_closest_point(node_coords)
+			if not point_idx in points_disabled:
+				points_disabled[point_idx] = true
+				astar_to_use.set_point_disabled(point_idx,true)
+	for i in range(UnitManager.alive_unit_identifiers.size()):
+		var identifier : int = UnitManager.alive_unit_identifiers[i]
+		if identifier == -1:
+			continue
+		if UnitManager.alive_unit_factions[i] != faction:
+			var nearest_point : int = astar_to_use.get_closest_point(UnitManager.alive_unit_positions[i])
+			if not nearest_point in points_disabled:
+				points_disabled[nearest_point] = true
+				astar_to_use.set_point_disabled(nearest_point,true)
+	var point_path : PoolVector2Array = astar_to_use.get_point_path(nearest_starting_point,nearest_ending_point)
+	# cleanup
+	for idx in points_disabled:
+		astar_to_use.set_point_disabled(idx,false)
+	return point_path

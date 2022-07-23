@@ -32,6 +32,9 @@ signal allegiance_changed
 signal spawned
 signal despawned
 signal defeated
+signal captured
+signal capture_attempt_failed
+signal order_set(order_type,order_target_type,order_target)
 
 
 const BLANK_ATTACK_TIMING_INFORMATION_DICT = {
@@ -54,7 +57,7 @@ export(int) var identifier : int
 export(int) var species : int
 export(int) var faction : int = -1 # governs stats too
 export(int) var allegiance : int = -1 setget set_allegiance # usually matches faction, unless captured but not yet purified
-export(int) var spawn_status : int
+export(int) var spawn_status : int = -1
 export(int) var upgrade_type = -1
 export(int) var upgrade_faction = -1
 export(Dictionary) var attack_timing_information := {}
@@ -67,6 +70,19 @@ var maximum_health : float setget ,get_maximum_health
 func sync_data_from_manager() -> void:
 	# Queries UnitManager singleton for updated position data, if alive.
 	pass
+
+
+func set_order(p_order_type:int,p_order_target_type:int,p_order_target) -> void:
+	order_type = p_order_type
+	order_target_type = p_order_target_type
+	if p_order_target is int:
+		order_target_identifier = p_order_target
+		emit_signal("order_set",order_type,order_target_type,order_target_identifier)
+		order_target_point = Vector2()
+	elif p_order_target is Vector2:
+		order_target_point = p_order_target
+		emit_signal("order_set",order_type,order_target_type,order_target_point)
+		order_target_identifier = -1
 
 
 func set_allegiance(to:int) -> void:
@@ -137,15 +153,45 @@ func get_ranged_resistance() -> float:
 	return StaticData.get_species(species).ranged_damage_to_multiplier
 
 
+func get_maximum_range_of_attack() -> float:
+	# TODO: incorporate upgrades into calc
+	var spec : SpeciesStaticData = StaticData.get_species(species)
+	var lesser_hb_radius : float = spec.attack_hb_len_or_radius_0 \
+			if (spec.attack_hitbox_shape == SpeciesStaticData.HitboxShape.CIRCLE \
+			or spec.attack_hb_len_or_radius_0 < spec.attack_hb_len_or_radius_1) \
+			else spec.attack_hb_len_or_radius_1
+	return StaticData.get_species(species).attack_hb_offset + lesser_hb_radius
+
+
+func get_move_speed() -> float:
+	# TODO: incorporate upgrades into calc
+	return StaticData.get_species(species).move_speed
+
+
 func take_damage(base_amount:float,damage_type:int) -> void:
+	current_health -= _get_damage_modified_amount(base_amount,damage_type)
+	if current_health <= 0.0:
+		emit_signal("defeated")
+
+
+func take_capture_damage(base_amount:float,damage_type:int,capture_threshold:float,capturing_faction:int,true_capture:bool=false) -> void:
+	current_health -= _get_damage_modified_amount(base_amount,damage_type)
+	if current_health < 0.0 and not true_capture:
+		emit_signal("defeated")
+		emit_signal("capture_attempt_failed") # for ui feedback only
+	elif current_health < capture_threshold:
+		set_in_limbo()
+		set_allegiance(capturing_faction)
+		emit_signal("captured")
+
+
+func _get_damage_modified_amount(base_amount:float,damage_type:int) -> float:
 	var modified_amount : float = base_amount
 	if damage_type == SpeciesStaticData.DamageTypes.MELEE:
 		modified_amount = base_amount * get_melee_resistance()
 	elif damage_type == SpeciesStaticData.DamageTypes.RANGED:
 		modified_amount = base_amount * get_ranged_resistance()
-	current_health -= modified_amount
-	if current_health <= 0.0:
-		emit_signal("defeated")
+	return modified_amount
 
 
 func _on_attack_delay_timed_out(dict:Dictionary) -> void:
@@ -159,6 +205,6 @@ func _on_attack_delay_timed_out(dict:Dictionary) -> void:
 	# TODO: When hitbox manager is available, push hitbox information
 
 
-func _on_attack_cooldown_timed_out(dict:Dictionary) -> void:
+func _on_attack_cooldown_timed_out(_dict:Dictionary) -> void:
 	attack_timing_information = {}
 	is_able_to_attack = true

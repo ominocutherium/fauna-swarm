@@ -69,12 +69,13 @@ func initialize_new_game(mode:int=GameMode.SP_PURITY_VS_SINGLE_EVIL,mapfile:Star
 		used_edge_locations.append(pure_faction.new_units_spawn_at)
 	var first_chosen_evil : int = StaticData.engine_keys_to_faction_ids.specter
 	var first_evil_faction := _generate_faction(first_chosen_evil)
+	var second_evil_faction : SavedFaction
 	used_edge_locations.append(first_evil_faction.new_units_spawn_at)
 	if mode in [GameMode.MP_EVIL_VS_EVIL,GameMode.SP_PURITY_VS_TWO_EVILS]:
 		var second_chosen_evil : int = -1
 		while second_chosen_evil < 0 or second_chosen_evil == first_chosen_evil:
 			second_chosen_evil = random_number_generator.randi_range(0,StaticData.engine_keys_to_faction_ids.size())
-		var second_evil_faction := _generate_faction(second_chosen_evil)
+		second_evil_faction = _generate_faction(second_chosen_evil)
 	if mode != GameMode.MP_EVIL_VS_EVIL:
 		_place_unclaimed_forest_hearts(mapfile)
 
@@ -91,12 +92,36 @@ func get_unit(identifier:int) -> SavedUnit:
 	return units[identifier]
 
 
+func add_unit(species:int,upgrade_equipped:int,faction:int) -> int:
+	var identifier : int = units.size()
+	var unit := SavedUnit.new()
+	unit.faction = faction
+	unit.allegiance = faction
+	unit.species = species
+	unit.upgrade_faction = faction
+	unit.upgrade_type = upgrade_equipped
+	units.append(unit)
+	_add_unit_connections(identifier,unit)
+	return identifier
+
+
+func create_building(building_type:int) -> int:
+	var building := SavedBuilding.new()
+	building.identifer = buildings.size()
+	building.building_type = building_type
+
+	buildings.append(building)
+	return building.identifer
+
+
 func restore(save_res:SavedGameState) -> void:
 	random_number_generator.seed = save_res.rng_seed
 	random_number_generator.state = save_res.rng_state
 	units = save_res.units
 	for u in units:
-		(u as SavedUnit).on_restore()
+		var unit := u as SavedUnit
+		unit.on_restore()
+		_add_unit_connections(unit.identifier,unit)
 	factions = save_res.factions
 	for f in factions:
 		(f as SavedFaction).on_restore()
@@ -107,9 +132,6 @@ func restore(save_res:SavedGameState) -> void:
 	for b in buildings:
 		(b as SavedBuilding).on_restore()
 	elapsed_time = save_res.elapsed_time
-	for u in units:
-		var unit := u as SavedUnit
-		# TODO: check if spawned, if so call UnitManager.spawn_unit()
 
 
 func save() -> SavedGameState:
@@ -144,7 +166,8 @@ func _prune_unalive_and_unqueued_units_when_serializing() -> void:
 
 
 func _process_timed_out_event_dict(event:Dictionary) -> void:
-	pass
+	if event.has("callback_obj") and event.callback_obj as Object and event.has("callback") and event.callback_obj.has_method(event.callback):
+		event.callback_obj.call(event.callback)
 
 
 func _generate_faction(identifier:int) -> SavedFaction:
@@ -167,3 +190,11 @@ func _place_factions_initial_buildings(_faction:SavedFaction) -> void:
 
 func _place_unclaimed_forest_hearts(_mapfile:StartingMapResource) -> void:
 	pass
+
+
+func _on_unit_captured(unit:SavedUnit,faction_captured_by:int) -> void:
+	pass
+
+
+func _add_unit_connections(unit_id:int,unit:SavedUnit) -> void:
+	unit.connect("order_set",UnitManager,"_on_unit_order_set",[unit_id])

@@ -46,12 +46,39 @@ func _ready() -> void:
 		initialize_or_restore_map_state()
 		GameState.building_tiles.connect("tile_updated",building_tilemap,"_on_tile_updated_in_gamestate")
 		GameState.background_tiles.connect("tile_updated",background_tilemap,"_on_tile_updated_in_gamestate")
+		for unit in GameState.units:
+			_add_unit_connections(unit)
+			if unit.spawn_status == SavedUnit.Status.SPAWNED:
+				spawn_existing_unit(unit.identifier,unit.position)
+		for building in GameState.buildings:
+			_add_building_connections(building)
 	foreground_display.reference_tm_for_sprite_tilevs = building_tilemap
 	UnitManager.connect("unit_moved",self,"_on_unit_moved")
 
 
-func _process(delta: float) -> void:
-	pass
+func spawn_num_of_requested_units(p_num:int,species:int,faction:int,where:Vector2,upgrade_equipped:int=-1) -> void:
+	for _i in range(p_num):
+		var identifier : int = GameState.add_unit(species,upgrade_equipped,faction)
+		var unit : SavedUnit = GameState.get_unit(identifier)
+		var actual_spawn_pos : Vector2 = where # TODO: maybe randomize the position a bit within a radius
+		UnitManager.spawn_unit(identifier,actual_spawn_pos)
+		foreground_display.spawn_unit(identifier,actual_spawn_pos)
+		unit.set_spawned()
+		GameState.get_faction(faction).add_unit(unit)
+		_add_unit_connections(unit)
+
+
+func spawn_existing_unit(identifier:int,where_tiles:Vector2) -> void:
+	# some buildings do this
+	var where : Vector2 = UnitManager.TILE_LEN * where_tiles
+	GameState.get_unit(identifier).set_spawned()
+	UnitManager.spawn_unit(identifier,where)
+	foreground_display.spawn_unit(identifier,where)
+
+
+func spawn_existing_unit_at(identifier:int,where:Vector2) -> void:
+	UnitManager.spawn_unit(identifier,where)
+	foreground_display.spawn_unit(identifier,where)
 
 
 func initialize_or_restore_map_state() -> void:
@@ -74,7 +101,7 @@ func _on_MouseInput_location_left_clicked(location : Vector2, selection_radius :
 		pass # TODO: implement
 		return
 	var xformed_pos : Vector2 = mouse_input_handler.display_space_to_physics_space_transform.xform(location)
-	var nearest_unit := UnitManager.get_closest_unit_to_position_within_radius(xformed_pos,selection_radius,selection_radius_squared)
+	var nearest_unit : int = UnitManager.get_closest_unit_to_position_within_radius(xformed_pos,selection_radius,selection_radius_squared)
 	if nearest_unit != -1:
 		heads_up_display.units_selected([nearest_unit])
 		order_input_handler.list_of_selected_unit_identifiers = [nearest_unit]
@@ -105,10 +132,10 @@ func _get_building_within_display_loc(location : Vector2) -> int:
 	return -1
 
 
-func _on_MouseInput_rect_released(selection_rect:Rect2,xformed_rect:Rect2,xformed_midpoints:Array,xformed_normals:Array) -> void:
+func _on_MouseInput_rect_released(_selection_rect:Rect2,xformed_rect:Rect2,xformed_midpoints:Array,xformed_normals:Array) -> void:
 #	print(("{0} selection finished. Corresponds to rect in physics space of {1} and rect is a diamond in physics space with midpoints {2}").format([
 #			selection_rect,xformed_rect,str(xformed_midpoints)]))
-	var units_inside := UnitManager.get_units_inside_selection(xformed_rect,xformed_midpoints,xformed_normals)
+	var units_inside : Array = UnitManager.get_units_inside_selection(xformed_rect,xformed_midpoints,xformed_normals)
 	# TODO: if no units were selected, try to select a building instead
 	var unit_objs := []
 	for identifier in units_inside:
@@ -118,8 +145,8 @@ func _on_MouseInput_rect_released(selection_rect:Rect2,xformed_rect:Rect2,xforme
 	# TODO: if nothing was overlapped even after checking for building, tell HUD to deselect everything
 
 
-func _on_MouseInput_rect_updated(selection_rect:Rect2,xformed_rect:Rect2,xformed_midpoints:Array,xformed_normals:Array) -> void:
-	var units_inside := UnitManager.get_units_inside_selection(xformed_rect,xformed_midpoints,xformed_normals)
+func _on_MouseInput_rect_updated(_selection_rect:Rect2,xformed_rect:Rect2,xformed_midpoints:Array,xformed_normals:Array) -> void:
+	var units_inside : Array = UnitManager.get_units_inside_selection(xformed_rect,xformed_midpoints,xformed_normals)
 	var unit_objs := []
 	for identifier in units_inside:
 		unit_objs.append(GameState.units[identifier])
@@ -134,6 +161,7 @@ func _on_save_and_exit_requested() -> void:
 
 func _on_save_and_back_to_mm_requested() -> void:
 	_save_game_incl_map_data()
+# warning-ignore:return_value_discarded
 	get_tree().change_scene("res://main/MainMenu.tscn")
 
 
@@ -141,3 +169,33 @@ func _save_game_incl_map_data() -> void:
 	GameState.background_tiles.extract_from_tilemap(background_tilemap)
 	GameState.building_tiles.extract_from_tilemap(building_tilemap)
 	GameState.save()
+
+
+func _on_unit_defeated(unit:SavedUnit) -> void:
+	UnitManager.despawn_unit(unit.identifier)
+	foreground_display.despawn_unit(unit.identifier)
+	if unit.faction == StaticData.engine_keys_to_faction_ids.purity:
+		unit.set_in_limbo()
+	else:
+		GameState.get_faction(unit.faction).remove_unit(unit)
+
+
+func _on_unit_captured(unit:SavedUnit) -> void:
+	UnitManager.despawn_unit(unit.identifier)
+	foreground_display.despawn_unit(unit.identifier)
+	# updating unit's faction in the game state is already taken care of by Faction connections
+
+
+func _add_unit_connections(unit:SavedUnit) -> void:
+	if not unit.is_connected("defeated",self,"_on_unit_defeated"):
+# warning-ignore:return_value_discarded
+		unit.connect("defeated",self,"_on_unit_defeated",[unit])
+	if not unit.is_connected("captured",self,"_on_unit_captured"):
+# warning-ignore:return_value_discarded
+		unit.connect("captured",self,"_on_unit_captured",[unit])
+#	unit.connect("capture_attempt_failed",self,"_on_capture_attempt_failed",[unit]) # TODO: make a notifications object and connect this feedback-only signal to it
+
+
+func _add_building_connections(building:SavedBuilding) -> void:
+# warning-ignore:return_value_discarded
+	building.connect("request_spawn_unit",self,"spawn_existing_unit")

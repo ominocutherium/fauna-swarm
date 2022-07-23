@@ -40,6 +40,9 @@ export(NodePath) var building_disp_path : NodePath
 export(NodePath) var pause_button_path : NodePath
 export(NodePath) var menu_button_path : NodePath
 export(NodePath) var menu_popup_path : NodePath
+export(NodePath) var order_modal_panel_path : NodePath
+export(NodePath) var order_modal_label_path : NodePath
+
 
 var selected_unit_identifier : int = -1
 var selected_units_group_identifiers := []
@@ -168,16 +171,44 @@ func _hide_all_on_left() -> void:
 	get_node(building_disp_path).hide()
 
 
-func _on_order_input_mode_order_in_progress(order_type:int) -> void:
-	pass # TODO: implement; should just be display feedback
+func _on_order_input_mode_order_in_progress(order_type:int,addl_param=null) -> void:
+	match order_type:
+		UnitManager.OrderTypes.HOLD_POS:
+			return
+		UnitManager.OrderTypes.ATTACK_OBJ:
+			get_node(order_modal_label_path).text = tr("HUD_ORDER_MODAL_AMOVE_IN_PROGRESS")
+			get_node(order_modal_panel_path).show()
+		UnitManager.OrderTypes.MOVE_TO_POS:
+			get_node(order_modal_label_path).text = tr("HUD_ORDER_MODAL_MOVE_IN_PROGRESS")
+			get_node(order_modal_panel_path).show()
+		UnitManager.OrderTypes.ATTACK_POS:
+			get_node(order_modal_label_path).text = tr("HUD_ORDER_MODAL_AMOVE_IN_PROGRESS")
+			get_node(order_modal_panel_path).show()
+		UnitManager.OrderTypes.CLAIM_OBJ:
+			get_node(order_modal_label_path).text = tr("HUD_ORDER_MODAL_CLAIM_IN_PROGRESS")
+			get_node(order_modal_panel_path).show()
+		UnitManager.OrderTypes.BUILD_OBJ:
+			if addl_param != null and typeof(addl_param) == TYPE_INT:
+				var building_tr_string : String = tr(StaticData.get_building(addl_param).name_key)
+				get_node(order_modal_label_path).text = tr("HUD_ORDER_MODAL_BUILD_CHOOSE_LOCATION").format([building_tr_string])
+				get_node(order_modal_panel_path).show()
+			else:
+				get_node(order_modal_label_path).text = tr("HUD_ORDER_MODAL_BUILD_CHOOSE_BUILDING")
+				get_node(order_modal_panel_path).show()
+		UnitManager.OrderTypes.CAPTURE_OBJ:
+			get_node(order_modal_label_path).text = tr("HUD_ORDER_MODAL_CMOVE_IN_PROGRESS")
+			get_node(order_modal_panel_path).show()
+		UnitManager.OrderTypes.HEAL:
+			get_node(order_modal_label_path).text = tr("HUD_ORDER_MODAL_HEAL_IN_PROGRESS")
+			get_node(order_modal_panel_path).show()
 
 
 func _on_order_input_mode_order_invalidated() -> void:
-	pass # TODO: implement; should just be display feedback
+	get_node(order_modal_panel_path).hide()
 
 
 func _on_order_input_mode_order_cleared() -> void:
-	pass # TODO: implement; should just be display feedback
+	get_node(order_modal_panel_path).hide()
 	
 
 

@@ -22,6 +22,8 @@ building_disp_path = NodePath("Bottom Panel/H/CurrSelected/SelectedBuilding")
 pause_button_path = NodePath("Bottom Panel/H/MMContainer/Pause")
 menu_button_path = NodePath("Bottom Panel/H/MMContainer/Menu")
 menu_popup_path = NodePath("Menu")
+order_modal_panel_path = NodePath("OrderModal")
+order_modal_label_path = NodePath("OrderModal/Label")
 
 [node name="Bottom Panel" type="Panel" parent="."]
 anchor_top = 1.0
@@ -684,6 +686,29 @@ margin_right = -30.0
 margin_bottom = -30.0
 
 [node name="Settings" parent="Settings" instance=ExtResource( 7 )]
+
+[node name="OrderModal" type="Panel" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 25.0
+margin_top = -175.0
+margin_bottom = -145.0
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="OrderModal"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = 5.0
+margin_right = -5.0
+margin_bottom = -5.0
+grow_horizontal = 0
+grow_vertical = 2
+align = 2
+valign = 1
 
 [connection signal="pressed" from="Bottom Panel/H/CurrSelected/SelectedUnit/H1/C/V/UpgradeUnit" to="." method="_on_UpgradeUnit_pressed"]
 [connection signal="request_top_queue_cancel" from="Bottom Panel/H/CurrSelected/SelectedBuilding/H1/TopOfQueue" to="." method="_on_TopOfQueue_request_top_queue_cancel"]

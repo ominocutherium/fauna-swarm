@@ -87,7 +87,7 @@ export(float) var attack_delay : float = 0.001 # mainly an animation parameter
 export(Dictionary) var upgrade_attributes_by_identifier_then_faction
 
 
-func get_upgrade_attributes(identifier:int,faction:int) -> Dictionary:
-	if upgrade_attributes_by_identifier_then_faction.has(identifier) and upgrade_attributes_by_identifier_then_faction[identifier].has(faction):	
-		return upgrade_attributes_by_identifier_then_faction[identifier][faction]
+func get_upgrade_attributes(upgrade_identifier:int,faction:int) -> Dictionary:
+	if upgrade_attributes_by_identifier_then_faction.has(upgrade_identifier) and upgrade_attributes_by_identifier_then_faction[upgrade_identifier].has(faction):	
+		return upgrade_attributes_by_identifier_then_faction[upgrade_identifier][faction]
 	return {}

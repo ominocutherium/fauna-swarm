@@ -27,6 +27,7 @@ extends Resource
 class_name MapTileData
 
 
+# warning-ignore:unused_signal
 signal tile_updated(coords,tile_type)
 
 
