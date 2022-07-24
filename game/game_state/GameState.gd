@@ -56,7 +56,11 @@ func _process(delta:float) -> void:
 
 func initialize_new_game(mode:int=GameMode.SP_PURITY_VS_SINGLE_EVIL,mapfile:StartingMapResource=null,use_seed:bool=false,used_seed:int=-1) -> void:
 	if use_seed:
-		random_number_generator.seed = used_seed
+		rng_seed = used_seed
+	else:
+		randomize()
+		rng_seed = randi()
+	random_number_generator.seed = rng_seed
 	# Static Data needs to be loaded first!
 	background_tiles = BackgroundTileData.new()
 	building_tiles = GameStateBuildingData.new()

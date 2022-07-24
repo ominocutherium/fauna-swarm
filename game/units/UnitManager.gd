@@ -36,9 +36,9 @@ const ENEMY_DETECTION_RANGE = 400.0
 const DEFAULT_OBSTACLE_LEN = TILE_LEN
 const NUM_QUADRANTS_X = 25
 const NUM_QUADRANTS_Y = 25
-const QUANDRANT_LEN = 8 * TILE_LEN
+const QUANDRANT_LEN = 4 * TILE_LEN
 const QUADRANT_LEN_INV = 1.0 / QUANDRANT_LEN # to avoid divide operation during runtime
-const FIRST_QUADRANT_START_POS = Vector2(-100,-100)*TILE_LEN
+const FIRST_QUADRANT_START_POS = Vector2(-50,-50)*TILE_LEN
 
 
 signal unit_moved(identifier,new_position)

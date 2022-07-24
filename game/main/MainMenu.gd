@@ -40,7 +40,7 @@ func _ready() -> void:
 
 
 func _on_Start_pressed() -> void:
-	GameState.initialize_new_game()
+	GameState.initialize_new_game(GameState.GameMode.SP_PURITY_VS_SINGLE_EVIL,load("res://map/game_map_0.tres"))
 	get_tree().change_scene_to(gameplay_scene)
 
 

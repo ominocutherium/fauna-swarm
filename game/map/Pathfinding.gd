@@ -36,38 +36,42 @@ func set_map_and_obstacles_structure(game_map:StartingMapResource) -> void:
 	pathfinding_for_flying_units = AStar2D.new()
 	pathfinding_for_flying_units.reserve_space(num_tiles)
 	pathfinding_for_normal_units.reserve_space(num_tiles)
-	for i in range(int(game_map.extents.position.x),int(game_map.extents.position.x+game_map.extents.size.x)):
-		for j in range(int(game_map.extents.position.y),int(game_map.extents.position.y+game_map.extents.size.y)):
-			var node_coords : Vector2 = (Vector2(i,j) + Vector2(0.5,0.5)) * UnitManager.TILE_LEN
-			var pt_index : int = j*int(game_map.extents.size.x)+i
-			pathfinding_for_flying_units.add_point(pt_index,node_coords)
-			pathfinding_for_normal_units.add_point(pt_index,node_coords)
-			if i > int(game_map.extents.position.x):
-				var compare_pt : int = pt_index - 1
-				pathfinding_for_flying_units.connect_points(pt_index,compare_pt)
-				if _compare_points_should_be_connected(game_map,Vector2(i,j),Vector2(i-1,j)):
-					pathfinding_for_normal_units.connect_points(pt_index,compare_pt)
-			if j > int(game_map.extents.position.y):
-				var compare_pt : int = pt_index - int(game_map.extents.position.x)
-				pathfinding_for_flying_units.connect_points(pt_index,compare_pt)
-				if _compare_points_should_be_connected(game_map,Vector2(i,j),Vector2(i,j-1)):
-					pathfinding_for_normal_units.connect_points(pt_index,compare_pt)
-			if i > int(game_map.extents.position.x) and j > int(game_map.extents.position.y):
-				var compare_pt : int = pt_index - int(game_map.extents.position.x) - 1
-				pathfinding_for_flying_units.connect_points(pt_index,compare_pt)
-				if _compare_points_should_be_connected(game_map,Vector2(i,j),Vector2(i-1,j-1)):
-					pathfinding_for_normal_units.connect_points(pt_index,compare_pt,sqrt(2.0))
-			var functional_tilename_pt : String = game_map.tile_type_names_by_id[game_map.tile_data[pt_index]]
-			var tiletype := GameState.background_tiles.get_tile_type_by_name(functional_tilename_pt)
-			if 5.0 in tiletype.corner_elevations:
-				UnitManager.spawn_obstacle(Vector2(i,j))
+	for i in range(num_tiles):
+		var x_coords : int = i % int(game_map.extents.size.x)
+# warning-ignore:integer_division
+		var y_coords : int = i / int(game_map.extents.size.x)
+		var node_coords : Vector2 = (game_map.extents.position + Vector2(x_coords,y_coords) + Vector2(0.5,0.5)) * UnitManager.TILE_LEN
+		var pt_index : int = i
+		pathfinding_for_flying_units.add_point(pt_index,node_coords)
+		pathfinding_for_normal_units.add_point(pt_index,node_coords)
+		if x_coords > 0:
+			var compare_pt : int = pt_index - 1
+			pathfinding_for_flying_units.connect_points(pt_index,compare_pt)
+			if _compare_points_should_be_connected(game_map,Vector2(x_coords,y_coords),Vector2(x_coords-1,y_coords)):
+				pathfinding_for_normal_units.connect_points(pt_index,compare_pt)
+		if y_coords > 0:
+			var compare_pt : int = pt_index - int(game_map.extents.size.x)
+			pathfinding_for_flying_units.connect_points(pt_index,compare_pt)
+			if _compare_points_should_be_connected(game_map,Vector2(x_coords,y_coords),Vector2(x_coords,y_coords-1)):
+				pathfinding_for_normal_units.connect_points(pt_index,compare_pt)
+		if x_coords > 0 and y_coords > 0:
+			var compare_pt : int = pt_index - int(game_map.extents.size.x) - 1
+			pathfinding_for_flying_units.connect_points(pt_index,compare_pt)
+			if _compare_points_should_be_connected(game_map,Vector2(x_coords,y_coords),Vector2(x_coords-1,y_coords-1)):
+				pathfinding_for_normal_units.connect_points(pt_index,compare_pt,sqrt(2.0))
+		var functional_tilename_pt : String = game_map.tile_type_names_by_id[game_map.tile_data[pt_index]]
+		var tiletype := GameState.background_tiles.get_tile_type_by_name(functional_tilename_pt)
+		if 5.0 in tiletype.corner_elevations:
+			UnitManager.spawn_obstacle(Vector2(x_coords,y_coords)+game_map.extents.position)
 	var grown_map_for_obstacles : Rect2 = game_map.extents.grow(1.0)
-	for i in range(int(grown_map_for_obstacles.position.x),int(grown_map_for_obstacles.position.x+grown_map_for_obstacles.size.x)):
-		for j in range(int(grown_map_for_obstacles.position.y),int(grown_map_for_obstacles.position.y+grown_map_for_obstacles.size.y)):
-			if i < game_map.extents.position.x or j < game_map.extents.position.y or \
-					i >= game_map.extents.size.x+game_map.extents.position.x or \
-					j >= game_map.extents.size.y+game_map.extents.position.y:
-				UnitManager.spawn_obstacle(Vector2(i,j))
+	for i in range(int(grown_map_for_obstacles.size.x*grown_map_for_obstacles.size.y)):
+		var x_coords : int = (i % int(grown_map_for_obstacles.size.x)) + int(grown_map_for_obstacles.position.x)
+# warning-ignore:integer_division
+		var y_coords : int = (i / int(grown_map_for_obstacles.size.x)) + int(grown_map_for_obstacles.position.y)
+		if x_coords < game_map.extents.position.x or y_coords < game_map.extents.position.y or \
+				x_coords >= game_map.extents.size.x+game_map.extents.position.x or \
+				y_coords >= game_map.extents.size.y+game_map.extents.position.y:
+			UnitManager.spawn_obstacle(Vector2(x_coords,y_coords))
 
 
 func _compare_points_should_be_connected(game_map : StartingMapResource,point_coords:Vector2,compare_coords : Vector2) -> bool:

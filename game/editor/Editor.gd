@@ -40,18 +40,26 @@ func _ready() -> void:
 func save_to_res() -> void:
 	var save_res := StartingMapResource.new()
 	save_res.extents = get_used_rect()
-	save_res.tile_data.resize(int(save_res.extents.size.x*save_res.extents.size.y))
+	var tile_data := PoolIntArray()
+	tile_data.resize(int(save_res.extents.size.x*save_res.extents.size.y))
+	var t_t_names_by_id := PoolStringArray()
 	for t in tile_set.get_tiles_ids():
 		var tile_id : int = t
-		if save_res.tile_type_names_by_id.size() < tile_id + 1:
-			save_res.tile_type_names_by_id.resize(tile_id + 1)
-		save_res.tile_type_names_by_id[tile_id] = tile_set.tile_get_name(tile_id)
+		if t_t_names_by_id.size() < tile_id + 1:
+			t_t_names_by_id.resize(tile_id + 1)
+		t_t_names_by_id[tile_id] = tile_set.tile_get_name(tile_id)
+	save_res.tile_type_names_by_id = t_t_names_by_id
 	for tile_v in get_used_cells(): # make sure to actually paint every cell in the rectangle
-		save_res.tile_data[int(tile_v.x+tile_v.y*save_res.extents.size.x)] = get_cellv(tile_v)
+		tile_data[int(tile_v.x+tile_v.y*save_res.extents.size.x)] = get_cellv(tile_v)
+	save_res.tile_data = tile_data
 
 	if cosmetic_rng_seed == "":
 		randomize()
 		save_res.cosmetic_randomization_seed = randi()
 	else:
 		save_res.cosmetic_randomization_seed = hash(cosmetic_rng_seed)
-	ResourceSaver.save(save_to,save_res)
+	var err := ResourceSaver.save(save_to,save_res)
+	if err == OK:
+		print("Map successfully saved to {0}".format([save_to]))
+	else:
+		print("There was an issue saving the resource, error code {0}".format([err]))
