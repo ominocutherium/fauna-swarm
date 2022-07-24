@@ -40,7 +40,10 @@ const AT_LEFT_BIT = 3
 
 signal tile_infected(coords,with_biome)
 signal tile_purified(coords)
+signal entire_map_is_infected
 
+var total_infected_tile_count : int = -1
+var total_pure_tile_count : int = -1
 var tile_types_by_identifier := {}
 var _tile_identifiers_by_tilemap_id := {}
 var _autotile_bitmasks_by_tilemap_id := PoolIntArray()
@@ -75,6 +78,8 @@ func _process_tile(tile_identifier:int, current_time:float) -> void:
 		if current_time - tile_cannot_change_cooldown_started[tile_identifier] > MIN_TIME_TO_PURIFY and _is_tile_infected(tile_identifier):
 			# purify tile
 			_mutate_tile_to_biome(tile_identifier,StaticData.engine_keys_to_faction_ids.purity)
+			total_infected_tile_count -= 1
+			total_pure_tile_count += 1
 			emit_signal("tile_purified",coords)
 			_mark_tiles_within_range_as_under_cooldown(coords,current_time,PURIFICATION_RANGE)
 	elif _is_tile_infected(tile_identifier): # being within purification range blocks infection
@@ -86,9 +91,13 @@ func _process_tile(tile_identifier:int, current_time:float) -> void:
 		if _get_discrete_tile_distance(coords,chosen_tile_to_infect) <= INFECTION_RANGE and \
 				_is_tile_infectable(chosen_tile_identifier) and current_time - tile_cannot_change_cooldown_started[tile_identifier] > MIN_TIME_TO_INFECT:
 			# infect tile
+			total_infected_tile_count += 1
+			total_pure_tile_count -= 1
 			_mutate_tile_to_biome(chosen_tile_identifier,_get_biome_of_tile(tile_data[tile_identifier]))
 			emit_signal("tile_infected",chosen_tile_to_infect,_get_biome_of_tile(tile_data[tile_identifier]))
 			_mark_tiles_within_range_as_under_cooldown(chosen_tile_to_infect,current_time,INFECTION_RANGE)
+			if total_pure_tile_count <= 0:
+				emit_signal("entire_map_is_infected")
 
 
 func init_newgame_map_from_mapfile(new_game_map:StartingMapResource) -> RandomNumberGenerator:
@@ -103,7 +112,17 @@ func init_newgame_map_from_mapfile(new_game_map:StartingMapResource) -> RandomNu
 		tile_data[i] = tilemap_idx
 	Pathfinding.set_map_and_obstacles_structure(new_game_map)
 	cosmetic_randomization_seed = new_game_map.cosmetic_randomization_seed
+	_create_count_of_inf_pure_tiles_on_init_or_restore()
 	return rng # pass the cosmetic rng with its current state for another object to use to randomize background object sprites
+
+
+func infect_tiles(list_of_coords:Array,to_biome:int) -> void:
+	# call on NGI when generating evil buildings at start (evil buildings can only be built on corresponding biome)
+	for coord in list_of_coords:
+		var idx : int = int((coord.y-extents.position.y) * extents.size.x + coord.x - extents.position.x)
+		_mutate_tile_to_biome(idx,to_biome)
+		total_infected_tile_count += 1
+		total_pure_tile_count += 1
 
 
 func get_tile_type_by_name(tile_identifer:String) -> TileType:
@@ -122,6 +141,7 @@ func restore() -> void:
 	rng = RandomNumberGenerator.new()
 	rng.seed = cosmetic_randomization_seed
 	rng.state = cosmetic_randomization_state
+	_create_count_of_inf_pure_tiles_on_init_or_restore()
 
 
 func _load_tiles_data() -> void:
@@ -297,3 +317,13 @@ func _mark_tiles_within_range_as_under_cooldown(from_coords:Vector2,current_time
 		for y in range(from_coords.y - range_of_tiles,from_coords.y + range_of_tiles):
 			if _get_discrete_tile_distance(from_coords,Vector2(x,y)) <= range_of_tiles:
 				tile_cannot_change_cooldown_started[x+y*int(extents.size.x)] = current_time
+
+
+func _create_count_of_inf_pure_tiles_on_init_or_restore() -> void:
+	total_infected_tile_count = 0
+	total_pure_tile_count = 0
+	for i in range(tile_data.size()):
+		if _is_tile_infected(i):
+			total_infected_tile_count += 1
+		else:
+			total_pure_tile_count += 1
