@@ -51,6 +51,8 @@ var _parse_state_row_data_types := []
 var _species_name_keys_to_ids := {}
 var _engine_keys_to_factions := {}
 var engine_keys_to_faction_ids := {} # this is now the canonical way to look this up. TODO: Update any class that had this hard-coded.
+var species_unit_income_weights := {}
+var species_weight_total : float = 1.0
 
 
 func _ready() -> void:
@@ -76,9 +78,9 @@ func get_building(identifier:int) -> BuildingStaticData:
 
 
 func get_faction(identifier:int) -> FactionStaticData:
-	if species.size() <= identifier or not species[identifier]:
+	if factions.size() <= identifier or not factions[identifier]:
 		return null
-	return species[identifier]
+	return factions[identifier]
 
 
 func get_faction_color_palette(faction_id:int) -> Dictionary:
@@ -91,9 +93,13 @@ func set_faction_color_palettes(arr:Array) -> void:
 
 func set_species(to:Array) -> void:
 	species = to
+	var current_weight_total := 0.0
 	for i in range(species.size()):
 		var sp := species[i] as SpeciesStaticData
 		_species_name_keys_to_ids[sp.name_key] = i
+		current_weight_total += sp.income_selection_weight
+		species_unit_income_weights[current_weight_total] = i
+	species_weight_total = current_weight_total
 
 
 func set_factions(to:Array) -> void:
@@ -134,6 +140,14 @@ func read_csv_file(filepath:String,format:String) -> void:
 
 func set_upgrades(to:Array) -> void:
 	pass
+
+
+func choose_species_to_give_as_income() -> SpeciesStaticData:
+	var chosen_weight : float = GameState.random_number_generator.randf_range(0.0,species_weight_total)
+	for weight_threshold in species_unit_income_weights:
+		if chosen_weight < weight_threshold:
+			return species[species_unit_income_weights[weight_threshold]]
+	return null
 
 
 func _process_csv_line_rows(line:PoolStringArray) -> void:

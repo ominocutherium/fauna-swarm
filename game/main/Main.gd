@@ -52,6 +52,8 @@ func _ready() -> void:
 				spawn_existing_unit(unit.identifier,unit.position)
 		for building in GameState.buildings:
 			_add_building_connections(building)
+		GameState.set_process(true)
+		get_tree().paused = false
 	foreground_display.reference_tm_for_sprite_tilevs = building_tilemap
 	UnitManager.connect("unit_moved",self,"_on_unit_moved")
 

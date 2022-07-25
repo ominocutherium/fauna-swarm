@@ -84,6 +84,9 @@ func initialize_new_game(mode:int=GameMode.SP_PURITY_VS_SINGLE_EVIL,mapfile:Star
 		second_evil_faction = _generate_faction(second_chosen_evil)
 	if mode != GameMode.MP_EVIL_VS_EVIL:
 		_place_unclaimed_forest_hearts(mapfile)
+	for faction in factions:
+		if faction != null:
+			faction.on_init()
 
 
 func get_pure_faction() -> Object:
@@ -175,7 +178,7 @@ func _prune_unalive_and_unqueued_units_when_serializing() -> void:
 
 func _process_timed_out_event_dict(event:Dictionary) -> void:
 	if event.has("callback_obj") and event.callback_obj as Object and event.has("callback") and event.callback_obj.has_method(event.callback):
-		event.callback_obj.call(event.callback)
+		event.callback_obj.call_deferred(event.callback,event)
 
 
 func _generate_faction(identifier:int) -> SavedFaction:

@@ -37,6 +37,7 @@ const STRING_ATTRIBUTES := [
 ]
 const INT_ATTRIBUTES := [
 	"identifier",
+	"income_number_of_units_given",
 ]
 const REAL_ATTRIBUTES := [
 	"attack_damage",
@@ -50,6 +51,8 @@ const REAL_ATTRIBUTES := [
 	"ranged_damage_to_multiplier",
 	"attack_cooldown",
 	"attack_delay",
+	"income_selection_weight",
+	"cooldown_before_income",
 ]
 const FILTER_ATTRIBUTES := {
 	"attack_damage_type":"ATTACK_DAMAGE_NAMES_TO_TYPES",
@@ -84,6 +87,9 @@ export(float) var melee_damage_to_multiplier : float = 1.0
 export(float) var ranged_damage_to_multiplier : float = 1.0
 export(float) var attack_cooldown : float = 1.0 # game balance parameter
 export(float) var attack_delay : float = 0.001 # mainly an animation parameter
+export(float) var income_selection_weight : float = 1.0 # i.e. how likely this species will be chosen relative to others for random income step
+export(int) var income_number_of_units_given : int = 1 # i.e. how many at a time are given to the player when selected. Light units come in groups greater than 1, heavy units come alone.
+export(float) var cooldown_before_income : float = 12.0
 export(Dictionary) var upgrade_attributes_by_identifier_then_faction
 
 

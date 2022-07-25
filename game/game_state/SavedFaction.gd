@@ -98,19 +98,27 @@ func remove_unit(unit:SavedUnit) -> void:
 func on_save() -> void:
 	if unit_income_cooldown != {}:
 		unit_income_cooldown.cooldown_s = GameState.elapsed_time - unit_income_cooldown.timeout_s
+		unit_income_cooldown.erase("callback_obj")
 	if currency_income_cooldown != {}:
 		currency_income_cooldown.cooldown_s = GameState.elapsed_time - currency_income_cooldown.timeout_s
+		currency_income_cooldown.erase("callback_obj")
+	if place_limbo_unit_in_queue_cooldown != {}:
+		place_limbo_unit_in_queue_cooldown.cooldown_s = GameState.elapsed_time - currency_income_cooldown.timeout_s
+		place_limbo_unit_in_queue_cooldown.erase("callback_obj")
 
 
 func on_restore() -> void:
 	if unit_income_cooldown != {}:
 		unit_income_cooldown.timeout_s = GameState.elapsed_time + unit_income_cooldown.cooldown_s
+		unit_income_cooldown.callback_obj = self
 		GameState.event_heap.push_dict_onto_heap(unit_income_cooldown)
 	if currency_income_cooldown != {}:
 		currency_income_cooldown.timeout_s = GameState.elapsed_time + currency_income_cooldown.cooldown_s
+		currency_income_cooldown.callback_obj = self
 		GameState.event_heap.push_dict_onto_heap(currency_income_cooldown)
 	if place_limbo_unit_in_queue_cooldown != {}:
 		place_limbo_unit_in_queue_cooldown.timeout_s = GameState.elapsed_time + place_limbo_unit_in_queue_cooldown.cooldown_s
+		currency_income_cooldown.callback_obj = self
 		GameState.event_heap.push_dict_onto_heap(place_limbo_unit_in_queue_cooldown)
 
 
@@ -148,7 +156,10 @@ func _on_unit_income_timeout_dict_expired(dict:Dictionary) -> void:
 
 func _push_new_unit_income_timeout_dict() -> void:
 	unit_income_cooldown = BLANK_UNIT_INCOME_DICT.duplicate()
-	# TODO: randomly generate the units from static data
+	var species_selection = StaticData.choose_species_to_give_as_income()
+	unit_income_cooldown.unit_type = species_selection.identifier
+	unit_income_cooldown.unit_qty = species_selection.income_number_of_units_given
+	unit_income_cooldown.cooldown_s = species_selection.cooldown_before_income
 	unit_income_cooldown.callback_obj = self
 	unit_income_cooldown.timeout_s = GameState.elapsed_time + unit_income_cooldown.cooldown_s
 	GameState.event_heap.push_dict_onto_heap(unit_income_cooldown)
