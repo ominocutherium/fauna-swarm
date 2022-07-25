@@ -114,12 +114,13 @@ func add_unit(species:int,upgrade_equipped:int,faction:int) -> int:
 	return identifier
 
 
-func create_building(building_type:int) -> int:
+func create_building(building_type:int,where_coords:Vector2) -> int:
 	var building := SavedBuilding.new()
 	building.identifer = buildings.size()
 	building.building_type = building_type
 
 	buildings.append(building)
+	building_tiles.add_building(building,where_coords)
 	return building.identifer
 
 

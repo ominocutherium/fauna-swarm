@@ -31,6 +31,34 @@ func get_num_of_purity_buildings() -> int:
 	return 0
 
 
+func get_num_of_buildings_which_use_special_resource() -> int:
+	return 0
+
+
 func get_coords_of_nearest_purity_building_to(coords:Vector2) -> Vector2:
 	return Vector2()
 
+
+func add_building(building:SavedBuilding,where_coords:Vector2) -> void:
+	pass
+
+
+func remove_building(identifier:int) -> void:
+	pass
+
+
+func is_spot_valid_for_building(building_type:BuildingStaticData,position:Vector2) -> bool:
+	var coords : Vector2 = Vector2(floor(position.x/UnitManager.TILE_LEN),floor(position.y/UnitManager.TILE_LEN))
+	if coords.x >= extents.end.x or coords.y >= extents.end.y:
+		return false
+	var starting_x : int = int(coords.x-building_type.len_h_tiles-extents.position.x)
+	var starting_y : int = int(coords.y-building_type.len_v_tiles-extents.position.y)
+	if starting_x < 0 or starting_y < 0:
+		return false
+	var starting_idx : int = int(coords.x-building_type.len_h_tiles) + int(extents.size.x * (coords.y-building_type.len_h_tiles))
+	for i in range(building_type.len_h_tiles):
+		for j in range(building_type.len_v_tiles):
+			var idx_to_check : int = starting_x + i + (j+starting_y) * int(extents.size.x)
+			if tile_data[idx_to_check] != -1:
+				return false
+	return true

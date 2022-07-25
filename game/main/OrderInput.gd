@@ -122,7 +122,10 @@ func _resolve_order(use_position:bool=false) -> void:
 			target = targeted_building_identifier
 			continue
 		UnitManager.OrderTypes.BUILD_OBJ:
-			target = GameState.create_building(build_order_building_type)
+			if not GameState.building_tiles.is_spot_valid_for_building(StaticData.get_building(build_order_building_type),targeted_position):
+				# give some sort of feedback
+				return
+			target = GameState.create_building(build_order_building_type,targeted_position)
 			target_type = UnitManager.ObjTargetTypes.BUILDING
 			continue
 		UnitManager.OrderTypes.CAPTURE_OBJ:
