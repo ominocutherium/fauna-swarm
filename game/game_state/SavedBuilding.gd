@@ -101,7 +101,7 @@ func add_queue_item(task_identifier:String,target) -> bool:
 				item.callback_obj = self
 				return _add_queue_item(item)
 		"generate_units":
-			var unit_generated : SavedUnit = GameState.add_unit(0,-1,faction) # TODO: update building data and static data for this
+			var unit_generated : SavedUnit = GameState.get_unit(GameState.add_unit(0,-1,faction)) # TODO: update building data and static data for this
 			unit_generated.set_queued()
 			GameState.get_faction(faction).add_unit(unit_generated)
 			var item : Dictionary = QUEUE_ITEM_TYPE.duplicate()

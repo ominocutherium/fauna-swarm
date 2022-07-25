@@ -151,7 +151,7 @@ func _on_unit_income_timeout_dict_expired(dict:Dictionary) -> void:
 	var with_upgrade : int = -1
 	if dict.has("with_upgrade"):
 		with_upgrade = dict.with_upgrade
-	emit_signal("request_unit_generation_from_income",dict.unit_type,dict.unit_qty,with_upgrade)
+	emit_signal("request_unit_generation_from_income",dict.unit_qty,dict.unit_type,identifier,new_units_spawn_at,with_upgrade)
 
 
 func _push_new_unit_income_timeout_dict() -> void:

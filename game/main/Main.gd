@@ -52,6 +52,9 @@ func _ready() -> void:
 				spawn_existing_unit(unit.identifier,unit.position)
 		for building in GameState.buildings:
 			_add_building_connections(building)
+		for faction in GameState.factions:
+			if faction != null:
+				(faction as SavedFaction).connect("request_unit_generation_from_income",self,"spawn_num_of_requested_units")
 		GameState.set_process(true)
 		get_tree().paused = false
 	foreground_display.reference_tm_for_sprite_tilevs = building_tilemap
@@ -66,7 +69,7 @@ func spawn_num_of_requested_units(p_num:int,species:int,faction:int,where:Vector
 		UnitManager.spawn_unit(identifier,actual_spawn_pos)
 		foreground_display.spawn_unit(identifier,actual_spawn_pos)
 		unit.set_spawned()
-		GameState.get_faction(faction).add_unit(unit)
+		GameState.factions[faction].add_unit(unit)
 		_add_unit_connections(unit)
 
 

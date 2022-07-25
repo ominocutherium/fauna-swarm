@@ -381,6 +381,7 @@ func _increase_unit_pool_size() -> void:
 	alive_unit_factions.resize(UNIT_POOL_SIZE_INCREMENT+starting_idx)
 	for i in range(starting_idx,starting_idx+UNIT_POOL_SIZE_INCREMENT):
 		alive_unit_identifiers[i] = -1
+		alive_unit_path_ids[i] = -1
 		_unit_pool_unused_idxs.append(i)
 	_unit_pool_size += UNIT_POOL_SIZE_INCREMENT
 
