@@ -34,4 +34,5 @@ export(Array) var buildings := []
 export(float) var elapsed_time : float
 export(int) var rng_seed : int
 export(int) var rng_state : int
+export(int) var starting_forest_heart_count : int
 

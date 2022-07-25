@@ -28,6 +28,7 @@ extends Resource
 
 
 const CHECK_FOR_SPOT_IN_QUEUE_TIMEOUT = 4.0/13.0
+const BUILDING_CAP_FOR_INCOME_MILESTONE = 31.0
 const BLANK_UNIT_INCOME_DICT = {
 	"cooldown_s":5.0,
 	"timeout_s":0.0,
@@ -61,7 +62,8 @@ signal request_unit_spawn(unit_identifier)
 
 export(int) var identifier : int
 export(int) var current_currency : int = 0 # gold or leaves
-export(int) var current_special_resource : int = 0 # forest hearts for pure faction; evil factions currently don't use this
+export(int) var current_special_resource : int = 0 # forest hearts for pure faction; evil factions currently don't use this. Does not go down, current display subtracts number of buildings using it
+export(int) var max_num_buildings_built_at_once : int = 0 # typically only used for evil factions' build milestones
 export(Array) var spawned_unit_identifiers := []
 export(Array) var queued_unit_identifiers := []
 export(Array) var unit_identifiers_in_limbo := []
@@ -112,6 +114,11 @@ func on_restore() -> void:
 		GameState.event_heap.push_dict_onto_heap(place_limbo_unit_in_queue_cooldown)
 
 
+func on_init() -> void:
+	_push_new_currency_income_timeout_dict()
+	_push_new_unit_income_timeout_dict()
+
+
 func _on_unit_allegiance_changed(unit:SavedUnit) -> void:
 	remove_unit(unit)
 	GameState.get_faction(unit.allegiance).add_unit(unit)
@@ -155,8 +162,19 @@ func _on_currency_income_timeout_dict_expired(dict:Dictionary) -> void:
 func _push_new_currency_income_timeout_dict() -> void:
 	currency_income_cooldown = BLANK_CURRENCY_INCOME_DICT.duplicate()
 	currency_income_cooldown.callback_obj = self
+	currency_income_cooldown.cooldown_s = StaticData.get_faction(identifier).income_cooldown
+	var milestone_multiplier : float = 1.0
+	match StaticData.get_faction(identifier).faction_type:
+		FactionStaticData.FactionTypes.PURE:
+			milestone_multiplier = lerp(1.0,StaticData.get_faction(identifier).income_amount_maximum_multiplier,
+					0.5 * float(GameState.background_tiles.tile_ids_ever_within_purification_range.size()) / (
+					GameState.background_tiles.extents.size.x * GameState.background_tiles.extents.size.y) +
+					0.5 * min(1.0,float(current_special_resource/max(1.0,GameState.starting_forest_heart_count))))
+		FactionStaticData.FactionTypes.EVIL:
+			milestone_multiplier = lerp(1.0,StaticData.get_faction(identifier).income_amount_maximum_multiplier,
+					min(1.0,max_num_buildings_built_at_once/BUILDING_CAP_FOR_INCOME_MILESTONE))
+	currency_income_cooldown.amount = int(floor(StaticData.get_faction(identifier).income_amount*milestone_multiplier))
 	currency_income_cooldown.timeout_s = GameState.elapsed_time + currency_income_cooldown.cooldown_s
-	# TODO: calculate amount from static data and milestones
 	GameState.event_heap.push_dict_onto_heap(currency_income_cooldown)
 
 

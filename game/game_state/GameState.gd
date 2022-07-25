@@ -37,6 +37,7 @@ var random_number_generator := RandomNumberGenerator.new()
 var rng_seed : int
 var cosmetic_rng : RandomNumberGenerator
 var game_mode : int = GameMode.SP_PURITY_VS_SINGLE_EVIL
+var starting_forest_heart_count : int = 0
 
 
 func _init() -> void:
@@ -75,6 +76,7 @@ func initialize_new_game(mode:int=GameMode.SP_PURITY_VS_SINGLE_EVIL,mapfile:Star
 	var first_evil_faction := _generate_faction(first_chosen_evil)
 	var second_evil_faction : SavedFaction
 	used_edge_locations.append(first_evil_faction.new_units_spawn_at)
+	starting_forest_heart_count = mapfile.number_of_unclaimed_forest_hearts
 	if mode in [GameMode.MP_EVIL_VS_EVIL,GameMode.SP_PURITY_VS_TWO_EVILS]:
 		var second_chosen_evil : int = -1
 		while second_chosen_evil < 0 or second_chosen_evil == first_chosen_evil:
@@ -136,6 +138,7 @@ func restore(save_res:SavedGameState) -> void:
 	for b in buildings:
 		(b as SavedBuilding).on_restore()
 	elapsed_time = save_res.elapsed_time
+	starting_forest_heart_count = save_res.starting_forest_heart_count
 
 
 func save() -> SavedGameState:
@@ -153,6 +156,7 @@ func save() -> SavedGameState:
 	save_res.factions = factions
 	save_res.rng_seed = rng_seed
 	save_res.rng_state = random_number_generator.state
+	save_res.starting_forest_heart_count = starting_forest_heart_count
 	return save_res
 
 

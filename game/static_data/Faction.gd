@@ -32,8 +32,13 @@ const STRING_ATTRIBUTES := [
 	"name_key",
 	"engine_key",
 ]
-const INT_ATTRIBUTES := []
-const REAL_ATTRIBUTES := []
+const INT_ATTRIBUTES := [
+	"income_amount",
+	"income_amount_maximum_multiplier",
+]
+const REAL_ATTRIBUTES := [
+	"income_cooldown",
+]
 const FILTER_ATTRIBUTES := {
 	"faction_type":"FACTION_TYPES_TO_ENUM",
 }
@@ -57,7 +62,8 @@ export(String) var name_key : String
 export(String) var engine_key : String
 export(Array) var unit_bonuses : Array = []
 export(float) var income_cooldown : float = 20.0
-export(float) var income_amount : float = 15.0
+export(int) var income_amount : int = 15
+export(float) var income_amount_maximum_multiplier : float = 5.0
 
 var bonuses_by_species := {}
 
