@@ -38,6 +38,7 @@ const HANDLERS_BY_EVENT = {
 signal report_valid_order_in_progress(order_type)
 signal report_no_valid_order_in_progress
 signal report_no_more_order_data
+signal report_build_building_order_in_progress(building_type)
 
 
 var list_of_selected_unit_identifiers := [] setget set_list_of_selected_unit_identifiers
@@ -68,6 +69,7 @@ func set_targeted_building_identifier(id:int) -> void:
 
 func set_build_order_building_to_build(id:int) -> void:
 	build_order_building_type = id
+	emit_signal("report_build_building_order_in_progress",build_order_building_type)
 
 
 func set_targeted_unit_identifier(id:int) -> void:

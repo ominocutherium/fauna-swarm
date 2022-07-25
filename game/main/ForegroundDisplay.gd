@@ -30,6 +30,13 @@ var lists_of_static_sprites_by_tilev := {}
 var reference_tm_for_sprite_tilevs : TileMap
 var units_by_identifier := {}
 var buildings_by_identifier := {}
+var phantom_building : Node2D
+var position_target : Node2D
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		_move_phantom_building_according_to_cursor(event.relative)
 
 
 func add_static_sprite(tex:Texture,region:Rect2,tex_offset:Vector2,base_location:Vector2) -> void:
@@ -67,6 +74,28 @@ func remove_building_sprite(identifier:int) -> void:
 	if buildings_by_identifier.has(identifier):
 		buildings_by_identifier[identifier].queue_free()
 		buildings_by_identifier.erase(identifier)
+
+
+func spawn_phantom_building(building_type:int) -> void:
+	pass
+
+
+func show_position_target() -> void:
+	pass
+
+
+func hide_position_target() -> void:
+	pass
+
+
+func _move_phantom_building_according_to_cursor(amount:Vector2) -> void:
+	pass
+
+
+func despawn_phantom_building() -> void:
+	if phantom_building != null and is_instance_valid(phantom_building):
+		phantom_building.queue_free()
+		phantom_building = null
 
 
 func _add_sprite(tex:Texture,region:Rect2,tex_offset:Vector2,base_location:Vector2,sprite_subclass:GDScript=null) -> Sprite:

@@ -59,6 +59,7 @@ func _ready() -> void:
 		get_tree().paused = false
 	foreground_display.reference_tm_for_sprite_tilevs = building_tilemap
 	UnitManager.connect("unit_moved",self,"_on_unit_moved")
+	order_input_handler.connect("report_build_building_order_in_progress",foreground_display,"spawn_phantom_building")
 
 
 func spawn_num_of_requested_units(p_num:int,species:int,faction:int,where:Vector2,upgrade_equipped:int=-1) -> void:
