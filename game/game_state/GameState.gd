@@ -29,6 +29,7 @@ enum GameMode {SP_PURITY_VS_SINGLE_EVIL,SP_PURITY_VS_TWO_EVILS,MP_EVIL_VS_EVIL}
 var units := []
 var factions := []
 var buildings := []
+var commanders := []
 var background_tiles : BackgroundTileData
 var building_tiles : GameStateBuildingData
 var elapsed_time : float = 0.0
@@ -87,6 +88,7 @@ func initialize_new_game(mode:int=GameMode.SP_PURITY_VS_SINGLE_EVIL,mapfile:Star
 	for faction in factions:
 		if faction != null:
 			faction.on_init()
+	_on_init_or_restore()
 
 
 func get_pure_faction() -> Object:
@@ -143,6 +145,7 @@ func restore(save_res:SavedGameState) -> void:
 		(b as SavedBuilding).on_restore()
 	elapsed_time = save_res.elapsed_time
 	starting_forest_heart_count = save_res.starting_forest_heart_count
+	_on_init_or_restore()
 
 
 func save() -> SavedGameState:
@@ -171,6 +174,21 @@ func _serialize_units() -> Array: # sets and returns an array of SavedUnits
 		unit.sync_data_from_manager()
 		unit.save()
 	return units
+
+
+func _on_init_or_restore() -> void:
+	commanders.resize(factions.size())
+	for i in range(factions.size()):
+		if factions[i] as SavedFaction:
+			match StaticData.get_faction(i).faction_type:
+				FactionStaticData.FactionTypes.PURE:
+					commanders[i] = Commander.new()
+				FactionStaticData.FactionTypes.EVIL:
+					if game_mode != GameMode.MP_EVIL_VS_EVIL:
+						commanders[i] = NPCCommander.new()
+					else:
+						commanders[i] = Commander.new()
+			commanders[i].faction_id = i
 
 
 func _prune_unalive_and_unqueued_units_when_serializing() -> void:

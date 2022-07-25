@@ -41,12 +41,23 @@ signal report_no_more_order_data
 signal report_build_building_order_in_progress(building_type)
 
 
+var player_commander : Commander setget set_player_commander
 var list_of_selected_unit_identifiers := [] setget set_list_of_selected_unit_identifiers
 var targeted_building_identifier : int = -1 setget set_targeted_building_identifier
 var targeted_unit_identifier : int = -1 setget set_targeted_unit_identifier
 var targeted_position : Vector2 = Vector2()
 var build_order_building_type : int = -1
 var order_in_progress : int = -1
+
+
+func _ready() -> void:
+	match GameState.game_mode:
+		GameState.GameMode.SP_PURITY_VS_SINGLE_EVIL:
+			continue
+		GameState.GameMode.SP_PURITY_VS_TWO_EVILS:
+			continue
+		_:
+			self.player_commander = GameState.commanders[StaticData.engine_keys_to_faction_ids.purity]
 
 
 func _process(delta: float) -> void:
@@ -96,6 +107,10 @@ func set_targeted_position(position:Vector2) -> void:
 	targeted_position = position
 	if order_in_progress != -1 and list_of_selected_unit_identifiers != [] and order_in_progress != UnitManager.OrderTypes.CAPTURE_OBJ:
 		_resolve_order(true)
+
+
+func set_player_commander(value:Commander) -> void:
+	player_commander = value
 
 
 func _resolve_order(use_position:bool=false) -> void:
