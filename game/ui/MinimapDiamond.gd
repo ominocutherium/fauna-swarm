@@ -24,7 +24,7 @@
 
 extends Node2D
 
-export(Texture) var texture
+export(Texture) var texture setget set_texture
 
 
 onready var minimap_diamond_points := [
@@ -44,6 +44,7 @@ func set_texture(tex:Texture) -> void:
 	texture = tex
 	if texture is MinimapTexture:
 		texture.connect("texture_updated",self,"_on_texture_updated")
+		texture.paint_layout()
 
 func _on_texture_updated() -> void:
 	update()

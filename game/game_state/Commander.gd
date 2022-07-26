@@ -37,8 +37,8 @@ var faction : SavedFaction setget ,get_faction
 
 
 func set_building_order(building_to_build:int,units_to_build_it:Array,where_coords:Vector2) -> void:
-	var building_type := StaticData.get_building(building_to_build)
-	var building := GameState.create_building(building_to_build,where_coords)
+	var building_type = StaticData.get_building(building_to_build)
+	var building = GameState.create_building(building_to_build,where_coords)
 	self.faction.current_currency -= building_type.cost_to_build
 
 	for unit_id in units_to_build_it:

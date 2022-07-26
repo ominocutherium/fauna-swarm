@@ -27,3 +27,55 @@ extends ImageTexture
 class_name MinimapTexture
 
 signal texture_updated
+
+
+enum TilePaints {PURITY_TILE,EVIL_TILE,OBSTACLE,PURITY_BUILDING,FACTIONLESS_BUILDING,EVIL_BUILDING,PURITY_UNIT,EVIL_UNIT}
+
+
+export(Color) var purity_units_color := Color.cyan
+export(Color) var purity_buildings_color := Color.aquamarine
+export(Color) var purity_tile_color := Color.darkgreen
+export(Color) var evil_tile_color := Color.darkslateblue
+export(Color) var obstacle_color := Color.black
+export(Color) var factionless_building_color := Color.gray
+export(Color) var evil_building_color := Color.darkmagenta
+export(Color) var evil_units_color := Color.magenta
+export(Vector2) var physics_space_to_display_space_x_basis : Vector2 = Vector2.RIGHT
+export(Vector2) var physics_space_to_display_space_y_basis : Vector2 = Vector2.DOWN
+
+var image : Image
+var _row_size : int = -1
+
+func _init() -> void:
+	image = Image.new()
+	image.create(400,200,false,Image.FORMAT_RGB8)
+	create_from_image(image)
+
+func paint_layout() -> void:
+	image.lock()
+	var total_pixels : int = int(GameState.background_tiles.tile_data.size())
+	for i in range(total_pixels):
+		var color_to_paint : Color = Color.white
+		var paint_coords := get_starting_tex_coords_from_tile_idx(i)
+		var tile_type_identifier : String = GameState.background_tiles._tile_identifiers_by_tilemap_id[GameState.background_tiles.tile_data[i]]
+		if tile_type_identifier.ends_with("obstacle"):
+			color_to_paint = obstacle_color
+		elif tile_type_identifier.begins_with("purity"):
+			color_to_paint = purity_tile_color
+		else:
+			color_to_paint = evil_tile_color
+		image.set_pixelv(paint_coords,color_to_paint)
+		image.set_pixelv(paint_coords+Vector2.RIGHT,color_to_paint)
+		if i + _row_size < total_pixels and (i+1) % _row_size > 0:
+			image.set_pixelv(paint_coords+Vector2.DOWN,color_to_paint)
+			image.set_pixelv(paint_coords+Vector2.RIGHT+Vector2.DOWN,color_to_paint)
+	image.unlock()
+	set_data(image)
+	emit_signal("texture_updated")
+
+func get_starting_tex_coords_from_tile_idx(idx:int) -> Vector2:
+	if _row_size < 0:
+		_row_size = int(GameState.background_tiles.extents.size.x)
+	var data_x_coords : int = idx % _row_size
+	var data_y_coords : int = idx / _row_size
+	return Vector2(198+2*data_x_coords-2*data_y_coords,data_x_coords+data_y_coords)

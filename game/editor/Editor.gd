@@ -50,7 +50,9 @@ func save_to_res() -> void:
 		t_t_names_by_id[tile_id] = tile_set.tile_get_name(tile_id)
 	save_res.tile_type_names_by_id = t_t_names_by_id
 	for tile_v in get_used_cells(): # make sure to actually paint every cell in the rectangle
-		tile_data[int(tile_v.x+tile_v.y*save_res.extents.size.x)] = get_cellv(tile_v)
+		var x_idx : int = int(tile_v.x-save_res.extents.position.x)
+		var y_idx : int = int(tile_v.y-save_res.extents.position.y)
+		tile_data[int(x_idx+y_idx*save_res.extents.size.x)] = get_cellv(tile_v)
 	save_res.tile_data = tile_data
 
 	if cosmetic_rng_seed == "":

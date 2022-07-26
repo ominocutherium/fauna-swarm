@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://main/Main.gd" type="Script" id=1]
 [ext_resource path="res://main/MouseInput.gd" type="Script" id=2]
@@ -10,6 +10,20 @@
 [ext_resource path="res://main/ForegroundDisplay.gd" type="Script" id=8]
 [ext_resource path="res://main/TileDisplay.gd" type="Script" id=9]
 [ext_resource path="res://main/BuildingTiles.gd" type="Script" id=10]
+[ext_resource path="res://ui/MinimapTexture.gd" type="Script" id=11]
+
+[sub_resource type="ImageTexture" id=1]
+script = ExtResource( 11 )
+purity_units_color = Color( 0, 1, 1, 1 )
+purity_buildings_color = Color( 0.5, 1, 0.83, 1 )
+purity_tile_color = Color( 0, 0.39, 0, 1 )
+evil_tile_color = Color( 0.28, 0.24, 0.55, 1 )
+obstacle_color = Color( 0, 0, 0, 1 )
+factionless_building_color = Color( 0.75, 0.75, 0.75, 1 )
+evil_building_color = Color( 0.55, 0, 0.55, 1 )
+evil_units_color = Color( 1, 0, 1, 1 )
+physics_space_to_display_space_x_basis = Vector2( 1, 0 )
+physics_space_to_display_space_y_basis = Vector2( 0, 1 )
 
 [node name="Main" type="Node2D"]
 pause_mode = 2
@@ -98,7 +112,7 @@ pause_mode = 2
 
 [node name="MinimapDiamond" type="Node2D" parent="UI"]
 script = ExtResource( 6 )
-texture = ExtResource( 4 )
+texture = SubResource( 1 )
 
 [connection signal="tile_covered_by_building" from="Building Tiles" to="Foreground Display Objects" method="_on_tile_covered_by_building"]
 [connection signal="tile_uncovered_by_building" from="Building Tiles" to="Foreground Display Objects" method="_on_tile_no_longer_covered_by_building"]
