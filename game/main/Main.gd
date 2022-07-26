@@ -30,6 +30,8 @@ export(NodePath) var foreground_disp_path : NodePath
 export(NodePath) var background_tilemap_path : NodePath
 export(NodePath) var building_tilemap_path : NodePath
 export(NodePath) var order_input_handler_path : NodePath
+export(NodePath) var minimap_path : NodePath
+export(NodePath) var camera_path : NodePath
 
 
 onready var heads_up_display : HeadsUpDisplay = get_node(hud_path)
@@ -38,6 +40,8 @@ onready var foreground_display : ForegroundDisplay = get_node(foreground_disp_pa
 onready var background_tilemap : TileMap = get_node(background_tilemap_path)
 onready var building_tilemap : TileMap = get_node(building_tilemap_path)
 onready var order_input_handler : OrderInputHandler = get_node(order_input_handler_path)
+onready var minimap = get_node(minimap_path)
+onready var camera : Camera2D = get_node(camera_path)
 
 
 func _ready() -> void:
@@ -60,6 +64,8 @@ func _ready() -> void:
 	foreground_display.reference_tm_for_sprite_tilevs = building_tilemap
 	UnitManager.connect("unit_moved",self,"_on_unit_moved")
 	order_input_handler.connect("report_build_building_order_in_progress",foreground_display,"spawn_phantom_building")
+	if minimap.texture as MinimapTexture:
+		camera.connect("moved",minimap.texture,"set_current_camera_location")
 
 
 func spawn_num_of_requested_units(p_num:int,species:int,faction:int,where:Vector2,upgrade_equipped:int=-1) -> void:

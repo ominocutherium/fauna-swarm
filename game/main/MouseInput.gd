@@ -52,6 +52,7 @@ var _left_down_for_drag : bool = false
 var _left_down_in_minimap_diamond : bool = false
 var _left_down_time : float = 0.0
 var _middle_down_for_pan : bool = false
+var _middle_pan_amount := Vector2()
 var _right_down_for_action : bool = false
 var _edge_pan_magnitude_this_frame : Vector2 = Vector2()
 var _selection_rect := Rect2()
@@ -98,7 +99,10 @@ func _input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
 	if _left_down_for_drag:
 		_left_down_time += delta
-	if _edge_pan_magnitude_this_frame != Vector2():
+	if _middle_down_for_pan:
+		emit_signal("request_pan_camera",_middle_pan_amount)
+		_middle_pan_amount = Vector2()
+	elif _edge_pan_magnitude_this_frame != Vector2():
 		emit_signal("request_pan_camera",mouse_edge_camera_pan_speed*_edge_pan_magnitude_this_frame*delta)
 
 
@@ -147,7 +151,8 @@ func _if_mouse_button_handle_press_release(event:InputEvent) -> void:
 func _if_mouse_motion_handle_check_edge_pan_release(event:InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		if _middle_down_for_pan:
-			emit_signal("request_pan_camera",event.relative)
+			_middle_pan_amount += event.relative
+#			emit_signal("request_pan_camera",event.relative)
 			return
 		if _left_down_for_drag:
 			_selection_rect.end = make_canvas_position_local(event.position)

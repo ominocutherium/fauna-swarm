@@ -40,14 +40,19 @@ export(Color) var obstacle_color := Color.black
 export(Color) var factionless_building_color := Color.gray
 export(Color) var evil_building_color := Color.darkmagenta
 export(Color) var evil_units_color := Color.magenta
+export(Color) var camera_boundary_color := Color.red
 export(Vector2) var physics_space_to_display_space_x_basis : Vector2 = Vector2.RIGHT
 export(Vector2) var physics_space_to_display_space_y_basis : Vector2 = Vector2.DOWN
 
 var image : Image
+var current_camera_location : Vector2 setget set_current_camera_location
+var _translated_camera_loc : Vector2
 var _row_size : int = -1
+var _rect : Rect2
 
 func _init() -> void:
 	image = Image.new()
+	_rect = Rect2(0,0,400,200)
 	image.create(400,200,false,Image.FORMAT_RGB8)
 	create_from_image(image)
 
@@ -69,6 +74,7 @@ func paint_layout() -> void:
 		if i + _row_size < total_pixels and (i+1) % _row_size > 0:
 			image.set_pixelv(paint_coords+Vector2.DOWN,color_to_paint)
 			image.set_pixelv(paint_coords+Vector2.RIGHT+Vector2.DOWN,color_to_paint)
+	_paint_camera_loc()
 	image.unlock()
 	set_data(image)
 	emit_signal("texture_updated")
@@ -79,3 +85,29 @@ func get_starting_tex_coords_from_tile_idx(idx:int) -> Vector2:
 	var data_x_coords : int = idx % _row_size
 	var data_y_coords : int = idx / _row_size
 	return Vector2(198+2*data_x_coords-2*data_y_coords,data_x_coords+data_y_coords)
+
+func set_current_camera_location(to:Vector2) -> void:
+	current_camera_location = to
+	var translated_loc : Vector2 = Vector2(floor(current_camera_location.x/64.0),floor(current_camera_location.y/32.0)) + Vector2(200,0)
+	var changed : bool = true if translated_loc != _translated_camera_loc else false
+	_translated_camera_loc = translated_loc
+	if changed:
+		paint_layout()
+
+func _paint_camera_loc() -> void:
+	for i in range(50):
+		var pixelv := Vector2(_translated_camera_loc.x-25.0+i,_translated_camera_loc.y-18.0)
+		if _rect.has_point(pixelv):
+			image.set_pixelv(pixelv,camera_boundary_color)
+	for i in range(50):
+		var pixelv := Vector2(_translated_camera_loc.x-25.0+i,_translated_camera_loc.y+19.0)
+		if _rect.has_point(pixelv):
+			image.set_pixelv(pixelv,camera_boundary_color)
+	for i in range(37):
+		var pixelv := Vector2(_translated_camera_loc.x-25.0,_translated_camera_loc.y-18.0+i)
+		if _rect.has_point(pixelv):
+			image.set_pixelv(pixelv,camera_boundary_color)
+	for i in range(37):
+		var pixelv := Vector2(_translated_camera_loc.x+25.0,_translated_camera_loc.y-18.0+i)
+		if _rect.has_point(pixelv):
+			image.set_pixelv(pixelv,camera_boundary_color)

@@ -25,12 +25,9 @@
 extends Camera2D
 
 
-# Declare member variables here. Examples:
-# var a: int = 2
-# var b: String = "text"
+signal moved
 
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.
 
@@ -41,4 +38,5 @@ func _ready() -> void:
 
 
 func _on_MouseInput_request_pan_camera(amount) -> void:
-	position += amount
+	self.position += amount
+	emit_signal("moved",position)
