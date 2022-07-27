@@ -66,9 +66,6 @@ func _ready() -> void:
 	order_input_handler.connect("report_build_building_order_in_progress",foreground_display,"spawn_phantom_building")
 	if minimap.texture as MinimapTexture:
 		camera.connect("moved",minimap.texture,"set_current_camera_location")
-	# debug building code, remove later
-	for i in range(3):
-		foreground_display._on_building_completed(StaticData.get_building(4),i,Vector2(2,2)*i)
 
 
 func spawn_num_of_requested_units(p_num:int,species:int,faction:int,where:Vector2,upgrade_equipped:int=-1) -> void:
