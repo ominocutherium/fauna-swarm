@@ -35,9 +35,16 @@ const QUEUE_ITEM_TYPE = {
 	"callback":"",
 	"callback_obj":null,
 }
+const EMPTY_BUILD_COMPLETION_EVENT_HEAP_DICT = {
+	"cooldown_s":5.0, # only counts down for most recent one
+	"timeout_s":-1.0, # used by EventHeap
+	"callback":"_on_build_progress_dict_completed",
+	"callback_obj":null,
+}
 
 signal request_spawn_unit(unit_id,tile_coordinates_v2)
 signal destroyed
+signal completed
 
 export(int) var identifer : int
 export(int) var faction : int = -1 # -1 is a valid value for factionless buildings, like unclaimed forest hearts
@@ -47,19 +54,28 @@ export(int) var main_tile_x : int
 export(int) var main_tile_y : int
 export(int) var current_health : float
 export(int) var additional_income_provided : int
-export(float) var build_progress : float
+export(float) var build_progress : float = 0.0 setget set_build_progress # TODO: ensure NGI-placed buildings start completed
 export(Array) var queue_items := []
 
 var queue_expiry_event := {} # connects to the heap
+var build_completion_event := {}
 
 
 func on_restore() -> void:
+	if build_completion_event != {} and build_progress < 1.0:
+		_push_build_progress_dict_to_heap()
 	push_top_queue_item_event_to_heap()
 
 
 func on_save() -> void:
 	if queue_expiry_event != {}:
 		queue_expiry_event.cooldown_s = queue_expiry_event.timeout_s - GameState.elapsed_time
+		queue_expiry_event.callback_obj = null
+	if build_completion_event != {}:
+		build_completion_event.callback_obj = null
+		var progress_made : float = (build_completion_event.cooldown_s - build_completion_event.timeout_s + GameState.elapsed_time) * StaticData.get_building(building_type).build_progress_per_s
+		self.build_progress += progress_made
+		build_completion_event.cooldown_s = build_completion_event.timeout_s - GameState.elapsed_time
 
 
 func get_maximum_health() -> float:
@@ -76,6 +92,7 @@ func push_top_queue_item_event_to_heap() -> void:
 	if queue_items.size() > 0:
 		queue_expiry_event = queue_items[0]
 		var timeout : float = queue_expiry_event.cooldown_s + GameState.elapsed_time
+		queue_expiry_event.callback_obj = self
 		queue_expiry_event.timeout_s = timeout
 		GameState.event_heap.push_dict_onto_heap(queue_expiry_event)
 	else:
@@ -174,6 +191,21 @@ func _on_heals_units_queue_item_removed_from_queue(queue_item:Dictionary):
 	emit_signal("request_spawn_unit",unit.identifier,Vector2(main_tile_x,main_tile_y))
 
 
+func _on_build_progress_dict_completed(dict:Dictionary) -> void:
+	self.build_progress = 1.0
+	build_completion_event = {}
+
+
+func _push_build_progress_dict_to_heap() -> void:
+	var dict := EMPTY_BUILD_COMPLETION_EVENT_HEAP_DICT.duplicate()
+	dict.cooldown_s = (1.0-build_progress) / StaticData.get_building(building_type).build_progress_per_s
+	if dict.cooldown_s == 0.0:
+		return
+	dict.timeout_s = GameState.elapsed_time + dict.cooldown_s
+	dict.callback_obj = self
+	GameState.event_heap.push_dict_onto_heap(dict)
+
+
 func _on_queue_item_removed(queue_item:Dictionary) -> void:
 	if queue_item in queue_items:
 		queue_items.erase(queue_item)
@@ -181,3 +213,10 @@ func _on_queue_item_removed(queue_item:Dictionary) -> void:
 			_on_heals_units_queue_item_removed_from_queue(queue_item)
 	if queue_expiry_event != queue_items[0]:
 		push_top_queue_item_event_to_heap()
+
+
+func set_build_progress(value:float) -> void:
+	var old_progress := build_progress
+	build_progress = max(0.0,min(1.0,value))
+	if build_progress == 1.0 and old_progress < build_progress:
+		emit_signal("completed")

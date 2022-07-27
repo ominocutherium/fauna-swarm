@@ -126,6 +126,23 @@ func _on_tile_changed_biome(tilev:Vector2,new_texture:Texture) -> void:
 		spr.texture = new_texture
 
 
+func _on_building_completed(building_type:BuildingStaticData,building_identifier:int,where_coords:Vector2) -> void:
+	print("reference tm map to world: {0} to {1}".format([where_coords,reference_tm_for_sprite_tilevs.map_to_world(where_coords)]))
+	add_building_sprite(
+			building_identifier,
+			load(building_type.texture_path),
+			Rect2(building_type.texture_position,building_type.texture_size),
+			building_type.texture_offset,
+			reference_tm_for_sprite_tilevs.map_to_world(where_coords)+Vector2(32,16))
+
+
+func _on_building_removed(building_identifier:int) -> void:
+	if buildings_by_identifier.has(building_identifier):
+		if buildings_by_identifier[building_identifier] is Node and is_instance_valid(buildings_by_identifier[building_identifier]):
+			buildings_by_identifier[building_identifier].queue_free()
+		buildings_by_identifier.erase(building_identifier)
+
+
 func _on_tile_covered_by_building(tilev:Vector2) -> void:
 	for s in lists_of_static_sprites_by_tilev[tilev]:
 		var spr := s as Sprite

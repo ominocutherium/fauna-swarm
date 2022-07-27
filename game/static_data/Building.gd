@@ -39,6 +39,10 @@ const INT_ATTRIBUTES := [
 const REAL_ATTRIBUTES := [
 	"texture_pos_x",
 	"texture_pos_y",
+	"texture_offs_x",
+	"texture_offs_y",
+	"texture_size_x",
+	"texture_size_y",
 	"build_progress_per_s",
 ]
 const FILTER_ATTRIBUTES := {
@@ -57,11 +61,16 @@ export(float) var build_progress_per_s : float
 export(int) var cost_to_build : int
 export(String) var texture_path : String
 export(Vector2) var texture_position : Vector2
+export(Vector2) var texture_offset : Vector2
 export(Vector2) var texture_size : Vector2
 export(Array) var effects : Array
 
-var texture_pos_x : float
-var texture_pos_y : float
+var texture_pos_x : float setget set_tex_pos_x
+var texture_pos_y : float setget set_tex_pos_y
+var texture_size_x : float setget set_tex_size_x
+var texture_size_y : float setget set_tex_size_y
+var texture_offs_x : float setget set_tex_offs_x
+var texture_offs_y : float setget set_tex_offs_y
 var ids_of_factions : Dictionary setget ,get_ids_of_factions
 
 func get_ids_of_factions() -> Dictionary:
@@ -71,3 +80,33 @@ func get_ids_of_factions() -> Dictionary:
 	var copy_dict : Dictionary = StaticData.engine_keys_to_faction_ids.duplicate()
 	copy_dict["factionless"] = -1
 	return copy_dict
+
+
+func set_tex_pos_x(value:float) -> void:
+	texture_pos_x = value
+	texture_position = Vector2(texture_pos_x,texture_pos_y)
+
+
+func set_tex_pos_y(value:float) -> void:
+	texture_pos_y = value
+	texture_position = Vector2(texture_pos_x,texture_pos_y)
+
+
+func set_tex_size_x(value:float) -> void:
+	texture_size_x = value
+	texture_size = Vector2(texture_size_x,texture_size_y)
+
+
+func set_tex_size_y(value:float) -> void:
+	texture_size_y = value
+	texture_size = Vector2(texture_size_x,texture_size_y)
+
+
+func set_tex_offs_x(value:float) -> void:
+	texture_offs_x = value
+	texture_offset = Vector2(texture_offs_x,texture_offs_y)
+
+
+func set_tex_offs_y(value:float) -> void:
+	texture_offs_y = value
+	texture_offset = Vector2(texture_offs_x,texture_offs_y)
