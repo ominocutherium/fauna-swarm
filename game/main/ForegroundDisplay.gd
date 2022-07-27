@@ -126,10 +126,12 @@ func _on_tile_changed_biome(tilev:Vector2,new_texture:Texture) -> void:
 		spr.texture = new_texture
 
 
-func _on_building_completed(building_type:BuildingStaticData,building_identifier:int,where_coords:Vector2) -> void:
+func _on_building_completed(building:SavedBuilding) -> void:
+	var building_type = StaticData.get_building(building.building_type)
+	var where_coords : Vector2 = Vector2(building.main_tile_x,building.main_tile_y)
 	print("reference tm map to world: {0} to {1}".format([where_coords,reference_tm_for_sprite_tilevs.map_to_world(where_coords)]))
 	add_building_sprite(
-			building_identifier,
+			building.identifier,
 			load(building_type.texture_path),
 			Rect2(building_type.texture_position,building_type.texture_size),
 			building_type.texture_offset,

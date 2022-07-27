@@ -211,3 +211,5 @@ func _add_unit_connections(unit:SavedUnit) -> void:
 func _add_building_connections(building:SavedBuilding) -> void:
 # warning-ignore:return_value_discarded
 	building.connect("request_spawn_unit",self,"spawn_existing_unit")
+	if building.build_progress < 1.0:
+		building.connect("completed",foreground_display,"_on_building_completed",[building])
