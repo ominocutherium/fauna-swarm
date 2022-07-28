@@ -67,12 +67,27 @@ const ATTACK_DAMAGE_NAMES_TO_TYPES := {
 	"melee":DamageTypes.MELEE,
 	"ranged":DamageTypes.RANGED,
 }
+const ATTRIBUTES_ADD_UPGRADE_TO := [
+	"maximum_health",
+	"move_speed",
+	"attack_damage",
+	"damage_to_units_multiplier",
+	"damage_to_buildings_multiplier",
+	"attack_hb_offset",
+]
+const ATTRIBUTES_REPLACE_UPGRADE_WITH := [
+	"attack_damage_type",
+	"melee_damage_to_multiplier",
+	"ranged_damage_to_multiplier",
+	"true_capture",
+]
 
 
 export(int) var identifier : int
 export(String) var name_key : String
 export(String) var desc_short_key : String
 export(String) var desc_key : String
+export(bool) var true_capture : bool = false
 export(int) var attack_damage_type : int
 export(float) var attack_damage : float
 export(String) var attack_name_key : String
@@ -85,6 +100,8 @@ export(float) var move_speed : float
 export(float) var maximum_health : float
 export(float) var melee_damage_to_multiplier : float = 1.0
 export(float) var ranged_damage_to_multiplier : float = 1.0
+export(float) var damage_to_units_multiplier : float = 1.0
+export(float) var damage_to_buildings_multiplier : float = 1.0
 export(float) var attack_cooldown : float = 1.0 # game balance parameter
 export(float) var attack_delay : float = 0.001 # mainly an animation parameter
 export(float) var income_selection_weight : float = 1.0 # i.e. how likely this species will be chosen relative to others for random income step
