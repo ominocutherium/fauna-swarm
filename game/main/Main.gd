@@ -213,3 +213,4 @@ func _add_building_connections(building:SavedBuilding) -> void:
 	building.connect("request_spawn_unit",self,"spawn_existing_unit")
 	if building.build_progress < 1.0:
 		building.connect("completed",foreground_display,"_on_building_completed",[building])
+	building.connect("destroyed",foreground_display,"_on_building_removed",[building.identifer])

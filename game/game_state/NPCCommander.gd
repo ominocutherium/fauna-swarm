@@ -30,4 +30,5 @@ class_name NPCCommander
 
 func update(delta:float) -> void:
 	# call in GameState._process()
+	# TODO: maybe change this to update based on callbacks from EventHeap instead
 	pass
