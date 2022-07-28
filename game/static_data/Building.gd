@@ -48,6 +48,7 @@ const REAL_ATTRIBUTES := [
 const FILTER_ATTRIBUTES := {
 	"faction":"ids_of_factions",
 }
+const VARIANT_ATTRIBUTES := []
 
 
 export(int) var identifier : int

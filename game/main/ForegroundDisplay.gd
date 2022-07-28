@@ -116,7 +116,12 @@ func _add_sprite(tex:Texture,region:Rect2,tex_offset:Vector2,base_location:Vecto
 func move_unit(identifier:int,to_position:Vector2) -> void:
 	# expects position to be in display space.
 	if units_by_identifier.has(identifier):
+		var old_pos : Vector2 = units_by_identifier[identifier].position
 		units_by_identifier[identifier].position = to_position
+		if (to_position - old_pos).x > 0 and units_by_identifier[identifier] is Sprite:
+			units_by_identifier[identifier].flip_h = true
+		else:
+			units_by_identifier[identifier].flip_h = false
 	# TODO: also set direction
 
 

@@ -43,11 +43,20 @@ const INT_ATTRIBUTES := [
 	"sprite_size_v",
 	"offset_h",
 	"offset_v",
+	"purity_pos_x",
+	"purity_pos_y",
+	"specter_pos_x",
+	"specter_pos_y",
+	"purity_up_pos_x",
+	"purity_up_pos_x",
+	"specter_up_pos_x",
+	"specter_up_pos_x",
 ]
 const REAL_ATTRIBUTES := [
 	"frames_per_second",
 ]
 const FILTER_ATTRIBUTES := {}
+const VARIANT_ATTRIBUTES := []
 
 export(int) var num_frames_idle : int
 export(int) var num_frames_moving : int
@@ -64,6 +73,26 @@ export(String) var sanguine_tex_path : String = ""
 export(String) var artifice_tex_path : String = ""
 export(String) var upgrade_0_tex_path : String = ""
 export(String) var upgrade_1_tex_path : String = ""
+
+var purity_pos_x : float
+var purity_pos_y : float
+var specter_pos_x : float
+var specter_pos_y : float
+var purity_up0_pos_x : float
+var purity_up0_pos_y : float
+var specter_up0_pos_x : float
+var specter_up0_pos_y : float
+var purity_up1_pos_x : float
+var purity_up1_pos_y : float
+var specter_up1_pos_x : float
+var specter_up1_pos_y : float
+var purity_sprite_rect : Rect2 setget ,get_spr_rect_purity_unit
+var specter_sprite_rect : Rect2 setget ,get_spr_rect_specter_unit
+var purity_up0_sprite_rect : Rect2 setget ,get_spr_rect_purity_up0
+var purity_up1_sprite_rect : Rect2 setget ,get_spr_rect_purity_up1
+var specter_up0_sprite_rect : Rect2 setget ,get_spr_rect_specter_up0
+var specter_up1_sprite_rect : Rect2 setget ,get_spr_rect_specter_up1
+
 
 var sprite_size : Vector2
 var offset : Vector2
@@ -102,3 +131,27 @@ func set_offset_h(to:int) -> void:
 func set_offset_v(to:int) -> void:
 	offset_v = to
 	offset = Vector2(offset_h,offset_v)
+
+
+func get_spr_rect_purity_unit() -> Rect2:
+	return Rect2(purity_pos_x,purity_pos_y,sprite_size_h,sprite_size_v)
+
+
+func get_spr_rect_specter_unit() -> Rect2:
+	return Rect2(specter_pos_x,specter_pos_y,sprite_size_h,sprite_size_v)
+
+
+func get_spr_rect_purity_up0() -> Rect2:
+	return Rect2(purity_up0_pos_x,purity_up0_pos_y,sprite_size_h,sprite_size_v)
+
+
+func get_spr_rect_purity_up1() -> Rect2:
+	return Rect2(purity_up1_pos_x,purity_up1_pos_y,sprite_size_h,sprite_size_v)
+
+
+func get_spr_rect_specter_up0() -> Rect2:
+	return Rect2(specter_up0_pos_x,specter_up0_pos_y,sprite_size_h,sprite_size_v)
+
+
+func get_spr_rect_specter_up1() -> Rect2:
+	return Rect2(specter_up1_pos_x,specter_up1_pos_y,sprite_size_h,sprite_size_v)

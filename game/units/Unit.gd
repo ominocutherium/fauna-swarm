@@ -31,9 +31,9 @@ var _has_valid_animations : bool = false
 var _anim_player : AnimationPlayer
 
 
-func _draw() -> void:
-	if not _has_valid_animations:
-		draw_circle(Vector2(0,0),16,Color.yellow)
+#func _draw() -> void:
+#	if not _has_valid_animations:
+#		draw_circle(Vector2(0,0),16,Color.yellow)
 
 
 func initialize_from_unit(unit:SavedUnit) -> void:
@@ -57,17 +57,27 @@ func initialize_from_unit(unit:SavedUnit) -> void:
 	if tex:
 		texture = tex
 		offset = species_static_data.offset
-		var columns : int = int(texture.get_size().x/species_static_data.sprite_size.x)
-		var rows : int = int(texture.get_size().y/species_static_data.sprite_size.y)
-		if columns * rows >= total_frames:
-			_has_valid_animations = true
-			hframes = columns
-			vframes = rows
-			setup_animations(idle_start_frame,moving_start_frame,attacking_start_frame,total_frames,species_static_data.frames_per_second)
-		# TODO: handle upgrade type as well
+#		var columns : int = int(texture.get_size().x/species_static_data.sprite_size.x)
+#		var rows : int = int(texture.get_size().y/species_static_data.sprite_size.y)
+#		if columns * rows >= total_frames:
+#			_has_valid_animations = true
+#			hframes = columns
+#			vframes = rows
+#			setup_animations(idle_start_frame,moving_start_frame,attacking_start_frame,total_frames,species_static_data.frames_per_second)
+#		# TODO: handle upgrade type as well
+		region_enabled = true
+		var region_rect_name : String = "purity_sprite_rect" if unit.faction == StaticData.engine_keys_to_faction_ids.purity else "specter_sprite_rect"
+		region_rect = species_static_data.get(region_rect_name)
+		if unit.upgrade_type > -1:
+			var format_string : String = "purity_up{0}_sprite_rect" if unit.upgrade_faction == StaticData.engine_keys_to_faction_ids.purity else "specter_up{0}_sprite_rect"
+			var upgrade_sprite := Sprite.new()
+			upgrade_sprite.texture = texture
+			upgrade_sprite.region_rect = species_static_data.get(format_string.format([unit.upgrade_type]))
+			upgrade_sprite.region_enabled = true
+			add_child(upgrade_sprite)
 	
-	if not _has_valid_animations:
-		update()
+#	if not _has_valid_animations:
+#		update()
 
 
 func start_moving() -> void:
@@ -94,6 +104,7 @@ func setup_animations(idle_start:int,moving_start:int,attacking_start:int,total:
 	setup_animation("idle",idle_start,moving_start,_anim_player,fps*(moving_start-idle_start))
 	setup_animation("move",moving_start,attacking_start,_anim_player,fps*(attacking_start-moving_start))
 	setup_animation("attack",attacking_start,total,_anim_player,fps*(total-attacking_start))
+
 
 func setup_animation(anim_name:String,frame_start:int,frame_end:int,player:AnimationPlayer,fps:float) -> void:
 	var animation := Animation.new()

@@ -54,6 +54,7 @@ const REAL_ATTRIBUTES := [
 	"income_selection_weight",
 	"cooldown_before_income",
 ]
+const VARIANT_ATTRIBUTES := []
 const FILTER_ATTRIBUTES := {
 	"attack_damage_type":"ATTACK_DAMAGE_NAMES_TO_TYPES",
 	"attack_hitbox_shape":"ATTACK_HITBOX_NAMES_TO_SHAPES",

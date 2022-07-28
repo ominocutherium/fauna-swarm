@@ -46,6 +46,7 @@ const FACTION_TYPES_TO_ENUM := {
 	"pure":FactionTypes.PURE,
 	"evil":FactionTypes.EVIL
 }
+const VARIANT_ATTRIBUTES := []
 
 
 const FACTION_IDS_BY_NAME = {

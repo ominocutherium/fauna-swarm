@@ -30,15 +30,16 @@ const STRING_ATTRIBUTES := [
 	"modified_attr_0",
 	"modified_attr_1",
 	"modified_attr_2",
-	"faction",
+	"modified_attr_3",
+	"faction_name",
 	"species_name_key",
 	"desc_key",
-	"faction_name",
 ]
 const VARIANT_ATTRIBUTES := [
 	"modified_value_0",
 	"modified_value_1",
 	"modified_value_2",
+	"modified_value_3",
 ]
 const INT_ATTRIBUTES := [
 	"upgrade_identifier",
@@ -52,9 +53,11 @@ var identifier : int = -1
 var modified_attr_0 : String
 var modified_attr_1 : String
 var modified_attr_2 : String
+var modified_attr_3 : String
 var modified_value_0
 var modified_value_1
 var modified_value_2
+var modified_value_3
 var cost : float = 100.0
 var upgrade_identifier : int
 var species_name_key : String

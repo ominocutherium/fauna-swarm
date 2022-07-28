@@ -115,6 +115,7 @@ func read_from_csv_files() -> void:
 		set(property_name,_parse_state_items_in_creation)
 		_parse_state_items_in_creation = []
 		_parse_state_row_headings = []
+		_parse_state_row_data_types = []
 
 
 func read_csv_file(filepath:String,format:String) -> void:
@@ -182,16 +183,16 @@ func _process_csv_line_rows(line:PoolStringArray) -> void:
 				continue
 			match _parse_state_row_data_types[i]:
 				TYPE_STRING:
-					continue
+					cast_data = line[i]
 				TYPE_REAL:
 					cast_data = 0.0 if not line[i].is_valid_float() else float(line[i])
 				TYPE_INT:
 					cast_data = -1 if not line[i].is_valid_integer() else int(line[i])
 				-1:
 					# was Variant, will get handled later by a special handler
-					continue
+					cast_data = line[i]
 				_:
-					cast_data = line[1]
+					cast_data = line[i]
 			if item.get(attr) is Array:
 				item.get(attr).append(cast_data)
 			else:
@@ -243,7 +244,7 @@ func _process_csv_line_columns(line:PoolStringArray) -> void:
 			continue
 		match handler:
 			TYPE_STRING:
-				continue
+				item.set(pname,cell)
 			TYPE_REAL:
 				var cast_data : float = 0.0 if not cell.is_valid_float() else float(cell)
 				item.set(pname,cast_data)
@@ -309,7 +310,7 @@ func _assign_upgrades_arr_to_species_files(arr:Array) -> void:
 
 func _get_named_species(species_name_key:String) -> SpeciesStaticData:
 	for spec in species:
-		if spec.name == species_name_key:
+		if spec.name_key == species_name_key:
 			return spec
 	return null
 
