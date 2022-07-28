@@ -42,7 +42,7 @@ var buildings := []
 var faction_color_palettes : Array setget set_faction_color_palettes
 var _faction_color_palettes := FactionColorPalettesStaticData.new()
 var factions := [] setget set_factions
-var upgrades : Array setget set_upgrades
+var species_upgrades : Array setget set_upgrades
 
 var _parse_state_property_name := ""
 var _parse_state_items_in_creation := []
@@ -139,7 +139,7 @@ func read_csv_file(filepath:String,format:String) -> void:
 
 
 func set_upgrades(to:Array) -> void:
-	pass
+	_assign_upgrades_arr_to_species_files(to)
 
 
 func choose_species_to_give_as_income() -> SpeciesStaticData:
@@ -182,11 +182,16 @@ func _process_csv_line_rows(line:PoolStringArray) -> void:
 				continue
 			match _parse_state_row_data_types[i]:
 				TYPE_STRING:
-					cast_data = line[i]
+					continue
 				TYPE_REAL:
 					cast_data = 0.0 if not line[i].is_valid_float() else float(line[i])
 				TYPE_INT:
 					cast_data = -1 if not line[i].is_valid_integer() else int(line[i])
+				-1:
+					# was Variant, will get handled later by a special handler
+					continue
+				_:
+					cast_data = line[1]
 			if item.get(attr) is Array:
 				item.get(attr).append(cast_data)
 			else:
@@ -206,6 +211,7 @@ func _get_type_of_property_name_in_item_class(pname:String,item:Object):
 			["STRING_ATTRIBUTES",TYPE_STRING],
 			["INT_ATTRIBUTES",TYPE_INT],
 			["REAL_ATTRIBUTES",TYPE_REAL],
+			["VARIANT_ATTRIBUTES",-1],
 			]:
 		if item.get(type_list_pair[0]) as Array and pname in item.get(type_list_pair[0]):
 			return type_list_pair[1]
@@ -237,13 +243,15 @@ func _process_csv_line_columns(line:PoolStringArray) -> void:
 			continue
 		match handler:
 			TYPE_STRING:
-				item.set(pname,cell)
+				continue
 			TYPE_REAL:
 				var cast_data : float = 0.0 if not cell.is_valid_float() else float(cell)
 				item.set(pname,cast_data)
 			TYPE_INT:
 				var cast_data : int = -1 if not cell.is_valid_integer() else int(cell)
 				item.set(pname,cast_data)
+			_:
+				item.set(pname,cell)
 
 
 func _process_csv_line_custom_faction(line:PoolStringArray) -> void:
@@ -290,4 +298,61 @@ func _process_csv_line_custom_colorpalettes(line:PoolStringArray) -> void:
 
 
 func _assign_upgrades_arr_to_species_files(arr:Array) -> void:
-	pass
+	for u in arr:
+		if u as UpgradeStaticData:
+			_handle_species_upgrade_datatypes(u)
+			var spec := _get_named_species(u.species_name_key)
+			if not spec.upgrade_attributes_by_identifier_then_faction.has(u.upgrade_identifier):
+				spec.upgrade_attributes_by_identifier_then_faction[u.upgrade_identifier] = {}
+			spec.upgrade_attributes_by_identifier_then_faction[u.upgrade_identifier][engine_keys_to_faction_ids[u.faction_name]] = u
+
+
+func _get_named_species(species_name_key:String) -> SpeciesStaticData:
+	for spec in species:
+		if spec.name == species_name_key:
+			return spec
+	return null
+
+
+func _handle_species_upgrade_datatypes(upgrade:UpgradeStaticData) -> void:
+	var host_species : SpeciesStaticData = _get_named_species(upgrade.species_name_key)
+	if not host_species:
+		return
+	for i in range(3):
+		var attr_name : String = upgrade.get("modified_attr_"+str(i))
+		var modifier : String = upgrade.get("modified_value_"+str(i))
+		var set_value
+		match typeof(host_species.get(attr_name)):
+			TYPE_BOOL:
+				if modifier == "false":
+					set_value = false
+				elif modifier == "true":
+					set_value = true
+				else:
+					set_value = bool(modifier)
+				upgrade.set("modified_value_"+str(i),bool(modifier))
+			TYPE_STRING:
+				continue
+			TYPE_INT:
+				if modifier.is_valid_integer():
+					set_value = int(modifier)
+				else:
+					set_value = -1
+					print("There was a problem parsing the upgrade value for attribute {0} in species {1} with upgrade named {2}: expected integer, got {3}".format([
+						attr_name,
+						upgrade.species_name_key,
+						upgrade.desc_key,
+						modifier,
+					]))
+			TYPE_REAL:
+				if modifier.is_valid_float():
+					set_value = float(modifier)
+				else:
+					set_value = 0.0
+					print("There was a problem parsing the upgrade value for attribute {0} in species {1} with upgrade named {2}: expected number, got {3}".format([
+						attr_name,
+						upgrade.species_name_key,
+						upgrade.desc_key,
+						modifier,
+					]))
+		upgrade.set("modified_value_"+str(i),set_value)

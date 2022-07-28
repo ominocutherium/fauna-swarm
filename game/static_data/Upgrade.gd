@@ -26,24 +26,37 @@ extends Resource
 
 class_name UpgradeStaticData
 
-const STRING_ATTRIBUTES := []
-const INT_ATTRIBUTES := []
-const REAL_ATTRIBUTES := []
+const STRING_ATTRIBUTES := [
+	"modified_attr_0",
+	"modified_attr_1",
+	"modified_attr_2",
+	"faction",
+	"species_name_key",
+	"desc_key",
+	"faction_name",
+]
+const VARIANT_ATTRIBUTES := [
+	"modified_value_0",
+	"modified_value_1",
+	"modified_value_2",
+]
+const INT_ATTRIBUTES := [
+	"upgrade_identifier",
+]
+const REAL_ATTRIBUTES := [
+	"cost",
+]
 const FILTER_ATTRIBUTES := {}
 
 var identifier : int = -1
-
-
-# Declare member variables here. Examples:
-# var a: int = 2
-# var b: String = "text"
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta: float) -> void:
-#	pass
+var modified_attr_0 : String
+var modified_attr_1 : String
+var modified_attr_2 : String
+var modified_value_0
+var modified_value_1
+var modified_value_2
+var cost : float = 100.0
+var upgrade_identifier : int
+var species_name_key : String
+var desc_key : String
+var faction_name : String

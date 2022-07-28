@@ -208,3 +208,11 @@ func _on_attack_delay_timed_out(dict:Dictionary) -> void:
 func _on_attack_cooldown_timed_out(_dict:Dictionary) -> void:
 	attack_timing_information = {}
 	is_able_to_attack = true
+
+
+func _get_attr_modified_by_upgrade(attr_name:String):
+	if attr_name in StaticData.get_species(species).ATTRIBUTES_ADD_UPGRADE_TO:
+		pass
+	elif attr_name in StaticData.get_species(species).ATTRIBUTES_REPLACE_UPGRADE_WITH:
+		pass
+	return get(attr_name)

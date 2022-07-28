@@ -87,7 +87,7 @@ export(int) var identifier : int
 export(String) var name_key : String
 export(String) var desc_short_key : String
 export(String) var desc_key : String
-export(bool) var true_capture : bool = false
+export(bool) var true_capture : bool = false # this is never parsed from a csv so being a bool is OK
 export(int) var attack_damage_type : int
 export(float) var attack_damage : float
 export(String) var attack_name_key : String
