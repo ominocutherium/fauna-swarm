@@ -63,7 +63,8 @@ var _unit_pool_unused_idxs := []
 var _path_pool_size : int = 0
 var _path_pool_unused_idxs := []
 var _unit_paths := []
-var _space_rid : RID
+var space_rid : RID
+var has_created_space_rid : bool = false
 var _obstacle_shape_rids := []
 var _obstacle_body_rids := []
 var obstacle_idxs_by_coords := {}
@@ -135,7 +136,8 @@ class UnitPath:
 
 
 func _ready() -> void:
-	_space_rid = Physics2DServer.space_create()
+	space_rid = Physics2DServer.space_create()
+	has_created_space_rid = true
 	for j in range(NUM_QUADRANTS_Y):
 		for i in range(NUM_QUADRANTS_X):
 			_lists_of_unit_idxs_from_quadrant[Vector2(i,j)] = []
@@ -241,7 +243,7 @@ func spawn_unit(identifier:int,where:Vector2) -> void:
 	alive_unit_identifiers[idx] = identifier
 	alive_unit_factions[idx] = GameState.get_unit(identifier).faction # TODO use this to set coll layer and mask
 	var body := Physics2DServer.body_create()
-	Physics2DServer.body_set_space(body,_space_rid)
+	Physics2DServer.body_set_space(body,space_rid)
 	Physics2DServer.body_set_mode(body,Physics2DServer.BODY_MODE_KINEMATIC)
 	alive_unit_body_rids[idx] = body
 	var shape := _get_unit_collshape_from_static_data(identifier)
@@ -288,7 +290,7 @@ func despawn_unit(identifier:int) -> void:
 func spawn_obstacle(where_coords:Vector2) -> void:
 	obstacle_idxs_by_coords[where_coords] = _obstacle_body_rids.size()
 	var body := Physics2DServer.body_create()
-	Physics2DServer.body_set_space(body,_space_rid)
+	Physics2DServer.body_set_space(body,space_rid)
 	Physics2DServer.body_set_mode(body,Physics2DServer.BODY_MODE_STATIC)
 	_obstacle_body_rids.append(body)
 	var shape := _get_obstacle_collshape()
