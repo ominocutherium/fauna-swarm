@@ -32,7 +32,7 @@ class_name Commander
 # It's also cleaner to separate this code from Faction so that it can be inherited by a class
 # which holds all of the NPC faction AI logic.
 
-var faction_id : int = -1
+var faction_id : int = -1 setget set_faction_id
 var faction : SavedFaction setget ,get_faction
 
 
@@ -49,6 +49,11 @@ func set_building_order(building_to_build:int,units_to_build_it:Array,where_coor
 
 func get_faction() -> SavedFaction:
 	return GameState.factions[faction_id]
+
+
+func set_faction_id(value:int) -> void:
+	faction_id = value
+	# virutual function
 
 
 func upgrade_unit(unit_identifier:int,upgrade_to_apply:int) -> void:

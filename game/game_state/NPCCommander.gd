@@ -26,9 +26,70 @@ extends Commander
 
 class_name NPCCommander
 
+enum Priorities {EXPAND_BUILDINGS,MORE_UNITS,UPGRADE_UNITS}
+
+var _costs_of_buildings := {}
+var current_priority : int
+
 # Holds "bot" logic for NPC commanders.
 
-func update(delta:float) -> void:
+func update(_delta:float) -> void:
 	# call in GameState._process()
 	# TODO: maybe change this to update based on callbacks from EventHeap instead
+	match current_priority:
+		Priorities.EXPAND_BUILDINGS:
+			if not _has_space_to_build():
+				if _has_units_available_for_an_order() and _has_units_in_range_of_creep_blocking_building():
+					_attack_nearest_non_allied_building()
+			elif _has_enough_currency_to_build() and _has_units_available_for_an_order():
+				_choose_and_build_building()
+		Priorities.MORE_UNITS:
+			if _has_currency_and_space_in_queue_for_units():
+				_buy_unit_from_building()
+		Priorities.UPGRADE_UNITS:
+			if _has_units_that_can_be_upgraded_with_currency():
+				_choose_and_upgrade_unit()
+
+
+func _re_evaluate_priority() -> void:
+	current_priority = GameState.random_number_generator.randi_range(0,Priorities.size()-1)
+
+
+func _has_units_in_range_of_creep_blocking_building() -> bool:
+	return false
+
+
+func _has_units_available_for_an_order() -> bool:
+	return false
+
+
+func _has_enough_currency_to_build() -> bool:
+	return false
+
+
+func _has_space_to_build() -> bool:
+	return false
+
+
+func _has_units_that_can_be_upgraded_with_currency() -> bool:
+	return false
+
+
+func _has_currency_and_space_in_queue_for_units() -> bool:
+	return false
+
+
+func _choose_and_build_building() -> void:
+	pass
+
+
+func _choose_and_upgrade_unit() -> void:
+	pass
+
+
+func _buy_unit_from_building() -> void:
+	pass
+
+
+func _attack_nearest_non_allied_building() -> void:
 	pass

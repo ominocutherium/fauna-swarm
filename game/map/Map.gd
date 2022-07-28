@@ -34,3 +34,5 @@ export(Rect2) var extents : Rect2
 export(int) var cosmetic_randomization_seed : int
 export(int) var number_of_unclaimed_forest_hearts : int
 export(PoolVector2Array) var forest_heart_possible_locations := PoolVector2Array()
+export(PoolVector2Array) var purity_spawn_possible_locations := PoolVector2Array()
+export(PoolVector2Array) var evil_spawn_possible_locations := PoolVector2Array()
