@@ -211,8 +211,15 @@ func _on_attack_cooldown_timed_out(_dict:Dictionary) -> void:
 
 
 func _get_attr_modified_by_upgrade(attr_name:String):
+	if upgrade_type < 0:
+		return StaticData.get_species(species).get(attr_name)
+	var upgrade : UpgradeStaticData = StaticData.get_species(species).upgrade_attributes_by_identifier_then_faction[upgrade_type][upgrade_faction]
 	if attr_name in StaticData.get_species(species).ATTRIBUTES_ADD_UPGRADE_TO:
-		pass
+		for i in range(3):
+			if attr_name == upgrade.get("modified_attr_"+str(i)):
+				return StaticData.get_species(species).get(attr_name) + upgrade.get("modified_value_"+str(i))
 	elif attr_name in StaticData.get_species(species).ATTRIBUTES_REPLACE_UPGRADE_WITH:
-		pass
-	return get(attr_name)
+		for i in range(3):
+			if attr_name == upgrade.get("modified_attr_"+str(i)):
+				return upgrade.get("modified_value_"+str(i))
+	return StaticData.get_species(species).get(attr_name)
