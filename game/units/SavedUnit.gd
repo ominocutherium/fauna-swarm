@@ -139,33 +139,46 @@ func start_attack(target_hitbox_position:Vector2) -> bool:
 
 
 func get_maximum_health() -> float:
-	# TODO: incorporate upgrades into calc
-	return StaticData.get_species(species).maximum_health
+	return _get_attr_modified_by_upgrade("maximum_health")
 
 
 func get_melee_resistance() -> float:
-	# TODO: incorporate upgrades into calc
-	return StaticData.get_species(species).melee_damage_to_multiplier
+	return _get_attr_modified_by_upgrade("melee_damage_to_multiplier")
 
 
 func get_ranged_resistance() -> float:
-	# TODO: incorporate upgrades into calc
-	return StaticData.get_species(species).ranged_damage_to_multiplier
+	return _get_attr_modified_by_upgrade("ranged_damage_to_multiplier")
 
 
 func get_maximum_range_of_attack() -> float:
-	# TODO: incorporate upgrades into calc
 	var spec : SpeciesStaticData = StaticData.get_species(species)
 	var lesser_hb_radius : float = spec.attack_hb_len_or_radius_0 \
 			if (spec.attack_hitbox_shape == SpeciesStaticData.HitboxShape.CIRCLE \
 			or spec.attack_hb_len_or_radius_0 < spec.attack_hb_len_or_radius_1) \
 			else spec.attack_hb_len_or_radius_1
-	return StaticData.get_species(species).attack_hb_offset + lesser_hb_radius
+	return _get_attr_modified_by_upgrade("attack_hb_offset") + lesser_hb_radius
+
+
+func get_attack_damage_to_buildings() -> float:
+	return _get_attr_modified_by_upgrade("attack_damage") * _get_attr_modified_by_upgrade("damage_to_buildings_multiplier")
+
+
+func get_attack_damage_to_units(is_capture_attack:bool=false) -> float:
+	if is_capture_attack and not _get_attr_modified_by_upgrade("true_capture"):
+		return StaticData.get_species(species).attack_damage * StaticData.get_species(species).damage_to_units_multiplier
+	return _get_attr_modified_by_upgrade("attack_damage") * _get_attr_modified_by_upgrade("damage_to_units_multiplier")
+
+
+func get_attack_damage_type() -> int:
+	return _get_attr_modified_by_upgrade("attack_damage_type")
+
+
+func get_can_true_capture() -> bool:
+	return _get_attr_modified_by_upgrade("true_capture")
 
 
 func get_move_speed() -> float:
-	# TODO: incorporate upgrades into calc
-	return StaticData.get_species(species).move_speed
+	return _get_attr_modified_by_upgrade("move_speed")
 
 
 func take_damage(base_amount:float,damage_type:int) -> void:
