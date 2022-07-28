@@ -33,6 +33,7 @@ signal spawned
 signal despawned
 signal defeated
 signal captured
+signal upgraded
 signal capture_attempt_failed
 signal order_set(order_type,order_target_type,order_target)
 
@@ -70,6 +71,12 @@ var maximum_health : float setget ,get_maximum_health
 func sync_data_from_manager() -> void:
 	# Queries UnitManager singleton for updated position data, if alive.
 	pass
+
+
+func apply_upgrade(type:int) -> void:
+	upgrade_type = type
+	upgrade_faction = faction
+	emit_signal("upgraded")
 
 
 func set_order(p_order_type:int,p_order_target_type:int,p_order_target) -> void:

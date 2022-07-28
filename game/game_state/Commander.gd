@@ -49,3 +49,12 @@ func set_building_order(building_to_build:int,units_to_build_it:Array,where_coor
 
 func get_faction() -> SavedFaction:
 	return GameState.factions[faction_id]
+
+
+func upgrade_unit(unit_identifier:int,upgrade_to_apply:int) -> void:
+	var unit := GameState.get_unit(unit_identifier)
+	var upgrade : UpgradeStaticData = StaticData.get_species(unit.species).upgrade_attributes_by_identifier_then_faction[upgrade_to_apply][faction_id]
+	if not faction.current_currency >= upgrade.cost:
+		return
+	faction.current_currency -= upgrade.cost
+	unit.apply_upgrade(upgrade_to_apply)

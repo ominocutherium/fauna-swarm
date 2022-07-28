@@ -68,13 +68,8 @@ func initialize_from_unit(unit:SavedUnit) -> void:
 		region_enabled = true
 		var region_rect_name : String = "purity_sprite_rect" if unit.faction == StaticData.engine_keys_to_faction_ids.purity else "specter_sprite_rect"
 		region_rect = species_static_data.get(region_rect_name)
-		if unit.upgrade_type > -1:
-			var format_string : String = "purity_up{0}_sprite_rect" if unit.upgrade_faction == StaticData.engine_keys_to_faction_ids.purity else "specter_up{0}_sprite_rect"
-			var upgrade_sprite := Sprite.new()
-			upgrade_sprite.texture = texture
-			upgrade_sprite.region_rect = species_static_data.get(format_string.format([unit.upgrade_type]))
-			upgrade_sprite.region_enabled = true
-			add_child(upgrade_sprite)
+		_on_unit_upgraded(unit)
+	unit.connect("upgraded",self,"_on_unit_upgraded")
 	
 #	if not _has_valid_animations:
 #		update()
@@ -117,3 +112,14 @@ func setup_animation(anim_name:String,frame_start:int,frame_end:int,player:Anima
 	for frame_number in range(frame_start,frame_end):
 		animation.track_insert_key(track,seconds_per_frame*(frame_number-frame_start),frame_number)
 	player.add_animation(anim_name,animation)
+
+
+func _on_unit_upgraded(unit:SavedUnit) -> void:
+	var species_static_data := StaticData.get_species_display(unit.species)
+	if unit.upgrade_type > -1:
+		var format_string : String = "purity_up{0}_sprite_rect" if unit.upgrade_faction == StaticData.engine_keys_to_faction_ids.purity else "specter_up{0}_sprite_rect"
+		var upgrade_sprite := Sprite.new()
+		upgrade_sprite.texture = texture
+		upgrade_sprite.region_rect = species_static_data.get(format_string.format([unit.upgrade_type]))
+		upgrade_sprite.region_enabled = true
+		add_child(upgrade_sprite)
