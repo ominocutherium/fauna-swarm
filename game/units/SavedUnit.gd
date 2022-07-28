@@ -215,11 +215,11 @@ func _get_attr_modified_by_upgrade(attr_name:String):
 		return StaticData.get_species(species).get(attr_name)
 	var upgrade : UpgradeStaticData = StaticData.get_species(species).upgrade_attributes_by_identifier_then_faction[upgrade_type][upgrade_faction]
 	if attr_name in StaticData.get_species(species).ATTRIBUTES_ADD_UPGRADE_TO:
-		for i in range(3):
+		for i in range(4):
 			if attr_name == upgrade.get("modified_attr_"+str(i)):
 				return StaticData.get_species(species).get(attr_name) + upgrade.get("modified_value_"+str(i))
 	elif attr_name in StaticData.get_species(species).ATTRIBUTES_REPLACE_UPGRADE_WITH:
-		for i in range(3):
+		for i in range(4):
 			if attr_name == upgrade.get("modified_attr_"+str(i)):
 				return upgrade.get("modified_value_"+str(i))
 	return StaticData.get_species(species).get(attr_name)

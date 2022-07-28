@@ -318,8 +318,10 @@ func _handle_species_upgrade_datatypes(upgrade:UpgradeStaticData) -> void:
 	var host_species : SpeciesStaticData = _get_named_species(upgrade.species_name_key)
 	if not host_species:
 		return
-	for i in range(3):
+	for i in range(4):
 		var attr_name : String = upgrade.get("modified_attr_"+str(i))
+		if attr_name == "":
+			continue
 		var modifier : String = upgrade.get("modified_value_"+str(i))
 		var set_value
 		match typeof(host_species.get(attr_name)):
