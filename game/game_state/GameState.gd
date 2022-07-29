@@ -57,37 +57,38 @@ func _process(delta:float) -> void:
 
 
 func initialize_new_game(mode:int=GameMode.SP_PURITY_VS_SINGLE_EVIL,mapfile:StartingMapResource=null,use_seed:bool=false,used_seed:int=-1) -> void:
-	if use_seed:
-		rng_seed = used_seed
-	else:
-		randomize()
-		rng_seed = randi()
-	random_number_generator.seed = rng_seed
+	_ngi_seed(use_seed,used_seed)
 	# Static Data needs to be loaded first!
 	background_tiles = BackgroundTileData.new()
 	building_tiles = GameStateBuildingData.new()
-	if mapfile:
-		cosmetic_rng = background_tiles.init_newgame_map_from_mapfile(mapfile)
+	if not mapfile:
+		return
+	cosmetic_rng = background_tiles.init_newgame_map_from_mapfile(mapfile)
 	factions.resize(StaticData.engine_keys_to_faction_ids.size())
 	var used_edge_locations := PoolVector2Array()
-	if mode in [GameMode.SP_PURITY_VS_SINGLE_EVIL,GameMode.SP_PURITY_VS_TWO_EVILS]:
-		var pure_faction := _generate_faction(StaticData.engine_keys_to_faction_ids.purity)
-		used_edge_locations.append(pure_faction.new_units_spawn_at)
 	var first_chosen_evil : int = StaticData.engine_keys_to_faction_ids.specter
 	var first_evil_faction := _generate_faction(first_chosen_evil)
+	_choose_starting_location_for_faction(first_evil_faction,mapfile)
+	var used_factions := [first_evil_faction]
+	if mode in [GameMode.SP_PURITY_VS_SINGLE_EVIL,GameMode.SP_PURITY_VS_TWO_EVILS]:
+		var pure_faction := _generate_faction(StaticData.engine_keys_to_faction_ids.purity)
+		used_factions.append(pure_faction)
+		_choose_starting_location_for_faction(pure_faction,mapfile)
 	var second_evil_faction : SavedFaction
-	used_edge_locations.append(first_evil_faction.new_units_spawn_at)
 	starting_forest_heart_count = mapfile.number_of_unclaimed_forest_hearts
 	if mode in [GameMode.MP_EVIL_VS_EVIL,GameMode.SP_PURITY_VS_TWO_EVILS]:
 		var second_chosen_evil : int = -1
 		while second_chosen_evil < 0 or second_chosen_evil == first_chosen_evil:
 			second_chosen_evil = random_number_generator.randi_range(0,StaticData.engine_keys_to_faction_ids.size())
 		second_evil_faction = _generate_faction(second_chosen_evil)
+		used_factions.append(second_evil_faction)
+		_choose_starting_location_for_faction(second_evil_faction,mapfile)
 	if mode != GameMode.MP_EVIL_VS_EVIL:
 		_place_unclaimed_forest_hearts(mapfile)
-	for faction in factions:
+	for faction in used_factions:
 		if faction != null:
 			faction.on_init()
+		used_edge_locations.append(faction.new_units_spawn_at)
 	_on_init_or_restore()
 
 
@@ -209,6 +210,10 @@ func _generate_faction(identifier:int) -> SavedFaction:
 	return f
 
 
+func _choose_starting_location_for_faction(faction:SavedFaction,mapfile:StartingMapResource) -> void:
+	pass
+
+
 func _choose_starting_units_for_faction(_faction:SavedFaction) -> void:
 	# also initializes starting location
 	pass
@@ -228,3 +233,12 @@ func _on_unit_captured(unit:SavedUnit,faction_captured_by:int) -> void:
 
 func _add_unit_connections(unit_id:int,unit:SavedUnit) -> void:
 	unit.connect("order_set",UnitManager,"_on_unit_order_set",[unit_id])
+
+
+func _ngi_seed(use_seed:bool,used_seed:int=-1) -> void:
+	if use_seed:
+		rng_seed = used_seed
+	else:
+		randomize()
+		rng_seed = randi()
+	random_number_generator.seed = rng_seed
