@@ -231,6 +231,21 @@ func _choose_starting_units_for_faction(_faction:SavedFaction) -> void:
 
 func _place_factions_initial_buildings(faction:SavedFaction,mapfile:StartingMapResource,without_used_location:bool=false,used_location:Vector2=Vector2()) -> Vector2:
 	var building_loc := _choose_starting_location_for_faction(faction,mapfile,without_used_location,used_location)
+	var building_type : int
+	var faction_type : int = StaticData.get_faction(faction.identifier).faction_type
+	match StaticData.get_faction(faction.identifier).faction_type:
+		FactionStaticData.FactionTypes.PURE:
+			building_type = 0
+			# TODO: ideally, some building should be marked in static data as the command center. Hardcoding values because out of time.
+		FactionStaticData.FactionTypes.EVIL:
+			building_type = 4
+	var building_st_data := StaticData.get_building(building_type)
+	if faction_type == FactionStaticData.FactionTypes.EVIL:
+		for i in range(building_st_data.len_h_tiles*building_st_data.len_v_tiles):
+			var coord_to_mutate : Vector2 = building_loc - Vector2(i%building_st_data.len_h_tiles,i/building_st_data.len_h_tiles)
+			var tile_to_mutate : int = int(coord_to_mutate.x + coord_to_mutate.y * background_tiles.extents.size.x)
+			background_tiles._mutate_tile_to_biome(tile_to_mutate,faction.identifier)
+	create_building(building_type,building_loc)
 	return building_loc
 
 
