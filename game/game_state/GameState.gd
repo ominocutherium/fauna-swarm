@@ -65,15 +65,15 @@ func initialize_new_game(mode:int=GameMode.SP_PURITY_VS_SINGLE_EVIL,mapfile:Star
 		return
 	cosmetic_rng = background_tiles.init_newgame_map_from_mapfile(mapfile)
 	factions.resize(StaticData.engine_keys_to_faction_ids.size())
-	var used_edge_locations := PoolVector2Array()
+	var used_starting_locations := {}
 	var first_chosen_evil : int = StaticData.engine_keys_to_faction_ids.specter
 	var first_evil_faction := _generate_faction(first_chosen_evil)
-	_choose_starting_location_for_faction(first_evil_faction,mapfile)
+	used_starting_locations[_place_factions_initial_buildings(first_evil_faction,mapfile)] = first_evil_faction
 	var used_factions := [first_evil_faction]
 	if mode in [GameMode.SP_PURITY_VS_SINGLE_EVIL,GameMode.SP_PURITY_VS_TWO_EVILS]:
 		var pure_faction := _generate_faction(StaticData.engine_keys_to_faction_ids.purity)
 		used_factions.append(pure_faction)
-		_choose_starting_location_for_faction(pure_faction,mapfile)
+		used_starting_locations[_place_factions_initial_buildings(pure_faction,mapfile)] = pure_faction
 	var second_evil_faction : SavedFaction
 	starting_forest_heart_count = mapfile.number_of_unclaimed_forest_hearts
 	if mode in [GameMode.MP_EVIL_VS_EVIL,GameMode.SP_PURITY_VS_TWO_EVILS]:
@@ -82,13 +82,13 @@ func initialize_new_game(mode:int=GameMode.SP_PURITY_VS_SINGLE_EVIL,mapfile:Star
 			second_chosen_evil = random_number_generator.randi_range(0,StaticData.engine_keys_to_faction_ids.size())
 		second_evil_faction = _generate_faction(second_chosen_evil)
 		used_factions.append(second_evil_faction)
-		_choose_starting_location_for_faction(second_evil_faction,mapfile)
+		used_starting_locations[_place_factions_initial_buildings(second_evil_faction,mapfile,true,used_starting_locations.keys()[0])] = second_evil_faction
 	if mode != GameMode.MP_EVIL_VS_EVIL:
 		_place_unclaimed_forest_hearts(mapfile)
+	_ngi_assign_edges_to_factions(used_starting_locations)
 	for faction in used_factions:
 		if faction != null:
 			faction.on_init()
-		used_edge_locations.append(faction.new_units_spawn_at)
 	_on_init_or_restore()
 
 
@@ -206,12 +206,22 @@ func _generate_faction(identifier:int) -> SavedFaction:
 	f.identifier = identifier
 	factions[identifier] = f
 	_choose_starting_units_for_faction(f)
-	_place_factions_initial_buildings(f)
 	return f
 
 
-func _choose_starting_location_for_faction(faction:SavedFaction,mapfile:StartingMapResource) -> void:
-	pass
+func _choose_starting_location_for_faction(faction:SavedFaction,mapfile:StartingMapResource,without_used_location:bool=false,used_location:Vector2=Vector2()) -> Vector2:
+	var loc_idx : int
+	var arr : PoolVector2Array
+	match StaticData.get_faction(faction.identifier).faction_type:
+		FactionStaticData.FactionTypes.PURE:
+			arr = mapfile.purity_spawn_possible_locations
+		FactionStaticData.FactionTypes.EVIL:
+			arr = mapfile.evil_spawn_possible_locations
+	loc_idx = random_number_generator.randi_range(0,arr.size()-1)
+	if without_used_location:
+		while arr[loc_idx] == used_location:
+			loc_idx = random_number_generator.randi_range(0,arr.size()-1)
+	return arr[loc_idx]
 
 
 func _choose_starting_units_for_faction(_faction:SavedFaction) -> void:
@@ -219,8 +229,9 @@ func _choose_starting_units_for_faction(_faction:SavedFaction) -> void:
 	pass
 
 
-func _place_factions_initial_buildings(_faction:SavedFaction) -> void:
-	pass
+func _place_factions_initial_buildings(faction:SavedFaction,mapfile:StartingMapResource,without_used_location:bool=false,used_location:Vector2=Vector2()) -> Vector2:
+	var building_loc := _choose_starting_location_for_faction(faction,mapfile,without_used_location,used_location)
+	return building_loc
 
 
 func _place_unclaimed_forest_hearts(_mapfile:StartingMapResource) -> void:
@@ -242,3 +253,29 @@ func _ngi_seed(use_seed:bool,used_seed:int=-1) -> void:
 		randomize()
 		rng_seed = randi()
 	random_number_generator.seed = rng_seed
+
+
+func _ngi_assign_edges_to_factions(used_starting_locations_to_factions:Dictionary) -> void:
+	var center_between_faction_starting_locations : Vector2
+	for loc in used_starting_locations_to_factions:
+		center_between_faction_starting_locations += loc
+	center_between_faction_starting_locations /= used_starting_locations_to_factions.size()
+	var faction_dots := {}
+	for faction in used_starting_locations_to_factions.values():
+		faction_dots[faction.identifier] = {}
+	for loc in used_starting_locations_to_factions:
+		var faction : SavedFaction = used_starting_locations_to_factions[loc]
+		var to_center_norm : Vector2 = (loc - center_between_faction_starting_locations).normalized()
+		for direction in [Vector2.UP,Vector2.RIGHT,Vector2.DOWN,Vector2.LEFT]:
+			faction_dots[faction.identifier][direction] = to_center_norm.dot(direction)
+	var directions_to_edges_to_factions_using_them := {}
+	for faction_id in faction_dots:
+		var highest_dot_product : float = -1.0
+		var dir_with_highest_dot := Vector2()
+		for dir in faction_dots[faction_id]:
+			if faction_dots[faction_id][dir] > highest_dot_product and not dir in directions_to_edges_to_factions_using_them:
+				dir_with_highest_dot = dir
+				highest_dot_product = faction_dots[faction_id][dir]
+		directions_to_edges_to_factions_using_them[dir_with_highest_dot] = factions[faction_id]
+	for dir in directions_to_edges_to_factions_using_them:
+		(directions_to_edges_to_factions_using_them[dir] as SavedFaction).new_units_spawn_at = 50 * dir * UnitManager.TILE_LEN
