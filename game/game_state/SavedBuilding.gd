@@ -46,7 +46,7 @@ signal request_spawn_unit(unit_id,tile_coordinates_v2)
 signal destroyed
 signal completed
 
-export(int) var identifer : int
+export(int) var identifier : int
 export(int) var faction : int = -1 # -1 is a valid value for factionless buildings, like unclaimed forest hearts
 export(bool) var used_special_resource : bool = false
 export(int) var building_type : int
@@ -84,7 +84,7 @@ func get_maximum_health() -> float:
 
 
 func get_maximum_queue_size() -> int:
-	var s_d : BuildingStaticData = StaticData.get_building(identifer)
+	var s_d : BuildingStaticData = StaticData.get_building(identifier)
 	return s_d.queue_len
 
 
@@ -142,7 +142,7 @@ func take_damage(amount:float) -> void:
 
 
 func _add_queue_item(item:Dictionary) -> bool:
-	if queue_items.size() < StaticData.get_building(identifer).queue_len:
+	if queue_items.size() < StaticData.get_building(identifier).queue_len:
 		queue_items.append(item)
 		if queue_expiry_event == {}:
 			push_top_queue_item_event_to_heap()

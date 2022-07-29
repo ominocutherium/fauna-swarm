@@ -48,6 +48,7 @@ func _ready() -> void:
 	get_tree().paused = true
 	if GameState.building_tiles != null:
 		initialize_or_restore_map_state()
+		foreground_display.reference_tm_for_sprite_tilevs = building_tilemap
 		GameState.building_tiles.connect("tile_updated",building_tilemap,"_on_tile_updated_in_gamestate")
 		GameState.background_tiles.connect("tile_updated",background_tilemap,"_on_tile_updated_in_gamestate")
 		for unit in GameState.units:
@@ -56,12 +57,13 @@ func _ready() -> void:
 				spawn_existing_unit(unit.identifier,unit.position)
 		for building in GameState.buildings:
 			_add_building_connections(building)
+			if building.build_progress == 1.0:
+				foreground_display._on_building_completed(building)
 		for faction in GameState.factions:
 			if faction != null:
 				(faction as SavedFaction).connect("request_unit_generation_from_income",self,"spawn_num_of_requested_units")
 		GameState.set_process(true)
 		get_tree().paused = false
-	foreground_display.reference_tm_for_sprite_tilevs = building_tilemap
 	UnitManager.connect("unit_moved",self,"_on_unit_moved")
 	order_input_handler.connect("report_build_building_order_in_progress",foreground_display,"spawn_phantom_building")
 	if minimap.texture as MinimapTexture:
@@ -213,4 +215,4 @@ func _add_building_connections(building:SavedBuilding) -> void:
 	building.connect("request_spawn_unit",self,"spawn_existing_unit")
 	if building.build_progress < 1.0:
 		building.connect("completed",foreground_display,"_on_building_completed",[building])
-	building.connect("destroyed",foreground_display,"_on_building_removed",[building.identifer])
+	building.connect("destroyed",foreground_display,"_on_building_removed",[building.identifier])

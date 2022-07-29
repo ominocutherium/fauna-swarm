@@ -125,8 +125,8 @@ func infect_tiles(list_of_coords:Array,to_biome:int) -> void:
 		total_pure_tile_count += 1
 
 
-func get_tile_type_by_name(tile_identifer:String) -> TileType:
-	return tile_types_by_identifier[tile_identifer] as TileType
+func get_tile_type_by_name(tile_identifier:String) -> TileType:
+	return tile_types_by_identifier[tile_identifier] as TileType
 
 
 func get_num_tiles_ever_within_purification_range() -> int:

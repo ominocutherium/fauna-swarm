@@ -119,12 +119,12 @@ func add_unit(species:int,upgrade_equipped:int,faction:int) -> int:
 
 func create_building(building_type:int,where_coords:Vector2) -> int:
 	var building := SavedBuilding.new()
-	building.identifer = buildings.size()
+	building.identifier = buildings.size()
 	building.building_type = building_type
 
 	buildings.append(building)
 	building_tiles.add_building(building,where_coords)
-	return building.identifer
+	return building.identifier
 
 
 func restore(save_res:SavedGameState) -> void:
@@ -245,7 +245,8 @@ func _place_factions_initial_buildings(faction:SavedFaction,mapfile:StartingMapR
 			var coord_to_mutate : Vector2 = building_loc - Vector2(i%building_st_data.len_h_tiles,i/building_st_data.len_h_tiles)
 			var tile_to_mutate : int = int(coord_to_mutate.x + coord_to_mutate.y * background_tiles.extents.size.x)
 			background_tiles._mutate_tile_to_biome(tile_to_mutate,faction.identifier)
-	create_building(building_type,building_loc)
+	var building := create_building(building_type,building_loc)
+	(buildings[building] as SavedBuilding).build_progress = 1.0
 	return building_loc
 
 
