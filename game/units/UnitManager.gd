@@ -347,6 +347,8 @@ func get_closest_unit_to_position_within_radius(position:Vector2,sel_radius:floa
 	var shortest_distance_sq : float = -1.0
 	var return_unit_idx : int = -1
 	for quadrant in quadrants_to_check:
+		if not _lists_of_unit_idxs_from_quadrant.has(quadrant):
+			continue
 		for unit_idx in _lists_of_unit_idxs_from_quadrant[quadrant]:
 			var dist := position.distance_squared_to(alive_unit_positions[unit_idx])
 			if shortest_distance_sq < 0.0 or dist < shortest_distance_sq:

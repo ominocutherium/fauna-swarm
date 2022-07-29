@@ -76,7 +76,7 @@ func spawn_num_of_requested_units(p_num:int,species:int,faction:int,where:Vector
 		var unit : SavedUnit = GameState.get_unit(identifier)
 		var actual_spawn_pos : Vector2 = where # TODO: maybe randomize the position a bit within a radius
 		UnitManager.spawn_unit(identifier,actual_spawn_pos)
-		foreground_display.spawn_unit(identifier,actual_spawn_pos)
+		foreground_display.spawn_unit(identifier,mouse_input_handler.physics_space_to_display_space_transform.xform(actual_spawn_pos))
 		unit.set_spawned()
 		GameState.factions[faction].add_unit(unit)
 		_add_unit_connections(unit)
@@ -87,7 +87,7 @@ func spawn_existing_unit(identifier:int,where_tiles:Vector2) -> void:
 	var where : Vector2 = UnitManager.TILE_LEN * where_tiles
 	GameState.get_unit(identifier).set_spawned()
 	UnitManager.spawn_unit(identifier,where)
-	foreground_display.spawn_unit(identifier,where)
+	foreground_display.spawn_unit(identifier,mouse_input_handler.physics_space_to_display_space_transform.xform(where))
 
 
 func spawn_existing_unit_at(identifier:int,where:Vector2) -> void:
@@ -99,7 +99,8 @@ func initialize_or_restore_map_state() -> void:
 	building_tilemap.set_map_size(GameState.building_tiles.extents.position,GameState.building_tiles.extents.end)
 	GameState.background_tiles.apply_to_tilemap($"Background Tiles")
 	GameState.building_tiles.apply_to_tilemap($"Building Tiles")
-	get_tree().paused = false
+	for used_tile in building_tilemap.get_used_cells():
+		foreground_display._on_tile_covered_by_building(used_tile)
 
 
 func _on_unit_moved(identifier:int,to:Vector2) -> void:

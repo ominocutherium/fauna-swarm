@@ -76,8 +76,8 @@ selection_line_width = 1.0
 mouse_edge_camera_pan_speed = 400.0
 edge_margin_h = 0.15
 edge_margin_v = 0.1
-physics_space_to_display_space_x_basis = Vector2( 1, 0.5 )
-physics_space_to_display_space_y_basis = Vector2( -1, 0.5 )
+physics_space_to_display_space_x_basis = Vector2( 0.5, 0.25 )
+physics_space_to_display_space_y_basis = Vector2( -0.5, 0.25 )
 
 [node name="OrderInput" type="Node" parent="."]
 script = ExtResource( 7 )

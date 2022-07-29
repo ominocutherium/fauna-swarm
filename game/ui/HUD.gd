@@ -116,7 +116,8 @@ func building_selected(building : SavedBuilding) -> void:
 	get_node(building_disp_path).show()
 
 
-func _disp_selected_unit(unit:SavedUnit) -> void:
+func _disp_selected_unit(unit_identifier:int) -> void:
+	var unit = GameState.get_unit(unit_identifier)
 	_hide_all_on_left()
 	# TODO: get strings from static data and translate them
 	get_node(unit_disp_path).get_node("Name").text = tr("HUD_SELUNIT_EXAMPLE_NAME")
@@ -136,7 +137,7 @@ func _disp_group_of_units(list_of_units:Array) -> void:
 			for sub_child in child.get_children():
 				sub_child.queue_free()
 	for u in list_of_units:
-		var unit := u as SavedUnit
+		var unit := GameState.get_unit(u) as SavedUnit
 		if not unit.species in species_count_by_species_id:
 			species_count_by_species_id[unit.species] = 1
 		else:
