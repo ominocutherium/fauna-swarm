@@ -282,7 +282,7 @@ upgrade_unit_opt2={
 
 [locale]
 
-translations=PoolStringArray( "res://ui/ui_text.en.translation", "res://static_data/static_data_text.en.translation" )
+translations=PoolStringArray( "res://ui/ui_text.en.translation", "res://static_data/static_data_text.en.translation", "res://static_data/campaign_text.en.translation" )
 
 [physics]
 

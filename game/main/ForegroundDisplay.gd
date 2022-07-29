@@ -89,7 +89,13 @@ func hide_position_target() -> void:
 
 
 func _move_phantom_building_according_to_cursor(amount:Vector2) -> void:
-	pass
+	if phantom_building:
+		phantom_building.position += amount
+
+
+func _move_position_target_according_to_cursor(amount:Vector2) -> void:
+	if position_target:
+		position_target.position += amount
 
 
 func despawn_phantom_building() -> void:

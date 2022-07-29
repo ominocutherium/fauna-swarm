@@ -87,7 +87,7 @@ func get_starting_tex_coords_from_tile_idx(idx:int) -> Vector2:
 	return Vector2(198+2*data_x_coords-2*data_y_coords,data_x_coords+data_y_coords)
 
 func set_current_camera_location(to:Vector2) -> void:
-	current_camera_location = to
+	current_camera_location = to + Vector2(0,1600)
 	var translated_loc : Vector2 = Vector2(floor(current_camera_location.x/16.0),floor(current_camera_location.y/16.0)) + Vector2(200,0)
 	var changed : bool = true if translated_loc != _translated_camera_loc else false
 	_translated_camera_loc = translated_loc

@@ -40,7 +40,6 @@ camera_path = NodePath("Camera2D")
 
 [node name="Background Tiles" type="TileMap" parent="."]
 pause_mode = 1
-position = Vector2( 0, 1600 )
 mode = 1
 tile_set = ExtResource( 12 )
 cell_size = Vector2( 64, 32 )
@@ -51,7 +50,6 @@ script = ExtResource( 9 )
 
 [node name="Building Tiles" type="TileMap" parent="."]
 pause_mode = 1
-position = Vector2( 0, 1600 )
 mode = 1
 cell_size = Vector2( 64, 32 )
 cell_y_sort = true
@@ -60,12 +58,10 @@ script = ExtResource( 10 )
 
 [node name="Foreground Display Objects" type="YSort" parent="."]
 pause_mode = 1
-position = Vector2( 0, 1600 )
 script = ExtResource( 8 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
 pause_mode = 2
-position = Vector2( 0, 1600 )
 current = true
 script = ExtResource( 3 )
 

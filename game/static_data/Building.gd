@@ -30,6 +30,7 @@ const STRING_ATTRIBUTES := [
 	"name_key",
 	"texture_path",
 	"effects",
+	"short_desc_key"
 ]
 const INT_ATTRIBUTES := [
 	"len_h_tiles",
@@ -53,6 +54,7 @@ const VARIANT_ATTRIBUTES := []
 
 export(int) var identifier : int
 export(String) var name_key : String
+export(String) var short_desc_key : String
 export(int) var len_h_tiles : int
 export(int) var len_v_tiles : int
 export(int) var faction : int

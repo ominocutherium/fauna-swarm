@@ -147,9 +147,9 @@ func _get_building_within_display_loc(location : Vector2) -> int:
 	return -1
 
 
-func _on_MouseInput_rect_released(_selection_rect:Rect2,xformed_rect:Rect2,xformed_midpoints:Array,xformed_normals:Array) -> void:
-#	print(("{0} selection finished. Corresponds to rect in physics space of {1} and rect is a diamond in physics space with midpoints {2}").format([
-#			selection_rect,xformed_rect,str(xformed_midpoints)]))
+func _on_MouseInput_rect_released(selection_rect:Rect2,xformed_rect:Rect2,xformed_midpoints:Array,xformed_normals:Array) -> void:
+	print(("{0} selection finished. Corresponds to rect in physics space of {1} and rect is a diamond in physics space with midpoints {2}").format([
+			selection_rect,xformed_rect,str(xformed_midpoints)]))
 	var units_inside : Array = UnitManager.get_units_inside_selection(xformed_rect,xformed_midpoints,xformed_normals)
 	# TODO: if no units were selected, try to select a building instead
 	var unit_objs := []

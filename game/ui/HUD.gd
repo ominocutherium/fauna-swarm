@@ -93,17 +93,21 @@ func units_selected(list_of_units : Array) -> void:
 
 func building_selected(building : SavedBuilding) -> void:
 	_hide_all_on_left()
+	var building_data := StaticData.get_building(building.building_type)
 	for child in get_node(building_disp_path).get_node("RestOfQueue").get_children():
 		child.queue_free()
-	get_node(building_disp_path).get_node("Name").text = tr("HUD_SELBUILD_EXAMPLE_NAME")
-	get_node(building_disp_path).get_node("H1/TextureRect").texture = load("res://icon.png")
-	get_node(building_disp_path).get_node("H1/Top/V/Desc").text = tr("HUD_SELBUILD_EXAMPLE_DESC")
+	get_node(building_disp_path).get_node("Name").text = tr(building_data.name_key)
+	var tex := AtlasTexture.new()
+	tex.atlas = load(building_data.texture_path)
+	tex.region = Rect2(building_data.texture_pos_x,building_data.texture_pos_y,building_data.texture_size_x,building_data.texture_size_y)
+	get_node(building_disp_path).get_node("H1/TextureRect").texture = tex
+	get_node(building_disp_path).get_node("H1/Top/V/Desc").text = tr(building_data.short_desc_key)
 	if building.queue_items.size() > 0:
 		get_node(building_disp_path).get_node("H1/Top/V/H/TextureRect").texture = load("res://icon.png")
 		get_node(building_disp_path).get_node("H1/Top/V/H/ProgressBar").max_value = 5.0
 		get_node(building_disp_path).get_node("H1/Top/V/H/ProgressBar").value = 3.0
 		get_node(building_disp_path).get_node("H1/Top/V/H/TextureRect").show()
-		get_node(building_disp_path).get_node("H1/Top/V/H/ProgressBar").show()
+#		get_node(building_disp_path).get_node("H1/Top/V/H/ProgressBar").show()
 	else:
 		get_node(building_disp_path).get_node("H1/Top/V/H/TextureRect").hide()
 		get_node(building_disp_path).get_node("H1/Top/V/H/ProgressBar").hide()
@@ -112,7 +116,8 @@ func building_selected(building : SavedBuilding) -> void:
 		var queue_item_disp := LaterBuildingQueueButton.new()
 		queue_item_disp.texture = load("res://icon.png")
 		get_node(building_disp_path).get_node("RestOfQueue").add_child(queue_item_disp)
-		queue_item_disp.connect("request_queue_cancel",self,"_on_later_queue_request_queue_cancel",[i])
+		if building.faction == StaticData.engine_keys_to_faction_ids.purity:
+			queue_item_disp.connect("request_queue_cancel",self,"_on_later_queue_request_queue_cancel",[i])
 	get_node(building_disp_path).show()
 
 
@@ -120,17 +125,34 @@ func _disp_selected_unit(unit_identifier:int) -> void:
 	var unit = GameState.get_unit(unit_identifier)
 	_hide_all_on_left()
 	# TODO: get strings from static data and translate them
-	get_node(unit_disp_path).get_node("Name").text = tr("HUD_SELUNIT_EXAMPLE_NAME")
-	get_node(unit_disp_path).get_node("H1/C/V/TextureRect").texture = load("res://icon.png")
+	get_node(unit_disp_path).get_node("Name").text = "{0} {1}".format([tr(StaticData.get_faction(unit.faction).name_key),tr(StaticData.get_species(unit.species).name_key)])
+	var sp_disp = StaticData.get_species_display(unit.species)
+	var species_atlas_tex : Texture = load(StaticData.get_species_display(unit.species).purity_tex_path)
+	var atlas_texture := AtlasTexture.new()
+	atlas_texture.atlas = species_atlas_tex
+	var desc_string : String
+	match unit.faction:
+		StaticData.engine_keys_to_faction_ids.purity:
+			atlas_texture.region = Rect2(sp_disp.purity_pos_x,sp_disp.purity_pos_y,sp_disp.sprite_size_h,sp_disp.sprite_size_v)
+			desc_string = StaticData.get_species(unit.species).desc_short_key
+		StaticData.engine_keys_to_faction_ids.specter:
+			atlas_texture.region = Rect2(sp_disp.specter_pos_x,sp_disp.specter_pos_y,sp_disp.sprite_size_h,sp_disp.sprite_size_v)
+			desc_string = tr("BASE_GAME_CORRUPTED_ANIMAL_TEMPLATE").format([tr(StaticData.get_faction(unit.faction).name_key),tr(StaticData.get_species(unit.species).name_key)])
+	get_node(unit_disp_path).get_node("H1/C/V/TextureRect").texture = atlas_texture
 	get_node(unit_disp_path).get_node("CurrentHealth").max_value = unit.get_maximum_health()
 	get_node(unit_disp_path).get_node("CurrentHealth").value = unit.current_health
-	get_node(unit_disp_path).get_node("C2/ShortDesc").text = tr("HUD_SELUNIT_EXAMPLE_SHORTDESC")
-	get_node(unit_disp_path).get_node("TechniqueName").text = tr("HUD_SELUNIT_EXAMPLE_TECHNAME")
+	get_node(unit_disp_path).get_node("H1/C2/ShortDesc").text = desc_string
+	get_node(unit_disp_path).get_node("TechniqueName").text = tr(StaticData.get_species(unit.species).attack_name_key)
 	get_node(unit_disp_path).get_node("TechniqueDesc").text = tr("HUD_SELUNIT_EXAMPLE_TECHDESC")
+	if unit.faction == StaticData.engine_keys_to_faction_ids.purity and unit.upgrade_type == -1:
+		get_node(unit_disp_path).get_node("H1/C/V/UpgradeUnit").show()
+	else:
+		get_node(unit_disp_path).get_node("H1/C/V/UpgradeUnit").hide()
 	get_node(unit_disp_path).show()
 
 
 func _disp_group_of_units(list_of_units:Array) -> void:
+	# TODO: handle factions
 	var species_count_by_species_id := {}
 	for child in get_node(multi_unit_disp_path).get_children():
 		if child.get_child_count() > 0:
@@ -149,15 +171,19 @@ func _disp_group_of_units(list_of_units:Array) -> void:
 			break
 		for i in range(2):
 			var texrect := TextureRect.new()
-			texrect.texture = load('res://icon.png') # TODO: get from static data
+			var spec_tex := AtlasTexture.new()
 			texrect.rect_min_size = Vector2(36,36)
 			texrect.expand = true
 			texrect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
 			var count := Label.new()
 			var spec : int = species_in_group[key_id]
+			var sp_disp = StaticData.get_species_display(spec)
+			spec_tex.texture = load(sp_disp.purity_tex_path)
+			spec_tex.region = Rect2(sp_disp.purity_pos_x,sp_disp.purity_pos_y,sp_disp.sprite_size_h,sp_disp.sprite_size_v)
 			count.text = str(species_count_by_species_id[spec])
 			get_node(multi_unit_disp_path).get_child(j).add_child(texrect)
 			get_node(multi_unit_disp_path).get_child(j).add_child(count)
+			texrect.texture = spec_tex # TODO: get from static data
 			key_id += 1
 			if key_id >= species_in_group.size():
 				break
