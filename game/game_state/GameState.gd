@@ -121,7 +121,8 @@ func create_building(building_type:int,where_coords:Vector2) -> int:
 	var building := SavedBuilding.new()
 	building.identifier = buildings.size()
 	building.building_type = building_type
-
+	building.main_tile_x = where_coords.x
+	building.main_tile_y = where_coords.y
 	buildings.append(building)
 	building_tiles.add_building(building,where_coords)
 	return building.identifier
@@ -243,7 +244,7 @@ func _place_factions_initial_buildings(faction:SavedFaction,mapfile:StartingMapR
 	if faction_type == FactionStaticData.FactionTypes.EVIL:
 		for i in range(building_st_data.len_h_tiles*building_st_data.len_v_tiles):
 			var coord_to_mutate : Vector2 = building_loc - Vector2(i%building_st_data.len_h_tiles,i/building_st_data.len_h_tiles)
-			var tile_to_mutate : int = int(coord_to_mutate.x + coord_to_mutate.y * background_tiles.extents.size.x)
+			var tile_to_mutate : int = int((coord_to_mutate.x-background_tiles.extents.position.x) + (coord_to_mutate.y-background_tiles.extents.position.y) * background_tiles.extents.size.x)
 			background_tiles._mutate_tile_to_biome(tile_to_mutate,faction.identifier)
 	var building := create_building(building_type,building_loc)
 	(buildings[building] as SavedBuilding).build_progress = 1.0
@@ -295,4 +296,4 @@ func _ngi_assign_edges_to_factions(used_starting_locations_to_factions:Dictionar
 				highest_dot_product = faction_dots[faction_id][dir]
 		directions_to_edges_to_factions_using_them[dir_with_highest_dot] = factions[faction_id]
 	for dir in directions_to_edges_to_factions_using_them:
-		(directions_to_edges_to_factions_using_them[dir] as SavedFaction).new_units_spawn_at = 50 * dir * UnitManager.TILE_LEN
+		(directions_to_edges_to_factions_using_them[dir] as SavedFaction).new_units_spawn_at = 49 * dir * UnitManager.TILE_LEN

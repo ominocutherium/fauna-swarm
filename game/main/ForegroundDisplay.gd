@@ -140,7 +140,7 @@ func _on_building_completed(building:SavedBuilding) -> void:
 			load(building_type.texture_path),
 			Rect2(building_type.texture_position,building_type.texture_size),
 			building_type.texture_offset,
-			reference_tm_for_sprite_tilevs.map_to_world(where_coords)+Vector2(32,16))
+			reference_tm_for_sprite_tilevs.map_to_world(where_coords)+Vector2(0,16))
 
 
 func _on_building_removed(building_identifier:int) -> void:

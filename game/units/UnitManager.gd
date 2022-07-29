@@ -256,7 +256,7 @@ func spawn_unit(identifier:int,where:Vector2) -> void:
 	tf.origin = where
 	alive_unit_positions[idx] = where
 	Physics2DServer.body_set_state(body,Physics2DServer.BODY_STATE_TRANSFORM,tf)
-	alive_unit_velocities[idx] = Vector2(0,-20)
+	alive_unit_velocities[idx] = Vector2()
 	alive_unit_distance_moved_since_vel_change_or_coll[idx] = 0.0
 	var quad := _get_quadrant_from_pos(where)
 	_lists_of_unit_idxs_from_quadrant[quad].append(idx)

@@ -1,9 +1,8 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://main/Main.gd" type="Script" id=1]
 [ext_resource path="res://main/MouseInput.gd" type="Script" id=2]
 [ext_resource path="res://main/MainCamera.gd" type="Script" id=3]
-[ext_resource path="res://icon.png" type="Texture" id=4]
 [ext_resource path="res://ui/HUD.tscn" type="PackedScene" id=5]
 [ext_resource path="res://ui/MinimapDiamond.gd" type="Script" id=6]
 [ext_resource path="res://main/OrderInput.gd" type="Script" id=7]
@@ -63,38 +62,6 @@ script = ExtResource( 10 )
 pause_mode = 1
 position = Vector2( 0, 1600 )
 script = ExtResource( 8 )
-
-[node name="Sprite" type="Sprite" parent="Foreground Display Objects"]
-position = Vector2( 159, 221 )
-texture = ExtResource( 4 )
-
-[node name="Sprite2" type="Sprite" parent="Foreground Display Objects"]
-position = Vector2( 56, 167 )
-texture = ExtResource( 4 )
-
-[node name="Sprite3" type="Sprite" parent="Foreground Display Objects"]
-position = Vector2( 253, 162 )
-texture = ExtResource( 4 )
-
-[node name="Sprite4" type="Sprite" parent="Foreground Display Objects"]
-position = Vector2( 541, 200 )
-texture = ExtResource( 4 )
-
-[node name="Sprite5" type="Sprite" parent="Foreground Display Objects"]
-position = Vector2( 669, 529 )
-texture = ExtResource( 4 )
-
-[node name="Sprite6" type="Sprite" parent="Foreground Display Objects"]
-position = Vector2( 279, 424 )
-texture = ExtResource( 4 )
-
-[node name="Sprite7" type="Sprite" parent="Foreground Display Objects"]
-position = Vector2( 479, 294 )
-texture = ExtResource( 4 )
-
-[node name="Sprite8" type="Sprite" parent="Foreground Display Objects"]
-position = Vector2( 110, 367 )
-texture = ExtResource( 4 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
 pause_mode = 2
