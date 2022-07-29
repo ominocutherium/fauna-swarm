@@ -103,8 +103,7 @@ func _process_tile(tile_identifier:int, current_time:float) -> void:
 func init_newgame_map_from_mapfile(new_game_map:StartingMapResource) -> RandomNumberGenerator:
 	rng = RandomNumberGenerator.new()
 	rng.seed = new_game_map.cosmetic_randomization_seed
-	extents = new_game_map.extents
-	tile_data.resize(new_game_map.tile_data.size())
+	.init_newgame_map_from_mapfile(new_game_map)
 	for i in range(new_game_map.tile_data.size()):
 		var tile_type_name : String = new_game_map.tile_type_names_by_id[new_game_map.tile_data[i]]
 		var tile_type := tile_types_by_identifier[tile_type_name] as TileType

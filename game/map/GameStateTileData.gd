@@ -47,3 +47,11 @@ func extract_from_tilemap(tm:TileMap) -> void:
 	for j in range(int(extents.size.y)):
 		for i in range(int(extents.size.x)):
 			tile_data.append(tm.get_cellv(extents.position + Vector2(i,j)))
+
+
+
+
+func init_newgame_map_from_mapfile(new_game_map:StartingMapResource) -> RandomNumberGenerator:
+	extents = new_game_map.extents
+	tile_data.resize(new_game_map.tile_data.size())
+	return null

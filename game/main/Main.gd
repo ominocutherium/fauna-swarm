@@ -114,6 +114,9 @@ func _on_MouseInput_location_left_clicked(location : Vector2, selection_radius :
 	var building_identifier : int = _get_building_within_display_loc(location)
 	if building_identifier != -1:
 		pass # TODO: implement
+		var saved_building := GameState.buildings[building_identifier] as SavedBuilding
+		if saved_building:
+			heads_up_display.building_selected(saved_building)
 		return
 	var xformed_pos : Vector2 = mouse_input_handler.display_space_to_physics_space_transform.xform(location)
 	var nearest_unit : int = UnitManager.get_closest_unit_to_position_within_radius(xformed_pos,selection_radius,selection_radius_squared)
@@ -142,9 +145,7 @@ func _on_MouseInput_location_right_clicked(location : Vector2, selection_radius 
 
 func _get_building_within_display_loc(location : Vector2) -> int:
 	var cell : Vector2 = building_tilemap.world_to_map(location)
-	if building_tilemap.get_cellv(cell) != -1:
-		pass # TODO: implement when building data model available
-	return -1
+	return GameState.building_tiles.get_id_for_building_in_tile(location)
 
 
 func _on_MouseInput_rect_released(selection_rect:Rect2,xformed_rect:Rect2,xformed_midpoints:Array,xformed_normals:Array) -> void:

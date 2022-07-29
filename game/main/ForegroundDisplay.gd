@@ -157,12 +157,16 @@ func _on_building_removed(building_identifier:int) -> void:
 
 
 func _on_tile_covered_by_building(tilev:Vector2) -> void:
+	if not lists_of_static_sprites_by_tilev.has(tilev):
+		return
 	for s in lists_of_static_sprites_by_tilev[tilev]:
 		var spr := s as Sprite
 		spr.hide()
 
 
 func _on_tile_no_longer_covered_by_building(tilev:Vector2) -> void:
+	if not lists_of_static_sprites_by_tilev.has(tilev):
+		return
 	for s in lists_of_static_sprites_by_tilev[tilev]:
 		var spr := s as Sprite
 		spr.show()

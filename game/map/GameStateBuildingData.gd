@@ -26,6 +26,8 @@ extends MapTileData
 
 class_name GameStateBuildingData
 
+var building_ids_by_tile := {}
+
 
 func get_num_of_purity_buildings() -> int:
 	return 0
@@ -40,11 +42,29 @@ func get_coords_of_nearest_purity_building_to(coords:Vector2) -> Vector2:
 
 
 func add_building(building:SavedBuilding,where_coords:Vector2) -> void:
-	pass
+	var building_type = StaticData.get_building(building.building_type)
+	var starting_x : int = int(where_coords.x-building_type.len_h_tiles-extents.position.x)
+	var starting_y : int = int(where_coords.y-building_type.len_v_tiles-extents.position.y)
+	var starting_idx : int = starting_x + int(extents.size.x) * starting_y
+	for i in range(building_type.len_h_tiles):
+		for j in range(building_type.len_v_tiles):
+			var idx : int = starting_x + i + (j+starting_y) * int(extents.size.x)
+			tile_data[idx] = 0
+			building_ids_by_tile[idx] = building.identifier
 
 
 func remove_building(identifier:int) -> void:
-	pass
+	var building : SavedBuilding = GameState.buildings[identifier]
+	var building_type = StaticData.get_building(building.building_type)
+	var starting_x : int = building.main_tile_x
+	var starting_y : int = building.main_tile_y
+	var starting_idx : int = starting_x + int(extents.size.x) * starting_y
+	for i in range(building_type.len_h_tiles):
+		for j in range(building_type.len_v_tiles):
+			var idx : int = starting_x + i + (j+starting_y) * int(extents.size.x)
+			tile_data[idx] = -1
+			if building_ids_by_tile.has(idx):
+				building_ids_by_tile.erase(idx)
 
 
 func is_spot_valid_for_building(building_type:BuildingStaticData,position:Vector2) -> bool:
@@ -55,10 +75,24 @@ func is_spot_valid_for_building(building_type:BuildingStaticData,position:Vector
 	var starting_y : int = int(coords.y-building_type.len_v_tiles-extents.position.y)
 	if starting_x < 0 or starting_y < 0:
 		return false
-	var starting_idx : int = int(coords.x-building_type.len_h_tiles) + int(extents.size.x * (coords.y-building_type.len_h_tiles))
+	var starting_idx : int = starting_x + int(extents.size.x) * starting_y
 	for i in range(building_type.len_h_tiles):
 		for j in range(building_type.len_v_tiles):
 			var idx_to_check : int = starting_x + i + (j+starting_y) * int(extents.size.x)
 			if tile_data[idx_to_check] != -1:
 				return false
 	return true
+
+
+func get_id_for_building_in_tile(position:Vector2) -> int:
+	var coords : Vector2 = Vector2(floor(position.x/UnitManager.TILE_LEN),floor(position.y/UnitManager.TILE_LEN))
+	if coords.x >= extents.end.x or coords.y >= extents.end.y:
+		return -1
+	var x_coord : int = int(coords.x-extents.position.x)
+	var y_coord : int = int(coords.y-extents.position.y)
+	if x_coord < 0 or y_coord < 0:
+		return -1
+	var tile_idx : int = x_coord + int(extents.size.x) * y_coord
+	if tile_idx in building_ids_by_tile:
+		return building_ids_by_tile[tile_idx]
+	return -1

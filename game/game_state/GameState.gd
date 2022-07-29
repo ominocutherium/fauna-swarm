@@ -64,6 +64,7 @@ func initialize_new_game(mode:int=GameMode.SP_PURITY_VS_SINGLE_EVIL,mapfile:Star
 	if not mapfile:
 		return
 	cosmetic_rng = background_tiles.init_newgame_map_from_mapfile(mapfile)
+	building_tiles.init_newgame_map_from_mapfile(mapfile)
 	factions.resize(StaticData.engine_keys_to_faction_ids.size())
 	var used_starting_locations := {}
 	var first_chosen_evil : int = StaticData.engine_keys_to_faction_ids.specter
