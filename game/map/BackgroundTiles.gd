@@ -297,7 +297,7 @@ func _mutate_tile_to_biome(index:int,to_biome:int) -> void:
 	var same_elevation_tile_types : Array = _title_type_lists_by_elevation_then_biome[current_tile_type.corner_elevation_key][to_biome]
 	var choices := []
 	for t_t in same_elevation_tile_types:
-		choices.append_array(t_t.tiles_in_tileset)
+		choices.append_array(tile_types_by_identifier[t_t].tiles_in_tileset)
 	var choice_idx : int = rng.randi_range(0,choices.size()-1)
 	tile_data[index] = choices[choice_idx]
 

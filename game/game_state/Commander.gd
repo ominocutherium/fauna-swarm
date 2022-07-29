@@ -57,7 +57,7 @@ func set_faction_id(value:int) -> void:
 
 
 func upgrade_unit(unit_identifier:int,upgrade_to_apply:int) -> void:
-	var unit := GameState.get_unit(unit_identifier)
+	var unit = GameState.get_unit(unit_identifier)
 	var upgrade : UpgradeStaticData = StaticData.get_species(unit.species).upgrade_attributes_by_identifier_then_faction[upgrade_to_apply][faction_id]
 	if not faction.current_currency >= upgrade.cost:
 		return

@@ -239,7 +239,7 @@ func _place_factions_initial_buildings(faction:SavedFaction,mapfile:StartingMapR
 			# TODO: ideally, some building should be marked in static data as the command center. Hardcoding values because out of time.
 		FactionStaticData.FactionTypes.EVIL:
 			building_type = 4
-	var building_st_data := StaticData.get_building(building_type)
+	var building_st_data = StaticData.get_building(building_type)
 	if faction_type == FactionStaticData.FactionTypes.EVIL:
 		for i in range(building_st_data.len_h_tiles*building_st_data.len_v_tiles):
 			var coord_to_mutate : Vector2 = building_loc - Vector2(i%building_st_data.len_h_tiles,i/building_st_data.len_h_tiles)
@@ -250,6 +250,7 @@ func _place_factions_initial_buildings(faction:SavedFaction,mapfile:StartingMapR
 
 
 func _place_unclaimed_forest_hearts(_mapfile:StartingMapResource) -> void:
+	var used_locs := {}
 	pass
 
 
