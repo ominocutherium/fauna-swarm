@@ -222,6 +222,7 @@ GameState="*res://game_state/GameState.gd"
 UnitManager="*res://units/UnitManager.gd"
 Pathfinding="*res://map/Pathfinding.gd"
 StaticData="*res://static_data/StaticData.gd"
+HitboxManager="*res://units/HitboxManager.gd"
 
 [display]
 

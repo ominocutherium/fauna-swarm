@@ -50,7 +50,7 @@ var _parse_state_row_headings := []
 var _parse_state_row_data_types := []
 var _species_name_keys_to_ids := {}
 var _engine_keys_to_factions := {}
-var engine_keys_to_faction_ids := {} # this is now the canonical way to look this up. TODO: Update any class that had this hard-coded.
+var engine_keys_to_faction_ids := {} # this is now the canonical way to look this up.
 var species_unit_income_weights := {}
 var species_weight_total : float = 1.0
 

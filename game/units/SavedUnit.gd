@@ -66,6 +66,7 @@ export(bool) var is_able_to_attack : bool = true
 
 
 var maximum_health : float setget ,get_maximum_health
+var _attack_rid : RID
 
 
 func sync_data_from_manager() -> void:
@@ -222,11 +223,12 @@ func _on_attack_delay_timed_out(dict:Dictionary) -> void:
 	attack_timing_information.attack_targeted_position = dict.attack_targeted_position
 	attack_timing_information.callback = "_on_attack_cooldown_timed_out"
 	GameState.event_heap.push_dict_onto_heap(attack_timing_information)
-	# TODO: When hitbox manager is available, push hitbox information
+	_attack_rid = HitboxManager.spawn_hitbox(self,dict.attack_targeted_position)
 
 
 func _on_attack_cooldown_timed_out(_dict:Dictionary) -> void:
 	attack_timing_information = {}
+	HitboxManager.remove_hitbox(_attack_rid)
 	is_able_to_attack = true
 
 

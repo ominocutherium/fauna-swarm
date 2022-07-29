@@ -61,7 +61,7 @@ func _build_order_should_commence(unit_in_range:int) -> void:
 	pass
 
 
-func _spawn_hitbox(attacker:SavedUnit,target_position:Vector2) -> void:
+func spawn_hitbox(attacker:SavedUnit,target_position:Vector2) -> RID:
 	var area_rid := Physics2DServer.area_create()
 	var hitbox_expiration : Dictionary = BLANK_HITBOX_ACTIVE_DICT.duplicate()
 	hitbox_expiration.rid = area_rid
@@ -69,6 +69,12 @@ func _spawn_hitbox(attacker:SavedUnit,target_position:Vector2) -> void:
 	_active_hitbox_rids[area_rid] = hitbox_expiration
 	# TODO: set timeout and cooldown
 	GameState.event_heap.push_dict_onto_heap(hitbox_expiration)
+	return area_rid
+
+
+func remove_hitbox(area_rid:RID) -> void:
+	Physics2DServer.free_rid(area_rid)
+	pass
 
 
 func _hitbox_collection_callback(attacker:SavedUnit,params) -> void:

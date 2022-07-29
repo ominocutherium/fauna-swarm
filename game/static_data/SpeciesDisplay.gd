@@ -98,16 +98,16 @@ var sprite_size : Vector2
 var offset : Vector2
 
 func get_tex_for_faction(faction:int) -> Texture:
-	match faction: # TODO: look these up from a const or enum somewhere
-		0:
+	match faction:
+		StaticData.engine_keys_to_faction_ids.purity:
 			return load(purity_tex_path) as Texture
-		1:
+		StaticData.engine_keys_to_faction_ids.specter:
 			return load(specter_tex_path) as Texture
-		2:
+		StaticData.engine_keys_to_faction_ids.sanguine:
 			return load(sanguine_tex_path) as Texture
-		3:
+		StaticData.engine_keys_to_faction_ids.artifice:
 			return load(artifice_tex_path) as Texture
-		4:
+		StaticData.engine_keys_to_faction_ids.pestilence:
 			return load(pestilent_tex_path) as Texture
 		_:
 			return null
