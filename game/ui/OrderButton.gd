@@ -22,7 +22,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-extends TextureButton
+extends Button
 
 class_name OrderInputButton
 
@@ -68,7 +68,7 @@ func _on_button_down() -> void:
 
 
 func _on_button_up() -> void:
-	if InputMap.has_action(action_emulated):
+	if InputMap.has_action(action_emulated) and Input.is_action_pressed(action_emulated):
 		Input.action_release(action_emulated)
 
 

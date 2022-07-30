@@ -248,6 +248,7 @@ func _place_factions_initial_buildings(faction:SavedFaction,mapfile:StartingMapR
 			var tile_to_mutate : int = int((coord_to_mutate.x-background_tiles.extents.position.x) + (coord_to_mutate.y-background_tiles.extents.position.y) * background_tiles.extents.size.x)
 			background_tiles._mutate_tile_to_biome(tile_to_mutate,faction.identifier)
 	var building := create_building(building_type,building_loc)
+	faction.building_identifiers.append(building)
 	(buildings[building] as SavedBuilding).build_progress = 1.0
 	return building_loc
 

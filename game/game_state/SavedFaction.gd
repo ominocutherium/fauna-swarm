@@ -62,7 +62,7 @@ signal request_unit_spawn(unit_identifier)
 
 export(int) var identifier : int
 export(int) var current_currency : int = 0 # gold or leaves
-export(int) var current_special_resource : int = 0 # forest hearts for pure faction; evil factions currently don't use this. Does not go down, current display subtracts number of buildings using it
+export(int) var current_special_resource : int = 1 # forest hearts for pure faction; evil factions currently don't use this. Does not go down, current display subtracts number of buildings using it
 export(int) var max_num_buildings_built_at_once : int = 0 # typically only used for evil factions' build milestones
 export(Array) var spawned_unit_identifiers := []
 export(Array) var queued_unit_identifiers := []

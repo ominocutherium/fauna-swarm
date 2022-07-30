@@ -27,6 +27,8 @@ extends MapTileData
 class_name GameStateBuildingData
 
 var building_ids_by_tile := {}
+var _purity_building_count := 0
+var _sp_resource_building_count := 0
 
 
 func get_num_of_purity_buildings() -> int:

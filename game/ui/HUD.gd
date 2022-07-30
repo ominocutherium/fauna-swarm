@@ -40,6 +40,7 @@ export(NodePath) var building_disp_path : NodePath
 export(NodePath) var pause_button_path : NodePath
 export(NodePath) var menu_button_path : NodePath
 export(NodePath) var menu_popup_path : NodePath
+export(NodePath) var order_buttons_path : NodePath
 export(NodePath) var order_modal_panel_path : NodePath
 export(NodePath) var order_modal_label_path : NodePath
 
@@ -47,6 +48,10 @@ export(NodePath) var order_modal_label_path : NodePath
 var selected_unit_identifier : int = -1
 var selected_units_group_identifiers := []
 var selected_building_identifier : int = -1
+
+
+func _ready() -> void:
+	_clear_everything()
 
 
 func _input(event: InputEvent) -> void:
@@ -101,16 +106,16 @@ func building_selected(building : SavedBuilding) -> void:
 	tex.atlas = load(building_data.texture_path)
 	tex.region = Rect2(building_data.texture_pos_x,building_data.texture_pos_y,building_data.texture_size_x,building_data.texture_size_y)
 	get_node(building_disp_path).get_node("H1/TextureRect").texture = tex
-	get_node(building_disp_path).get_node("H1/Top/V/Desc").text = tr(building_data.short_desc_key)
+	get_node(building_disp_path).get_node("H1/TopOfQueue/V/Desc").text = tr(building_data.short_desc_key)
 	if building.queue_items.size() > 0:
-		get_node(building_disp_path).get_node("H1/Top/V/H/TextureRect").texture = load("res://icon.png")
-		get_node(building_disp_path).get_node("H1/Top/V/H/ProgressBar").max_value = 5.0
-		get_node(building_disp_path).get_node("H1/Top/V/H/ProgressBar").value = 3.0
-		get_node(building_disp_path).get_node("H1/Top/V/H/TextureRect").show()
+		get_node(building_disp_path).get_node("H1/TopOfQueue/V/H/TextureRect").texture = load("res://icon.png")
+		get_node(building_disp_path).get_node("H1/TopOfQueue/V/H/ProgressBar").max_value = 5.0
+		get_node(building_disp_path).get_node("H1/TopOfQueue/V/H/ProgressBar").value = 3.0
+		get_node(building_disp_path).get_node("H1/TopOfQueue/V/H/TextureRect").show()
 #		get_node(building_disp_path).get_node("H1/Top/V/H/ProgressBar").show()
 	else:
-		get_node(building_disp_path).get_node("H1/Top/V/H/TextureRect").hide()
-		get_node(building_disp_path).get_node("H1/Top/V/H/ProgressBar").hide()
+		get_node(building_disp_path).get_node("H1/TopOfQueue/V/H/TextureRect").hide()
+		get_node(building_disp_path).get_node("H1/TopOfQueue/V/H/ProgressBar").hide()
 	# TODO: count down progress on queue items in _process once event system is implemented
 	for i in range(1,int(min(building.queue_items.size(),8))):
 		var queue_item_disp := LaterBuildingQueueButton.new()
@@ -118,6 +123,7 @@ func building_selected(building : SavedBuilding) -> void:
 		get_node(building_disp_path).get_node("RestOfQueue").add_child(queue_item_disp)
 		if building.faction == StaticData.engine_keys_to_faction_ids.purity:
 			queue_item_disp.connect("request_queue_cancel",self,"_on_later_queue_request_queue_cancel",[i])
+	get_node(order_buttons_path).hide()
 	get_node(building_disp_path).show()
 
 
@@ -148,6 +154,10 @@ func _disp_selected_unit(unit_identifier:int) -> void:
 		get_node(unit_disp_path).get_node("H1/C/V/UpgradeUnit").show()
 	else:
 		get_node(unit_disp_path).get_node("H1/C/V/UpgradeUnit").hide()
+	if unit.faction == StaticData.engine_keys_to_faction_ids.purity:
+		get_node(order_buttons_path).show()
+	else:
+		get_node(order_buttons_path).hide()
 	get_node(unit_disp_path).show()
 
 
@@ -178,12 +188,12 @@ func _disp_group_of_units(list_of_units:Array) -> void:
 			var count := Label.new()
 			var spec : int = species_in_group[key_id]
 			var sp_disp = StaticData.get_species_display(spec)
-			spec_tex.texture = load(sp_disp.purity_tex_path)
+			spec_tex.atlas = load(sp_disp.purity_tex_path)
 			spec_tex.region = Rect2(sp_disp.purity_pos_x,sp_disp.purity_pos_y,sp_disp.sprite_size_h,sp_disp.sprite_size_v)
 			count.text = str(species_count_by_species_id[spec])
 			get_node(multi_unit_disp_path).get_child(j).add_child(texrect)
 			get_node(multi_unit_disp_path).get_child(j).add_child(count)
-			texrect.texture = spec_tex # TODO: get from static data
+			texrect.texture = spec_tex
 			key_id += 1
 			if key_id >= species_in_group.size():
 				break
@@ -272,3 +282,9 @@ func _on_concede_accepted() -> void:
 
 func _on_menu_save_and_quit_pressed() -> void:
 	emit_signal("request_save_and_quit")
+
+
+func _clear_everything() -> void:
+	get_node(order_modal_panel_path).hide()
+	get_node(unit_disp_path).hide()
+	get_node(order_buttons_path).hide()

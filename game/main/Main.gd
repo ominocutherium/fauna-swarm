@@ -111,7 +111,8 @@ func _on_unit_moved(identifier:int,to:Vector2) -> void:
 
 func _on_MouseInput_location_left_clicked(location : Vector2, selection_radius : float, selection_radius_squared : float) -> void:
 	# prioritize finding a building over finding a unit over finding a position
-	var building_identifier : int = _get_building_within_display_loc(location)
+	var xformed_location = mouse_input_handler.display_space_to_physics_space_transform.xform(location)
+	var building_identifier : int = _get_building_within_display_loc(xformed_location)
 	if building_identifier != -1:
 		pass # TODO: implement
 		var saved_building := GameState.buildings[building_identifier] as SavedBuilding

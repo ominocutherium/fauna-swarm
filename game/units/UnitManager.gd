@@ -81,6 +81,7 @@ var _units_last_direction_moved := {}
 
 
 class UnitPath:
+	extends Reference
 	var points := PoolVector2Array() setget set_points
 	var distances_between_points := PoolRealArray()
 	var units_following_path_precisely := {}
@@ -379,6 +380,7 @@ func _increase_unit_pool_size() -> void:
 	alive_unit_velocities.resize(UNIT_POOL_SIZE_INCREMENT+starting_idx)
 	alive_unit_distance_moved_since_vel_change_or_coll.resize(UNIT_POOL_SIZE_INCREMENT+starting_idx)
 	alive_unit_path_ids.resize(UNIT_POOL_SIZE_INCREMENT+starting_idx)
+	alive_unit_path_point_ids.resize(UNIT_POOL_SIZE_INCREMENT+starting_idx)
 	alive_unit_body_rids.resize(UNIT_POOL_SIZE_INCREMENT+starting_idx)
 	alive_unit_shape_rids.resize(UNIT_POOL_SIZE_INCREMENT+starting_idx)
 	alive_unit_identifiers.resize(UNIT_POOL_SIZE_INCREMENT+starting_idx)
@@ -497,6 +499,8 @@ func _assign_path_to_targeted_for_group(arr_of_unit_identifiers:Array) -> void:
 	var average_position : Vector2 = position_sum / float(group_size)
 	var path := UnitPath.new()
 	path.points = Pathfinding.get_path_with_current_params(average_position,end_pos,-1,false) # FIXME: Will work once end pos is correct (and makes all units with each other regardless of faction) but please rewrite
+	if path.points.size() == 0:
+		return
 	var path_idx : int = _path_pool_unused_idxs.pop_front() if _path_pool_unused_idxs.size() > 0 else _path_pool_size
 	if path_idx == _path_pool_size:
 		_path_pool_size += 1
