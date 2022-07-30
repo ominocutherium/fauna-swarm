@@ -577,7 +577,9 @@ func _set_units_unit_target(targeting_unit_id:int,targeted_unit_id:int,temporary
 		_units_with_temporary_targets[targeting_unit_id] = targeted_unit_id
 	else:
 		_units_with_unit_targets[targeting_unit_id] = targeted_unit_id
-	_units_targeting_unit[targeted_unit_id] = targeting_unit_id
+	if not _units_targeting_unit.has(targeted_unit_id):
+		_units_targeting_unit[targeted_unit_id] = []
+	_units_targeting_unit[targeted_unit_id].append(targeting_unit_id)
 
 
 func get_quadrants_in_units_enemy_detection_range(unit_idx:int,dir:Vector2) -> Array:

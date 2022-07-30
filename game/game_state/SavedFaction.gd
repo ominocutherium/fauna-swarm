@@ -30,7 +30,7 @@ extends Resource
 const CHECK_FOR_SPOT_IN_QUEUE_TIMEOUT = 4.0/13.0
 const BUILDING_CAP_FOR_INCOME_MILESTONE = 31.0
 const BLANK_UNIT_INCOME_DICT = {
-	"cooldown_s":5.0,
+	"cooldown_s":1.0,
 	"timeout_s":0.0,
 	"unit_type":-1,
 	"unit_qty":-1,

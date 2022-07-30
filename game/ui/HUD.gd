@@ -130,7 +130,6 @@ func building_selected(building : SavedBuilding) -> void:
 func _disp_selected_unit(unit_identifier:int) -> void:
 	var unit = GameState.get_unit(unit_identifier)
 	_hide_all_on_left()
-	# TODO: get strings from static data and translate them
 	get_node(unit_disp_path).get_node("Name").text = "{0} {1}".format([tr(StaticData.get_faction(unit.faction).name_key),tr(StaticData.get_species(unit.species).name_key)])
 	var sp_disp = StaticData.get_species_display(unit.species)
 	var species_atlas_tex : Texture = load(StaticData.get_species_display(unit.species).purity_tex_path)
@@ -140,7 +139,7 @@ func _disp_selected_unit(unit_identifier:int) -> void:
 	match unit.faction:
 		StaticData.engine_keys_to_faction_ids.purity:
 			atlas_texture.region = Rect2(sp_disp.purity_pos_x,sp_disp.purity_pos_y,sp_disp.sprite_size_h,sp_disp.sprite_size_v)
-			desc_string = StaticData.get_species(unit.species).desc_short_key
+			desc_string = tr(StaticData.get_species(unit.species).desc_short_key)
 		StaticData.engine_keys_to_faction_ids.specter:
 			atlas_texture.region = Rect2(sp_disp.specter_pos_x,sp_disp.specter_pos_y,sp_disp.sprite_size_h,sp_disp.sprite_size_v)
 			desc_string = tr("BASE_GAME_CORRUPTED_ANIMAL_TEMPLATE").format([tr(StaticData.get_faction(unit.faction).name_key),tr(StaticData.get_species(unit.species).name_key)])
@@ -149,7 +148,7 @@ func _disp_selected_unit(unit_identifier:int) -> void:
 	get_node(unit_disp_path).get_node("CurrentHealth").value = unit.current_health
 	get_node(unit_disp_path).get_node("H1/C2/ShortDesc").text = desc_string
 	get_node(unit_disp_path).get_node("TechniqueName").text = tr(StaticData.get_species(unit.species).attack_name_key)
-	get_node(unit_disp_path).get_node("TechniqueDesc").text = tr("HUD_SELUNIT_EXAMPLE_TECHDESC")
+#	get_node(unit_disp_path).get_node("TechniqueDesc").text = tr("HUD_SELUNIT_EXAMPLE_TECHDESC")
 	if unit.faction == StaticData.engine_keys_to_faction_ids.purity and unit.upgrade_type == -1:
 		get_node(unit_disp_path).get_node("H1/C/V/UpgradeUnit").show()
 	else:

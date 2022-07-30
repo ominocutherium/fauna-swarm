@@ -160,7 +160,7 @@ func _resolve_order(use_position:bool=false) -> void:
 	for unit_id in list_of_selected_unit_identifiers:
 		var unit : SavedUnit = GameState.get_unit(unit_id)
 		unit.set_order(order_in_progress,target_type,target)
-		UnitManager.mark_unit_as_needing_order_resolution(unit_id)
+#		UnitManager.mark_unit_as_needing_order_resolution(unit_id)
 
 	_release_order_data()
 

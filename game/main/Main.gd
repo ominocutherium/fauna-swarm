@@ -68,6 +68,7 @@ func _ready() -> void:
 	order_input_handler.connect("report_build_building_order_in_progress",foreground_display,"spawn_phantom_building")
 	if minimap.texture as MinimapTexture:
 		camera.connect("moved",minimap.texture,"set_current_camera_location")
+	camera.position = mouse_input_handler.physics_space_to_display_space_transform.xform(GameState.factions[0].new_units_spawn_at) # TODO: update to where first building is instead
 
 
 func spawn_num_of_requested_units(p_num:int,species:int,faction:int,where:Vector2,upgrade_equipped:int=-1) -> void:
@@ -111,15 +112,14 @@ func _on_unit_moved(identifier:int,to:Vector2) -> void:
 
 func _on_MouseInput_location_left_clicked(location : Vector2, selection_radius : float, selection_radius_squared : float) -> void:
 	# prioritize finding a building over finding a unit over finding a position
-	var xformed_location = mouse_input_handler.display_space_to_physics_space_transform.xform(location)
-	var building_identifier : int = _get_building_within_display_loc(xformed_location)
+	var xformed_pos : Vector2 = mouse_input_handler.display_space_to_physics_space_transform.xform(location)
+	var building_identifier : int = _get_building_within_display_loc(xformed_pos)
 	if building_identifier != -1:
 		pass # TODO: implement
 		var saved_building := GameState.buildings[building_identifier] as SavedBuilding
 		if saved_building:
 			heads_up_display.building_selected(saved_building)
 		return
-	var xformed_pos : Vector2 = mouse_input_handler.display_space_to_physics_space_transform.xform(location)
 	var nearest_unit : int = UnitManager.get_closest_unit_to_position_within_radius(xformed_pos,selection_radius,selection_radius_squared)
 	if nearest_unit != -1:
 		heads_up_display.units_selected([nearest_unit])
